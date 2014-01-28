@@ -21,7 +21,9 @@
     "integration"
   ],
   "dependencies": {
-    "express": "3.4.x"
+    "mongoose": "3.8.x",
+    "express": "3.4.x",
+    "ejs": "0.8.x"
   },
   "devDependencies": {
     "mocha": "1.15.x",
