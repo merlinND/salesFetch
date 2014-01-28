@@ -1,0 +1,36 @@
+{
+  "name": "salesFetch",
+  "version": "1.0.0",
+  "author": "Pierre-Marie Dartus <dartus.pierremarie@gmail.com>",
+  "contributors": [],
+  "bin": {
+    "server": "./bin/server"
+  },
+  "scripts": {
+    "start": "node ./bin/server",
+    "test": "NODE_ENV=test mocha -R spec -t 5000 test/ test/test-*/*",
+    "lint": "jshint lib/ test/ config/ bin/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Papiel/salesFetch"
+  },
+  "keywords": [
+    "salesforce",
+    "FetchAPI",
+    "integration"
+  ],
+  "dependencies": {
+    "express": "3.4.x"
+  },
+  "devDependencies": {
+    "mocha": "1.15.x",
+    "should": "2.1.x",
+    "supertest": "0.8.x",
+    "jshint": "2.3.x"
+  },
+  "licence": "Copyright Papiel",
+  "engines": {
+    "node": ">=0.10"
+  }
+}
