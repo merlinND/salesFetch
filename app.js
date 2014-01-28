@@ -3,20 +3,13 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config');
+var express_configuration = require('./config/express');
 
 mongoose.connect(config.mongo_url);
+
+// Create and configure the express application
 var app = express();
-
-// Views settings
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.set('views', __dirname + '/views');
-
-// Logger configuration
-app.use(express.logger('dev'));
-
-// serve static files
-app.use(express.static(__dirname + '/public'));
+express_configuration(app);
 
 // Dummy users
 var users = [
