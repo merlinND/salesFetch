@@ -6,13 +6,11 @@ var lessMiddleware = require('less-middleware');
 var config = require('./index');
 
 module.exports = function(app) {
-  // serve static files
-  app.use(express.static(config.root_path + '/public'));
-
   // Views settings
   app.engine('html', require('ejs').renderFile);
   app.set('view engine', 'html');
   app.set('views', config.root_path + '/views');
+  app.use(express.favicon());
 
   // Logger configuration
   app.use(express.logger('dev'));
@@ -24,4 +22,17 @@ module.exports = function(app) {
     prefix: '/stylesheets',
     compress: true
   }));
+
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.cookieParser('your secret here'));
+  app.use(express.session());
+  app.use(app.router);
+
+  // serve static files
+  app.use(express.static(config.root_path + '/public'));
+
+  if ('development' === config.env) {
+    app.use(express.errorHandler());
+  }
 };
