@@ -3,9 +3,11 @@
 var crypto = require("crypto");
 var config = require('../config');
 var User = require('../models/user');
+var Organization = require('../models/organization');
 
 var authenticateUser = function(context, cb) {
-  User.findOne({userId: context.userId}, function(err, user) {
+  var userContext = context.user;
+  User.findOne({userId: userContext.userId}, function(err, user) {
     if (err) {
       return cb(err);
     }
@@ -13,13 +15,26 @@ var authenticateUser = function(context, cb) {
     if (user) {
       cb(null, user);
     } else {
-      user = new User({
-        name: context.fullName,
-        userId: context.userId,
-        email: context.email
-      });
+      Organization.findOne({organizationId: context.organization.organizationId}, function(err, org) {
+        if (err) {
+          return cb(err);
+        }
 
-      user.save(cb);
+        if (!org) {
+          console.log("no organisation found");
+          return cb('no organization');
+        }
+
+        user = new User({
+          name: userContext.fullName,
+          userId: userContext.userId,
+          email: userContext.email,
+          company: org._id
+        });
+
+        user.save(cb);
+
+      });
     }
 
   });
@@ -43,7 +58,7 @@ exports.authenticate = function(req, res) {
   if (check === consumerSecret) {
     var envelope = JSON.parse(new Buffer(encodedEnvelope, "base64"));
 
-    authenticateUser(envelope.context.user, function(err, user) {
+    authenticateUser(envelope.context, function(err, user) {
       if (err) {
         return res.send(500, {error: 'Problem during retrieving user'});
       }
