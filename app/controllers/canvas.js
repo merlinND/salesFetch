@@ -1,3 +1,6 @@
+/**
+ * Canvas controller
+ */
 'use strict';
 
 var crypto = require("crypto");
@@ -5,6 +8,11 @@ var config = require('../../config');
 var User = require('../models/user');
 var Organization = require('../models/organization');
 
+
+/**
+ * Authenticate the user based on the request's context
+ * return the the
+ */
 var authenticateUser = function(context, cb) {
   var userContext = context.user;
   User.findOne({userId: userContext.userId}, function(err, user) {

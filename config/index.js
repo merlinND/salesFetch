@@ -5,6 +5,7 @@
 
 
 var express = require('express');
+var ECT = require('ect');
 
 /**
  * Constant settings
@@ -37,8 +38,8 @@ if (!process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET) {
 var bootstrapServer = function(app) {
 
   // Views engine
-  app.engine('html', require('ejs').renderFile);
-  app.set('view engine', 'html');
+  var ectRenderer = ECT({ watch: true, root: dir_path + '/app/views' });
+  app.engine('.ect', ectRenderer.render);
 
   // View dir
   app.set('views', dir_path + '/app/views');

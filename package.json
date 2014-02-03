@@ -23,7 +23,7 @@
   "dependencies": {
     "mongoose": "3.8.x",
     "express": "3.4.x",
-    "ejs": "0.8.x",
+    "ect": "0.5.x",
     "less-middleware": "0.1.x"
   },
   "devDependencies": {
