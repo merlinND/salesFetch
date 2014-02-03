@@ -38,11 +38,10 @@ var bootstrapServer = function(app) {
 
   // Views engine
   app.engine('html', require('ejs').renderFile);
+  app.set('view engine', 'html');
 
   // View dir
   app.set('views', dir_path + '/app/views');
-
-  // Use
 
   // Use less
   app.use(require( 'less-middleware' )({ src: dir_path + '/public/' } ) );

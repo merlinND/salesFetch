@@ -1,5 +1,9 @@
 'use strict';
 
 module.exports = function(req, res) {
-  res.send("Welcome on Salesfetch");
+  res.render('layouts/website.ejs', {
+    users: [],
+    title: "EJS example",
+    header: "Some users"
+  });
 };
