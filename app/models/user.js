@@ -4,6 +4,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
+/**
+ * User Schema
+ */
+
 var userModel = new Schema ({
   userId: {type: String, required: true, unique: true},
   name: String,

@@ -1,7 +1,7 @@
 'use strict';
 
 var crypto = require("crypto");
-var config = require('../config');
+var config = require('../../config');
 var User = require('../models/user');
 var Organization = require('../models/organization');
 
@@ -40,15 +40,7 @@ var authenticateUser = function(context, cb) {
   });
 };
 
-exports.index = function(req, res) {
-  if (req.user) {
-    res.send("On the index and connected with " + req.user.name);
-  } else {
-    res.send("On the index");
-  }
-};
-
-exports.authenticate = function(req, res) {
+module.exports = function(req, res) {
   var bodyArray = req.body.signed_request.split(".");
   var consumerSecret = bodyArray[0];
   var encodedEnvelope = bodyArray[1];

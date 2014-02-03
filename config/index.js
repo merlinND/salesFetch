@@ -37,17 +37,12 @@ if (!process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET) {
 var bootstrapServer = function(app) {
 
   // Views engine
-  app.set('view engine', 'ejs');
+  app.engine('html', require('ejs').renderFile);
 
   // View dir
   app.set('views', dir_path + '/app/views');
 
   // Use
-  app.use( express.json() );
-  app.use( express.urlencoded() );
-  app.use( express.methodOverride() );
-  app.use( express.session() );
-  app.use( express.cookieParser() );
 
   // Use less
   app.use(require( 'less-middleware' )({ src: dir_path + '/public/' } ) );

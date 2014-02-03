@@ -8,6 +8,7 @@ var https = require('https');
 var mongoose = require('mongoose');
 var fs = require('fs');
 var config = require('./config');
+var controllers = require('./app/controllers.js');
 
 /**
  * Application configuration
@@ -26,6 +27,8 @@ mongoose.connect(config.mongo_url);
 var app = express();
 config.bootstrap(app);
 
+// Routing
+require('./config/routes.js')(app, controllers);
 
 
 // Create server
