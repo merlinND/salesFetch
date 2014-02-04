@@ -4,10 +4,13 @@
 
 'use strict';
 
+var auth = require('../app/middlewares/authentication.js');
+
+
 module.exports = function (app, controllers) {
   // Website routing
   app.get('/', controllers.website);
 
   // Canvas application routing
-  app.get('/authenticate', controllers.canvas);
+  app.post('/authenticate', auth, controllers.canvas);
 };

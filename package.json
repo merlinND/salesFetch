@@ -2,14 +2,9 @@
   "name": "salesFetch",
   "version": "1.0.0",
   "author": "Pierre-Marie Dartus <dartus.pierremarie@gmail.com>",
-  "contributors": [],
-  "bin": {
-    "server": "./bin/server"
-  },
   "scripts": {
     "start": "node ./bin/server",
-    "test": "NODE_ENV=test mocha -R spec -t 5000 test/ test/test-*/*",
-    "lint": "jshint lib/ test/ config/ bin/"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",

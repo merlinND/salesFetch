@@ -44,6 +44,11 @@ var bootstrapServer = function(app) {
   // View dir
   app.set('views', dir_path + '/app/views');
 
+  // Use
+  app.use(express.urlencoded());
+  app.use(express.json());
+  app.use(express.logger());
+
   // Use less
   app.use(require( 'less-middleware' )({ src: dir_path + '/public/' } ) );
 
