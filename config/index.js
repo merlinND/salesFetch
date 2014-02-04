@@ -37,6 +37,14 @@ if (!process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET) {
  */
 var bootstrapServer = function(app) {
 
+  // Use less
+  app.use(require('less-middleware')({
+    dest: dir_path + '/public/stylesheets',
+    src: dir_path + '/app/assets/less',
+    prefix: '/stylesheets',
+    compress: true
+  }));
+
   // Views engine
   var ectRenderer = ECT({ watch: true, root: dir_path + '/app/views' });
   app.engine('.ect', ectRenderer.render);
@@ -48,9 +56,6 @@ var bootstrapServer = function(app) {
   app.use(express.urlencoded());
   app.use(express.json());
   app.use(express.logger());
-
-  // Use less
-  app.use(require( 'less-middleware' )({ src: dir_path + '/public/' } ) );
 
   // Static
   app.use(express.static(dir_path + '/public'));
