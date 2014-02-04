@@ -42,6 +42,7 @@ var bootstrapServer = function(app) {
     dest: dir_path + '/public/stylesheets',
     src: dir_path + '/app/assets/less',
     prefix: '/stylesheets',
+    paths: [dir_path + '/vendor/bootstrap/less'],
     compress: true
   }));
 
