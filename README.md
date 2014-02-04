@@ -17,4 +17,4 @@ To request authentication keys, you'll a to setup a connected application throug
   $ nodemon app.js                          # Start the server in dev mode
 ```
 
-The server in now available on `*https*://localhost:<port>`.
+The server in now available on `https://localhost:<port>`. The `https`is important for securing the connection between salesFetch and Salesforce.
