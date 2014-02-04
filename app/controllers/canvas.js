@@ -1,14 +1,20 @@
 /**
- * Canvas controller
+ * Salesfoce Canvas controller
  */
 'use strict';
 
+/*
+ * Display Search page
+ */
 var displaySearch = function(req, res) {
-  res.render('canvas/timeline.ect', {
+  res.render('canvas/search.ect', {
     user: req.user
   });
 };
 
+/*
+ * Display specific context
+ */
 var displayContext = function(req, res) {
   res.render('canvas/timeline.ect', {
     user: req.user
@@ -18,7 +24,7 @@ var displayContext = function(req, res) {
 module.exports = function(req, res) {
   var params = req.context.environment.parameters;
 
-  if(params.indexOf("search") !== -1) {
+  if(params.mode === "search") {
     displaySearch(req, res);
   } else {
     displayContext(req, res);
