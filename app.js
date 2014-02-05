@@ -19,7 +19,7 @@ mongoose.connect(config.mongo_url);
 
 // Configure server
 var app = express();
-config.bootstrap(app);
+config.bootstrap(app, mongoose);
 
 // Routing
 require('./config/routes.js')(app, controllers);

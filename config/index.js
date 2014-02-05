@@ -5,6 +5,7 @@
 
 
 var express = require('express');
+var MongoStore = require('connect-mongo')(express);
 var ECT = require('ect');
 
 /**
@@ -21,7 +22,7 @@ if (node_env === "production") {
 }
 
 // mongo url connection
-var default_mongo_url = "mongodb://localhost/salesfetch_" + node_env;
+var mongo_url = process.env.MONGO_URL || "mongodb://localhost/salesfetch_" + node_env;
 
 // directory path
 var dir_path = (__dirname + '/..');
@@ -35,7 +36,18 @@ if (!process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET) {
 /**
  * Server bootstrap
  */
-var bootstrapServer = function(app) {
+var bootstrapServer = function(app, db) {
+
+  // Sessions
+  app.use(express.cookieParser());
+  app.use(express.session({
+    secret: node_env,
+    key: 'tt.sid',
+    cookie: {secure: true, maxAge: 60 * 60},
+    store: new MongoStore({
+      mongoose_connection: db.connections[0]
+    })
+  }));
 
   // Use less
   app.use(require('less-middleware')({
@@ -66,7 +78,7 @@ var bootstrapServer = function(app) {
 module.exports = {
   env: node_env,
   port: process.env.PORT || default_port,
-  mongo_url: process.env.MONGO_URL || default_mongo_url,
+  mongo_url: mongo_url,
 
   consumer_key: process.env.CONSUMER_KEY,
   consumer_secret: process.env.CONSUMER_SECRET,
