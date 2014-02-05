@@ -65,8 +65,8 @@ module.exports = function(req, res, next) {
         return res.send(500, {error: 'Problem during retrieving user'});
       }
 
-      req.user = user;
-      req.context = envelope.context;
+      req.session.user = user;
+      req.session.context = envelope.context;
       return next();
     });
 

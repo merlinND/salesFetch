@@ -32,20 +32,18 @@ var displaySearch = function(req, res) {
  * Display specific context
  */
 var displayContext = function(req, res) {
-  var params = req.context.environment.parameters;
+  var params = req.session.context.environment.parameters;
 
   retrieveDocuments(params.record.query, function(err, doc) {
     res.render('canvas/timeline.ect', {
-      user: req.user,
+      user: req.session.user,
       documents: doc.data
     });
   });
 };
 
 module.exports = function(req, res) {
-  console.log(req.session)
-  req.session.count = req.session.count + 1 || 0;
-  var params = req.context.environment.parameters;
+  var params = req.session.context.environment.parameters;
 
   if(params.mode === "search") {
     displaySearch(req, res);
