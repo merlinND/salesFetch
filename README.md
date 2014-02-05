@@ -10,6 +10,8 @@ Fetch API integration in Salesforce.
 
 You'll need `nodejs` to run the server. Use `nodemon` in development mode.
 
+Run `npm install`to install all the node dependences and `bower install` the frontend's.
+
 A `CONSUMER_KEY` and a `CONSUMER_SECRET` is needed to launch the server, these keys are provided by salesforce.
 To request authentication keys, you'll a to setup a connected application throught the developer panel.
 
