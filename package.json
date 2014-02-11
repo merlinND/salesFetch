@@ -24,7 +24,13 @@
     "less-middleware": "0.1.x",
     "async": "0.2.x",
     "request": "2.x.x",
-    "bower": "1.x.x"
+    "bower": "1.x.x",
+    "grunt": "~0.4.2",
+    "grunt-concurrent": "~0.4.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-nodemon": "0.1.2",
+    "grunt-env": "~0.4.1"
   },
   "devDependencies": {
     "mocha": "1.15.x",
