@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function(req, res) {
-  res.render('websites/index.ect');
+  res.render('websites/index.html');
 };

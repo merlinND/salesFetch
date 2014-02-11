@@ -1,5 +1,6 @@
-<% extend 'layouts/website.ect' %>
+{% extends '../layouts/website.html' %}
 
+{% block content %}
 <nav class="navbar navbar-default" role="navigation">
   <div class="container">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -24,3 +25,8 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+
+<div class="container">
+  <h1>Welcome to salesFetch</h1>
+</div>
+{% endblock %}

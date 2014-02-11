@@ -6,7 +6,7 @@
 
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);
-var ECT = require('ect');
+var swig = require('swig');
 
 /**
  * Constant settings
@@ -59,10 +59,13 @@ var bootstrapServer = function(app, db) {
   }));
 
   // Views engine
-  var ectRenderer = ECT({ watch: true, root: dir_path + '/app/views' });
-  app.engine('.ect', ectRenderer.render);
+  if (node_env !== 'production') {
+    swig.setDefaults({ cache: false });
+  }
+  app.engine('html', swig.renderFile);
 
   // View dir
+  app.set('view engine', 'html');
   app.set('views', dir_path + '/app/views');
 
   // Use
