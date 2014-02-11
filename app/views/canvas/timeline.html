@@ -10,7 +10,22 @@
 {% endautoescape %}
 </script>
 
-<section data-ng-controller="IndexController">
-  <h1>This is the home view</h1>
+<section data-ng-controller="IndexController" class="container-fluid timeline">
+  <div class="col-md-8 left">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Timeline</a></li>
+            <li><a href="">Search</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Settings</a></li>
+          </ul>
+      </div><!-- /.container-fluid -->
+    </nav>
+  </div>
+  <div class="col-md-4 right">
+    .col-md-6
+  </div>
 </section>
 {% endblock %}
