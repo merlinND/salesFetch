@@ -1,4 +1,7 @@
 node_modules
 .env
-vendor/
 *.css
+.sass-cache/
+.bower-*/
+public/lib
+.DS_Store
