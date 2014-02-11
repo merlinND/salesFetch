@@ -5,7 +5,8 @@ angular.module('sFetch.system').factory('Global', [
   function() {
     var _this = this;
     _this._data = {
-      user: window.user,
+      creds: window.creds,
+      context: window.context,
     };
 
     return _this._data;
