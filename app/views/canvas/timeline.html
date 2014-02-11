@@ -1,4 +1,14 @@
-<% extend 'layouts/website.ect' %>
+{% extends './template.html' %}
+
+{% block content %}
+
+<!-- Context block -->
+<script type="text/javascript">
+{% autoescape false %}
+    window.creds = {{creds|json}};
+    window.context = {{context|json}};
+{% endautoescape %}
+</script>
 
 <h1>Timeline view</h1>
-<p>Welcome <%- @user %></p>
+{% endblock %}

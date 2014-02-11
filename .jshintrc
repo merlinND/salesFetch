@@ -17,7 +17,7 @@
   "trailing"      : true,
   "unused"        : true,
   "loopfunc"      : true,
-  
+
   "asi"           : false,
   "boss"          : false,
   "debug"         : false,
@@ -44,8 +44,8 @@
   "sub"           : false,
   "supernew"      : false,
   "validthis"     : false,
-  
-  "browser"       : false,
+
+  "browser"       : true,
   "couch"         : false,
   "devel"         : false,
   "dojo"          : false,
@@ -56,19 +56,20 @@
   "prototypejs"   : false,
   "rhino"         : false,
   "wsh"           : false,
-  
+
   "nomen"         : false,
   "onevar"        : false,
   "passfail"      : false,
   "white"         : false,
-  
+
   "maxerr"        : 100,
   "predef"        : [
     "describe",
     "it",
     "after",
     "before",
-    "beforeEach"
+    "beforeEach",
+    "angular"
   ],
   "indent"        : 2,
   "maxstatements" : 20,

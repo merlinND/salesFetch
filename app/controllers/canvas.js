@@ -3,27 +3,12 @@
  */
 'use strict';
 
-var request = require('request');
-
-var retrieveDocuments = function(query, cb) {
-  var queryParams = {
-    'search': query
-  };
-
-  request({
-    url: 'http://api.anyfetch.com/documents',
-    headers: {'Authorization': 'Basic ' + process.env.FETCHAPI_CREDS},
-    qs: queryParams
-  }, function(err, response, body) {
-    cb(err, body);
-  });
-};
 
 /*
  * Display Search page
  */
 var displaySearch = function(req, res) {
-  res.render('canvas/search.ect', {
+  res.render('canvas/search.html', {
     user: req.user
   });
 };
@@ -33,12 +18,9 @@ var displaySearch = function(req, res) {
  */
 var displayContext = function(req, res) {
   var params = req.session.context.environment.parameters;
-
-  retrieveDocuments(params.record.query, function(err, doc) {
-    res.render('canvas/timeline.ect', {
-      user: req.session.user,
-      documents: doc.data
-    });
+  res.render('canvas/timeline.html', {
+    creds: process.env.FETCHAPI_CREDS,
+    context: params.record
   });
 };
 

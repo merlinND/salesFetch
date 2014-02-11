@@ -1,0 +1,25 @@
+{% extends '../template.html' %}
+
+{% block bare-css %}
+  <link rel="stylesheet" href="/stylesheets/app.css">
+{% endblock %}
+
+{% block bare-js %}
+  <!-- Bootstrap -->
+  <script type="text/javascript" src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <!-- Angular JS -->
+  <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
+  <script type="text/javascript" src="/lib/angular-cookies/angular-cookies.min.js"></script>
+  <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
+  <script type="text/javascript" src="/lib/angular-route/angular-route.js"></script>
+
+  <!-- Application Init -->
+  <script type="text/javascript" src="/js/app.js"></script>
+  <script type="text/javascript" src="/js/services/global.js"></script>
+
+  <script type="text/javascript">
+    //Then init the app
+    angular.bootstrap(document, ['sFetch']);
+  </script>
+{% endblock %}
