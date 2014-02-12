@@ -31,7 +31,9 @@
 
       <div class="documents">
         <ul>
-          <li ng-repeat="doc in documents"></li>
+          <li ng-repeat="doc in documents">
+            <div ng-bind-html="doc.rendered"></div>
+          </li>
         </ul>
       </div>
     </div>

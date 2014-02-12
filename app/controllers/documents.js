@@ -65,7 +65,7 @@ module.exports.index = function(req, res) {
     }
     json.provider = provider;
 
-    delete json.tokens
+    delete json.tokens;
     res.send(json);
   });
 };
