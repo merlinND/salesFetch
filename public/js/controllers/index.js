@@ -7,7 +7,13 @@ angular.module('sFetch.system').controller('IndexController', ['$scope', '$http'
   $http({method: 'GET', url: anyFetchUrl}).
     success(function(data) {
       console.log(data);
-    }).error(function(data) {
-      console.log(data);
+      $scope.documentTypes = data.document_types;
+      $scope.providers = data.providers;
+
+      var documents = data.datas;
+      for(var doc in documents) {
+        var template = $scope.documentTypes.
+        Mustache.render();
+      }
     });
 }]);

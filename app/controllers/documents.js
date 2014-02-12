@@ -48,22 +48,24 @@ module.exports.index = function(req, res) {
     var rootReturn = JSON.parse(data[0]);
     json = docReturn;
 
-    json.document_types = {};
-    for(var doc_type in rootReturn.document_types) {
-      if(docReturn.document_types[doc_type]) {
-        json.document_types[doc_type] = rootReturn.document_types[doc_type];
-        json.document_types[doc_type].documents = docReturn.document_types[doc_type].documents;
-      }
+    var document_types = {};
+    for(var doc_type in docReturn.document_types) {
+      console.log("bite");
+      document_types[doc_type] = rootReturn.document_types[doc_type];
+      document_types[doc_type].documents = docReturn.document_types[doc_type].documents;
     }
+    json.document_types = document_types;
 
-    json.providers = {};
+    var providers = {};
     for(var provider in rootReturn.provider_status) {
       if(docReturn.tokens[provider]) {
-        json.providers[provider] = rootReturn.provider_status[provider];
-        json.providers[provider].documents = docReturn.tokens[provider];
+        providers[provider] = rootReturn.provider_status[provider];
+        providers[provider].documents = docReturn.tokens[provider];
       }
     }
+    json.provider = provider;
 
+    delete json.tokens
     res.send(json);
   });
 };
