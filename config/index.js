@@ -59,9 +59,10 @@ var bootstrapServer = function(app, db) {
   }));
 
   // Views engine
-  if (node_env !== 'production') {
-    swig.setDefaults({ cache: false });
-  }
+  swig.setDefaults({
+    cache: node_env !== 'production' ? false : 'memory',
+    varControls: ['{{{', '}}}']
+  });
   app.engine('html', swig.renderFile);
 
   // View dir

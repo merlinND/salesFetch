@@ -6,5 +6,6 @@
 
 module.exports = {
   website: require('./controllers/website.js'),
-  canvas: require('./controllers/canvas.js')
+  canvas: require('./controllers/canvas.js'),
+  documents: require('./controllers/documents')
 };

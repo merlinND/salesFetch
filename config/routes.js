@@ -13,4 +13,8 @@ module.exports = function (app, controllers) {
 
   // Canvas application routing
   app.post('/authenticate', auth, controllers.canvas);
+
+  // Request document(s)
+  app.get('/documents', controllers.documents.index);
+  app.get('/documents/:id', controllers.documents.show);
 };
