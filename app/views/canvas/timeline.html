@@ -31,15 +31,21 @@
 
       <div class="documents">
         <ul>
-          <li ng-repeat="doc in documents">
+          <li ng-repeat="doc in documents" ng-click='displayFull(doc)' class='snippet-container'>
+            <header>
+              {{documentTypes[doc.document_type].name}} - {{providers[doc.token].name}}
+            </header>
             <div ng-bind-html="doc.rendered"></div>
+            <div clear="both"></div>
           </li>
         </ul>
       </div>
     </div>
   </div>
   <div class="col-md-4 right">
-    .col-md-6
+    <div class="pinned-container">
+      <div class="lead">Pinned</div>
+    </div>
   </div>
 </section>
 {% endblock %}

@@ -18,7 +18,6 @@ var anyFetchRequest = function(url, params) {
 
 module.exports.index = function(req, res) {
   var json = {};
-  req.query.search = 'dartus';
 
   async.parallel([
     function(cb) {
@@ -50,20 +49,17 @@ module.exports.index = function(req, res) {
 
     var document_types = {};
     for(var doc_type in docReturn.document_types) {
-      console.log("bite");
       document_types[doc_type] = rootReturn.document_types[doc_type];
       document_types[doc_type].documents = docReturn.document_types[doc_type].documents;
     }
     json.document_types = document_types;
 
     var providers = {};
-    for(var provider in rootReturn.provider_status) {
-      if(docReturn.tokens[provider]) {
-        providers[provider] = rootReturn.provider_status[provider];
-        providers[provider].documents = docReturn.tokens[provider];
-      }
+    for(var provider in docReturn.tokens) {
+      providers[provider] = rootReturn.provider_status[provider];
+      providers[provider].documents = docReturn.tokens[provider];
     }
-    json.provider = provider;
+    json.providers = providers;
 
     delete json.tokens;
     res.send(json);
