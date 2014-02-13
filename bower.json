@@ -9,16 +9,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "angular": "latest",
-    "angular-resource": "latest",
-    "angular-cookies": "latest",
-    "angular-mocks": "latest",
-    "angular-route": "latest",
     "bootstrap": "3.1.0",
-    "angular-bootstrap": "0.10.0",
-    "angular-ui-utils": "0.1.0",
-    "mustache": "latest",
-    "canvas-sdk": "forcedotcom/SalesforceCanvasJavascriptSDK",
-    "css-modal": "~1.0.4"
+    "canvas-sdk": "forcedotcom/SalesforceCanvasJavascriptSDK"
   }
 }

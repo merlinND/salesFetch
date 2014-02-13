@@ -22,12 +22,13 @@
 
       <div class="documents">
         <ul>
+        {% for doc in documents.datas %}
           <li class='snippet-container'>
             <header>
             </header>
-            <div ng-bind-html="doc.rendered"></div>
-            <div clear="both"></div>
+            {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
           </li>
+        {% endfor %}
         </ul>
       </div>
     </div>
