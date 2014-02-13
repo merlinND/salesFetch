@@ -4,7 +4,7 @@
   "author": "Pierre-Marie Dartus <dartus.pierremarie@gmail.com>",
   "scripts": {
     "start": "node ./bin/server",
-    "test": "mocha",
+    "test": "NODE_ENV=test mocha -R spec test/ test/**/*.js -t 5000",
     "postinstall": "node node_modules/bower/bin/bower install"
   },
   "repository": {

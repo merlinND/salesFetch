@@ -24,19 +24,22 @@ config.bootstrap(app, mongoose);
 // Routing
 require('./config/routes.js')(app, controllers);
 
-if (config.env !== 'production') {
+var server;
+if (config.env !== 'production' && config.env !== 'test') {
   // Create https server for local dev and testing
   var options = {
     key: fs.readFileSync('ssl-key.pem'),
     cert: fs.readFileSync('ssl-cert.pem')
   };
 
-  require('https').createServer(options, app).listen(config.port, function() {
-    console.log("Server [" + config.env + "] listening on " + config.port);
+  server = require('https').createServer(options, app).listen(config.port, function() {
+    console.log("Server HTPPS [" + config.env + "] listening on " + config.port);
   });
 } else {
   // Delegate SSL to Heroku for production
-  require('http').createServer(app).listen(config.port, function() {
-    console.log("Server [" + config.env + "] listening on " + config.port);
+  server = require('http').createServer(app).listen(config.port, function() {
+    console.log("Server HTTP [" + config.env + "] listening on " + config.port);
   });
 }
+
+module.exports = server;
