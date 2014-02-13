@@ -67,5 +67,39 @@ module.exports.index = function(req, res) {
 };
 
 module.exports.show = function(req, res) {
+  var json = {};
 
+  async.parallel([
+    function(cb) {
+      request(anyFetchRequest('http://api.anyfetch.com'), function(err, resp, body) {
+        if (err) {
+          return cb(err, null);
+        }
+
+        cb(null, body);
+      });
+    },
+    function(cb){
+      request(anyFetchRequest('http://api.anyfetch.com/documents/' + req.params.id), function(err, resp, body) {
+        if (err) {
+          return cb(err, null);
+        }
+
+        cb(null, body);
+      });
+    }
+  ], function(err, data){
+    if (err) {
+      return data.status(500).send(500);
+    }
+
+    var docReturn = JSON.parse(data[1]);
+    var rootReturn = JSON.parse(data[0]);
+
+    json = docReturn;
+    json.document_type = rootReturn.document_types[docReturn.document_type];
+    json.token = rootReturn.provider_status[docReturn.token];
+
+    res.send(json);
+  });
 };

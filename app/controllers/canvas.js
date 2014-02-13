@@ -26,7 +26,6 @@ var displayContext = function(req, res) {
 
 module.exports = function(req, res) {
   var params = req.session.context.environment.parameters;
-
   if(params.mode === "search") {
     displaySearch(req, res);
   } else {

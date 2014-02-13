@@ -60,8 +60,7 @@ var bootstrapServer = function(app, db) {
 
   // Views engine
   swig.setDefaults({
-    cache: node_env !== 'production' ? false : 'memory',
-    varControls: ['{{{', '}}}']
+    cache: node_env !== 'production' ? false : 'memory'
   });
   app.engine('html', swig.renderFile);
 

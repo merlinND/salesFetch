@@ -1,15 +1,6 @@
 {% extends './template.html' %}
 
 {% block content %}
-
-<!-- Context block -->
-<script type="text/javascript">
-{% autoescape false %}
-    window.creds = {{{creds|json}}};
-    window.context = {{{context|json}}};
-{% endautoescape %}
-</script>
-
 <section data-ng-controller="IndexController" class="container-fluid timeline">
   <div class="col-md-8 left">
     <nav class="navbar navbar-default" role="navigation">
@@ -26,14 +17,13 @@
 
     <div class="content">
       <div class= "about lead">
-        About <span>{{global.context.query}}</span>
+      About <span>{{context.query}}</span>
       </div>
 
       <div class="documents">
         <ul>
-          <li ng-repeat="doc in documents" ng-click='displayFull(doc)' class='snippet-container'>
+          <li class='snippet-container'>
             <header>
-              {{documentTypes[doc.document_type].name}} - {{providers[doc.token].name}}
             </header>
             <div ng-bind-html="doc.rendered"></div>
             <div clear="both"></div>

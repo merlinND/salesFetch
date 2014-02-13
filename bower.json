@@ -18,6 +18,7 @@
     "angular-bootstrap": "0.10.0",
     "angular-ui-utils": "0.1.0",
     "mustache": "latest",
-    "canvas-sdk": "forcedotcom/SalesforceCanvasJavascriptSDK"
+    "canvas-sdk": "forcedotcom/SalesforceCanvasJavascriptSDK",
+    "css-modal": "~1.0.4"
   }
 }
