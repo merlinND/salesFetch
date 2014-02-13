@@ -72,6 +72,46 @@ var retrieveDocuments = function(context, cb) {
   });
 };
 
+var retrieveDocument = function(id, cb) {
+  async.parallel([
+    function(cb) {
+      request(anyFetchRequest('http://api.anyfetch.com'), function(err, resp, body) {
+        if (err) {
+          return cb(err, null);
+        }
+
+        cb(null, body);
+      });
+    },
+    function(cb){
+      request(anyFetchRequest('http://api.anyfetch.com/documents/' + id), function(err, resp, body) {
+        if (err) {
+          return cb(err, null);
+        }
+
+        cb(null, body);
+      });
+    }
+  ], function(err, data){
+    if (err) {
+      return cb(err);
+    }
+
+    var docReturn = JSON.parse(data[1]);
+    var rootReturn = JSON.parse(data[0]);
+
+    console.log(rootReturn.document_types);
+    console.log(docReturn);
+
+    var realatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
+    docReturn.full_rendered = Mustache.render(realatedTemplate, docReturn.datas);
+
+    docReturn.provider = rootReturn.provider_status[docReturn.token].name;
+    docReturn.document_type = rootReturn.document_types[docReturn.document_type].name;
+
+    cb(null, docReturn);
+  });
+};
 
 /*
  * Display specific context
@@ -88,11 +128,21 @@ var displayContext = function(req, res) {
   });
 };
 
-module.exports = function(req, res) {
+module.exports.index = function(req, res) {
   var params = req.session.context.environment.parameters;
   if(params.mode === "search") {
     displaySearch(req, res);
   } else {
     displayContext(req, res);
   }
+};
+
+module.exports.show = function(req, res) {
+  retrieveDocument(req.params.id, function(err, datas) {
+
+    res.render('canvas/show.html', {
+      document: datas
+    });
+
+  });
 };

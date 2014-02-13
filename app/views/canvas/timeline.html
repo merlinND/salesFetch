@@ -1,7 +1,7 @@
 {% extends './template.html' %}
 
 {% block content %}
-<section data-ng-controller="IndexController" class="container-fluid timeline">
+<section class="container-fluid timeline">
   <div class="col-md-8 left">
     <nav class="navbar navbar-default" role="navigation">
       <div class="container-fluid">
@@ -24,7 +24,7 @@
         <ul>
         {% for doc in documents.datas %}
           <li class='snippet-container'>
-            <a href="/documents/{{doc.id}}">
+            <a href="/canvas/{{doc.id}}">
               <header>
               {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
               </header>
