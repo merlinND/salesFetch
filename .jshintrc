@@ -69,7 +69,7 @@
     "after",
     "before",
     "beforeEach",
-    "angular"
+    "$"
   ],
   "indent"        : 2,
   "maxstatements" : 20,
