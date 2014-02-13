@@ -24,9 +24,12 @@
         <ul>
         {% for doc in documents.datas %}
           <li class='snippet-container'>
-            <header>
-            </header>
-            {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
+            <a href="/documents/{{doc.id}}">
+              <header>
+              {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
+              </header>
+              {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
+            </a>
           </li>
         {% endfor %}
         </ul>

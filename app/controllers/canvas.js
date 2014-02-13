@@ -63,6 +63,9 @@ var retrieveDocuments = function(context, cb) {
     docReturn.datas.forEach(function(doc) {
       var realatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
       doc.snippet_rendered = Mustache.render(realatedTemplate, doc.datas);
+
+      doc.provider = rootReturn.provider_status[doc.token].name;
+      doc.document_type = rootReturn.document_types[doc.document_type].name;
     });
 
     cb(null, docReturn);
@@ -77,7 +80,6 @@ var displayContext = function(req, res) {
   var params = req.session.context.environment.parameters;
   retrieveDocuments(params.record, function(err, datas) {
 
-    console.log(datas.datas);
     res.render('canvas/timeline.html', {
       context: params.record,
       documents: datas

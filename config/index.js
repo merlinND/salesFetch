@@ -42,8 +42,6 @@ var bootstrapServer = function(app, db) {
   app.use(express.cookieParser());
   app.use(express.session({
     secret: node_env,
-    key: 'tt.sid',
-    cookie: {secure: true, maxAge: 60 * 60},
     store: new MongoStore({
       mongoose_connection: db.connections[0]
     })
