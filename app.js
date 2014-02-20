@@ -28,8 +28,8 @@ var server;
 if (config.env !== 'production' && config.env !== 'test') {
   // Create https server for local dev and testing
   var options = {
-    key: fs.readFileSync('ssl-key.pem'),
-    cert: fs.readFileSync('ssl-cert.pem')
+    key: fs.readFileSync('config/ssl-key.pem'),
+    cert: fs.readFileSync('config/ssl-cert.pem')
   };
 
   server = require('https').createServer(options, app).listen(config.port, function() {

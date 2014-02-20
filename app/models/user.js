@@ -8,11 +8,30 @@ var ObjectId = Schema.ObjectId;
  * User Schema
  */
 
-var userModel = new Schema ({
-  userId: {type: String, required: true, unique: true},
+var UserModel = new Schema ({
+  created: {
+    type: Date,
+    default: Date.now
+  },
+  userId: {
+    type: String,
+    unique: true
+  },
+  company: {
+    type: ObjectId,
+    ref: 'Company'
+  },
   name: String,
-  email: String,
-  company: ObjectId
+  email: String
 });
 
-module.exports = mongoose.model('User', userModel);
+/**
+ * Statics
+ */
+UserModel.statics.load = function(id, cb) {
+  this.findOne({
+    _id: id
+  }).populate('company').exec(cb);
+};
+
+module.exports = mongoose.model('User', UserModel);
