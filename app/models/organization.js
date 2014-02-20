@@ -6,9 +6,15 @@ var Schema = mongoose.Schema;
 /**
  * Organization Schema
  */
-
 var orgModel = new Schema ({
-  organizationId: {type: String, required: true, unique: true},
+  created: {
+    type: Date,
+    default: Date.now
+  },
+  organizationId: {
+    type: String,
+    unique: true
+  },
   name: String,
   currency: String
 });
