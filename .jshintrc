@@ -66,6 +66,7 @@
   "predef"        : [
     "describe",
     "it",
+    "should",
     "after",
     "before",
     "beforeEach",
