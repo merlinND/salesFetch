@@ -53,6 +53,10 @@ module.exports = function(req, res, next) {
   // Handle the post request
   if (req.method === 'POST' && req.url === '/authenticate') {
 
+    if (!req.body.length) {
+      return res.send(401);
+    }
+
     // Extract request parts
     var bodyArray = req.body.signed_request.split(".");
     var consumerSecret = bodyArray[0];

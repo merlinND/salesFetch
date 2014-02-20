@@ -3,7 +3,7 @@
 var request = require('supertest');
 var app = require('../../app.js');
 
-describe('website', function() {
+describe('website controller', function() {
   it('respond with valide html', function(done) {
     request(app)
       .get('/')
