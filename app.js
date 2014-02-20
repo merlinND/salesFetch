@@ -5,7 +5,6 @@
 
 var express = require('express');
 var mongoose = require('mongoose');
-var fs = require('fs');
 var config = require('./config');
 var controllers = require('./app/controllers.js');
 
@@ -25,14 +24,9 @@ config.bootstrap(app, mongoose);
 require('./config/routes.js')(app, controllers);
 
 var server;
-if (config.env !== 'production' && config.env !== 'test') {
-  // Create https server for local dev and testing
-  var options = {
-    key: fs.readFileSync('config/ssl-key.pem'),
-    cert: fs.readFileSync('config/ssl-cert.pem')
-  };
-
-  server = require('https').createServer(options, app).listen(config.port, function() {
+if (config.env === 'development') {
+  // Create https server for dev with SSL
+  server = require('https').createServer(config.certif, app).listen(config.port, function() {
     console.log("Server HTPPS [" + config.env + "] listening on " + config.port);
   });
 } else {
