@@ -2,6 +2,7 @@
 
 var request = require('supertest');
 var crypto = require('crypto');
+var should = require('should');
 
 var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
@@ -48,7 +49,11 @@ describe('<user controller>', function() {
       request(app)
         .post('/authenticate')
         .send({signed_request: postBody})
-        .expect(302, done);
+        .expect(302, function(err, res) {
+          res.should.have.header('set-cookie');
+          res.headers['set-cookie'][0].should.match(/connect.sid/);
+          done();
+        });
     });
   });
 });
