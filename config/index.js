@@ -50,7 +50,8 @@ var bootstrapServer = function(app, db) {
   app.use(express.session({
     secret: node_env,
     store: new MongoStore({
-      mongoose_connection: db.connections[0]
+      mongoose_connection: db.connections[0],
+      auto_reconnect: true
     })
   }));
 
