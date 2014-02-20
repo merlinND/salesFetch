@@ -2,12 +2,10 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
 
 /**
  * User Schema
  */
-
 var UserModel = new Schema ({
   created: {
     type: Date,
@@ -18,7 +16,7 @@ var UserModel = new Schema ({
     unique: true
   },
   company: {
-    type: ObjectId,
+    type: Schema.ObjectId,
     ref: 'Company'
   },
   name: String,
