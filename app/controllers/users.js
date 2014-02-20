@@ -2,8 +2,9 @@
 
 var crypto = require("crypto");
 var config = require('../../config');
-var User = require('../models/user');
-var Organization = require('../models/organization');
+var mongoose =require('mongoose'),
+    Organization = mongoose.model('Organization'),
+    User = mongoose.model('User');
 
 /**
  * Authenticate the user based on the request's context
@@ -22,11 +23,6 @@ var authenticateUser = function(context, cb) {
       Organization.findOne({organizationId: context.organization.organizationId}, function(err, org) {
         if (err) {
           return cb(err);
-        }
-
-        if (!org) {
-          console.log("no organisation found");
-          return cb('no organization');
         }
 
         user = new User({
@@ -48,22 +44,21 @@ var authenticateUser = function(context, cb) {
  * Choose the right redirection url based on the authentication
  * context.
  */
-var redirectionOnContext = function(context, res) {
+var redirectionOnContext = function(context) {
   var mode = context.environment.parameters.mode;
 
   if(mode === "search") {
-    return res.redirect('/app/search');
+    return '/app/search';
   } else {
-    return res.redirect('/app/context');
+    return '/app/context';
   }
 };
-
 
 module.exports.authenticate = function(req, res) {
   // Handle the post request
   if (req.method === 'POST' && req.url === '/authenticate') {
 
-    if (!req.body.length) {
+    if (!req.body.signed_request) {
       return res.send(401);
     }
 
@@ -79,13 +74,13 @@ module.exports.authenticate = function(req, res) {
 
       authenticateUser(envelope.context, function(err, user) {
         if (err) {
-          return res.send(500, {error: 'Problem during retrieving user'});
+          return res.send(500, err);
         }
 
         req.session.user = user;
         req.session.context = envelope.context;
 
-        return redirectionOnContext(envelope.context, res);
+        return res.redirect(redirectionOnContext(envelope.context));
       });
     }
   }
