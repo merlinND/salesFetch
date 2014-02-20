@@ -22,4 +22,4 @@ var PinnedDocumentModel = new Schema ({
   attachedObjects: []
 });
 
-module.exports = mongoose.model('PinnedDocument', PinnedDocumentModel);
+mongoose.model('PinnedDocument', PinnedDocumentModel);

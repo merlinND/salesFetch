@@ -32,4 +32,4 @@ UserModel.statics.load = function(id, cb) {
   }).populate('company').exec(cb);
 };
 
-module.exports = mongoose.model('User', UserModel);
+mongoose.model('User', UserModel);
