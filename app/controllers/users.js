@@ -1,10 +1,12 @@
 'use strict';
 
-var crypto = require("crypto");
-var config = require('../../config');
+var crypto = require('crypto');
+var async = require('async');
 var mongoose =require('mongoose'),
     Organization = mongoose.model('Organization'),
     User = mongoose.model('User');
+var config = require('../../config');
+
 
 /**
  * Authenticate the user based on the request's context
@@ -28,12 +30,10 @@ var authenticateUser = function(context, cb) {
         user = new User({
           name: userContext.fullName,
           userId: userContext.userId,
-          email: userContext.email,
-          company: org._id
+          email: userContext.email
         });
 
-        user.save(cb);
-
+        return user.save(cb);
       });
     }
 
@@ -55,35 +55,41 @@ var redirectionOnContext = function(context) {
 };
 
 module.exports.authenticate = function(req, res) {
-  // Handle the post request
-  if (req.method === 'POST' && req.url === '/authenticate') {
+  var envelope;
 
-    if (!req.body.signed_request) {
+  async.waterfall([
+    function(cb){
+      if (!req.body.signed_request) {
+        return cb('bad request');
+      }
+
+      // Extract request parts
+      var bodyArray = req.body.signed_request.split(".");
+      var consumerSecret = bodyArray[0];
+      var encodedEnvelope = bodyArray[1];
+
+      // Check the request validity
+      var check = crypto.createHmac("sha256", config.consumer_secret).update(encodedEnvelope).digest("base64");
+      if (check !== consumerSecret) {
+        return cb('bad request');
+      }
+
+      envelope = JSON.parse(new Buffer(encodedEnvelope, "base64"));
+      cb(null, envelope);
+    },
+    function(envelope, cb){
+      // Get the user
+      authenticateUser(envelope.context, cb);
+    }
+  ], function (err, user) {
+    if (err) {
       return res.send(401);
     }
 
-    // Extract request parts
-    var bodyArray = req.body.signed_request.split(".");
-    var consumerSecret = bodyArray[0];
-    var encodedEnvelope = bodyArray[1];
+    req.session.user = user;
+    req.session.context = envelope.context;
 
-    // Check the request validity
-    var check = crypto.createHmac("sha256", config.consumer_secret).update(encodedEnvelope).digest("base64");
-    if (check === consumerSecret) {
-      var envelope = JSON.parse(new Buffer(encodedEnvelope, "base64"));
-
-      authenticateUser(envelope.context, function(err, user) {
-        if (err) {
-          return res.send(500, err);
-        }
-
-        req.session.user = user;
-        req.session.context = envelope.context;
-
-        return res.redirect(redirectionOnContext(envelope.context));
-      });
-    }
-  }
-
-  return res.send(401);
+    var redirectUrl = redirectionOnContext(envelope.context);
+    return res.redirect(302,redirectUrl);
+  });
 };

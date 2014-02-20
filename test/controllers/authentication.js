@@ -4,13 +4,19 @@ var request = require('supertest');
 var crypto = require('crypto');
 
 var app = require('../../app.js');
+var cleaner = require('../hooks/cleaner');
+var consumerSecret = require('../../config/index').consumer_secret;
 
 var createAuthHash = function(obj) {
   var encodedContent = new Buffer(JSON.stringify(obj)).toString("base64");
-  return crypto.createHmac("sha256", "2568115552151233568").update(encodedContent).digest("base64");
+  return crypto.createHmac("sha256", consumerSecret).update(encodedContent).digest("base64");
 };
 
 describe('<user controller>', function() {
+  beforeEach(function(done) {
+    cleaner(done);
+  });
+
   describe('/authenticate endpoint', function() {
 
     it('reject unidentified user', function(done) {
