@@ -7,15 +7,6 @@ var async = require('async');
 var request = require('request');
 var Mustache = require('mustache');
 
-/*
- * Display Search page
- */
-var displaySearch = function(req, res) {
-  res.render('canvas/search.html', {
-    user: req.user
-  });
-};
-
 var anyFetchRequest = function(url, params) {
   var translatedParameters = {};
 
@@ -113,10 +104,10 @@ var retrieveDocument = function(id, cb) {
   });
 };
 
-/*
- * Display specific context
+/**
+ * Display Context page
  */
-var displayContext = function(req, res) {
+module.exports.context = function(req, res) {
   var params = req.session.context.environment.parameters;
   retrieveDocuments(params.record, function(err, datas) {
 
@@ -128,15 +119,9 @@ var displayContext = function(req, res) {
   });
 };
 
-module.exports.index = function(req, res) {
-  var params = req.session.context.environment.parameters;
-  if(params.mode === "search") {
-    displaySearch(req, res);
-  } else {
-    displayContext(req, res);
-  }
-};
-
+/**
+ * Show full document
+ */
 module.exports.show = function(req, res) {
   retrieveDocument(req.params.id, function(err, datas) {
 
@@ -145,4 +130,20 @@ module.exports.show = function(req, res) {
     });
 
   });
+};
+
+/*
+ * Display Search page
+ */
+module.exports.search = function(req, res) {
+  res.render('canvas/search.html', {
+    user: req.user
+  });
+};
+
+/*
+ * Retrieve a single document
+ */
+module.exports.document = function(req, res) {
+
 };
