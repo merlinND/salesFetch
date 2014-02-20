@@ -6,10 +6,15 @@ var app = require('../../app.js');
 
 describe('<user controller>', function() {
   describe('/authenticate endpoint', function() {
+
     it('reject unidentified user', function(done) {
       request(app)
         .post('/authenticate')
         .expect(401, done);
+    });
+
+    it('authenticate user with valide credentials', function(done) {
+      return done();
     });
   });
 });
