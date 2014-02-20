@@ -1,9 +1,10 @@
 'use strict';
 
+var website = require('../controllers/website');
+
 module.exports = function(app) {
 
   // Home route
-  var index = require('../controllers/website');
-  app.get('/', index);
+  app.get('/', website);
 
 };
