@@ -1,7 +1,3 @@
-/*
- * Canvas authentication middleware
- */
-
 'use strict';
 
 var crypto = require("crypto");
@@ -48,8 +44,22 @@ var authenticateUser = function(context, cb) {
   });
 };
 
+/**
+ * Choose the right redirection url based on the authentication
+ * context.
+ */
+var redirectionOnContext = function(context, res) {
+  var mode = context.environment.parameters.mode;
 
-module.exports = function(req, res, next) {
+  if(mode === "search") {
+    return res.redirect('/app/search');
+  } else {
+    return res.redirect('/app/context');
+  }
+};
+
+
+module.exports.authenticate = function(req, res) {
   // Handle the post request
   if (req.method === 'POST' && req.url === '/authenticate') {
 
@@ -74,17 +84,11 @@ module.exports = function(req, res, next) {
 
         req.session.user = user;
         req.session.context = envelope.context;
-        return next();
+
+        return redirectionOnContext(envelope.context, res);
       });
-    } else {
-      res.send(401);
     }
-  } else if(req.session.user) {
-    User.findOne(req.session.user._id, function(err, user) {
-      req.session.user = user;
-      return next();
-    });
-  } else {
-    res.send(401);
   }
+
+  return res.send(401);
 };
