@@ -1,7 +1,7 @@
 'use strict';
 
 var request = require('supertest');
-var user = request.agent();
+var agent = request.agent();
 var crypto = require('crypto');
 var consumerSecret = require('../../config/index').consumer_secret;
 
@@ -39,7 +39,7 @@ module.exports = function(request, done) {
         throw err;
       }
 
-      user.saveCookie(res);
-      done(user);
+      agent.saveCookies(res);
+      done(agent);
     });
 };
