@@ -15,9 +15,9 @@ var UserModel = new Schema ({
     type: String,
     unique: true
   },
-  company: {
+  organization: {
     type: Schema.ObjectId,
-    ref: 'Company'
+    ref: 'Organization'
   },
   name: String,
   email: String
@@ -29,7 +29,7 @@ var UserModel = new Schema ({
 UserModel.statics.load = function(id, cb) {
   this.findOne({
     _id: id
-  }).populate('company').exec(cb);
+  }).populate('organization').exec(cb);
 };
 
 mongoose.model('User', UserModel);
