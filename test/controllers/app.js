@@ -3,6 +3,7 @@
 var request = require('supertest');
 var app = require('../../app.js');
 var login = require('../helpers/login');
+var fetchAPI = require('../helpers/fetchAPI');
 
 describe('<Application controller>', function() {
   var agent;
@@ -10,7 +11,7 @@ describe('<Application controller>', function() {
   before(function (done) {
     login(request(app), function (loginAgent) {
       agent = loginAgent;
-      done();
+      fetchAPI.bootstrap(done);
     });
   });
 
@@ -37,6 +38,12 @@ describe('<Application controller>', function() {
       request(app)
         .get(endPoint)
         .expect(401, done);
+    });
+
+    it('should allow access for authenticatd user', function(done) {
+      var req = request(app).get(endPoint);
+      agent.attachCookies(req);
+      req.expect(200, done);
     });
 
   });

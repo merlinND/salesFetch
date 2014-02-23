@@ -47,7 +47,6 @@ var retrieveDocuments = function(context, cb) {
     if (err) {
       return cb(err);
     }
-
     var docReturn = JSON.parse(data[1]);
     var rootReturn = JSON.parse(data[0]);
 

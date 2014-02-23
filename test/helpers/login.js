@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * Login helpers
+ */
+
 var request = require('supertest');
 var agent = request.agent();
 var crypto = require('crypto');
@@ -28,6 +32,9 @@ var obj = {
   }
 };
 
+/**
+ * Log the user in and return in the callback the user agent for futher calls
+ */
 module.exports = function(request, done) {
   var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
 
