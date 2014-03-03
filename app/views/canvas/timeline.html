@@ -7,7 +7,7 @@
       <div class="container-fluid">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Timeline</a></li>
-            <li><a href="">Search</a></li>
+            <li><a href="/app/search">Search</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Settings</a></li>
@@ -24,7 +24,7 @@
         <ul>
         {% for doc in documents.datas %}
           <li class='snippet-container'>
-            <a href="/canvas/{{doc.id}}">
+            <a href="/app/documents/{{doc.id}}">
               <header>
               {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
               </header>

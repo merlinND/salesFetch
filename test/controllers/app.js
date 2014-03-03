@@ -11,7 +11,7 @@ describe('<Application controller>', function() {
   before(function (done) {
     login(request(app), function (loginAgent) {
       agent = loginAgent;
-      fetchAPI.bootstrap(done);
+      fetchAPI.mount(done);
     });
   });
 

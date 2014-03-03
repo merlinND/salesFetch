@@ -16,8 +16,7 @@ var walk = function(path) {
   fs.readdirSync(path).forEach(function(file) {
     var newPath = path + '/' + file;
     var stat = fs.statSync(newPath);
-    if (stat.isFile()) {
-
+    if (stat.isFile() && file.substr(file.lastIndexOf('.')+1) === 'json') {
       var endPointConfig = JSON.parse(fs.readFileSync(newPath, 'utf8'));
       fetchAPI
         .intercept(endPointConfig.path, endPointConfig.verb)
