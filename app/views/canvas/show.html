@@ -1,5 +1,10 @@
 {% extends './template.html' %}
 
 {% block content %}
+<a href="#" class="back-btn">
+  Return to results
+</a>
+<section class="container-fluid full-container">
   {% autoescape false %}{{document.full_rendered}}{% endautoescape %}
+</section>
 {% endblock %}

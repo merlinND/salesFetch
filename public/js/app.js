@@ -29,3 +29,8 @@ $( ".snippet-container a" ).click(function(e) {
     displayFull($(this)[0].href);
   }
 });
+
+$(".back-btn").click(function(e) {
+  e.preventDefault();
+  history.back();
+});
