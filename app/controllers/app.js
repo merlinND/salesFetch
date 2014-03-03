@@ -63,6 +63,7 @@ var retrieveDocuments = function(context, cb) {
 };
 
 var retrieveDocument = function(id, cb) {
+
   async.parallel([
     function(cb) {
       request(anyFetchRequest('http://api.anyfetch.com'), function(err, resp, body) {
@@ -89,9 +90,6 @@ var retrieveDocument = function(id, cb) {
 
     var docReturn = JSON.parse(data[1]);
     var rootReturn = JSON.parse(data[0]);
-
-    console.log(rootReturn.document_types);
-    console.log(docReturn);
 
     var realatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
     docReturn.full_rendered = Mustache.render(realatedTemplate, docReturn.datas);
@@ -122,7 +120,7 @@ module.exports.context = function(req, res) {
  * Show full document
  */
 module.exports.show = function(req, res) {
-  retrieveDocument(req.params.id, function(err, datas) {
+  retrieveDocument(req.params.documentId, function(err, datas) {
 
     res.render('canvas/show.html', {
       document: datas
