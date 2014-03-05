@@ -12,12 +12,10 @@ var _ = require('lodash');
 var mongoose = require('mongoose'),
     Organization = mongoose.model('Organization');
 
-var anyFetchRequest = function(url, params) {
-  var translatedParameters = {};
-
-  if (params && params.query) {
-    translatedParameters.search = params.query;
-  }
+var anyFetchRequest = function(url, builtQuery) {
+  var translatedParameters = {
+    search : builtQuery
+  };
 
   return {
     url: url,
@@ -28,7 +26,7 @@ var anyFetchRequest = function(url, params) {
   };
 };
 
-var retrieveDocuments = function(context, cb) {
+var retrieveDocuments = function(builtQuery, cb) {
   async.parallel([
     function(cb) {
       request(anyFetchRequest('http://api.anyfetch.com'), function(err, resp, body) {
@@ -40,7 +38,7 @@ var retrieveDocuments = function(context, cb) {
       });
     },
     function(cb){
-      request(anyFetchRequest('http://api.anyfetch.com/documents', context), function(err, resp, body) {
+      request(anyFetchRequest('http://api.anyfetch.com/documents', builtQuery), function(err, resp, body) {
         if (err) {
           return cb(err, null);
         }
