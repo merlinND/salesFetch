@@ -32,7 +32,8 @@
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-nodemon": "0.1.2",
     "grunt-env": "~0.4.1",
-    "mustache": "0.8.x"
+    "mustache": "0.8.x",
+    "jsforce": "1.x.x"
   },
   "devDependencies": {
     "mocha": "1.15.x",

@@ -6,6 +6,7 @@
 var async = require('async');
 var request = require('request');
 var Mustache = require('mustache');
+var jsforce = require('jsforce');
 
 var anyFetchRequest = function(url, params) {
   var translatedParameters = {};
@@ -106,6 +107,18 @@ var retrieveDocument = function(id, cb) {
  */
 module.exports.context = function(req, res) {
   var params = req.session.context.environment.parameters;
+
+
+  var conn = new jsforce.Connection({
+    instanceUrl : req.session.context.instance_url,
+    accessToken : req.session.context.oauth_token
+  });
+
+  conn.sobject(params.record.object_type).retrieve(params.record.record_id, function(err, account) {
+    if (err) { return console.error(err); }
+    console.log("Name : " + account.Name);
+  });
+
   retrieveDocuments(params.record, function(err, datas) {
 
     res.render('canvas/timeline.html', {

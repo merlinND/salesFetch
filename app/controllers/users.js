@@ -87,6 +87,10 @@ module.exports.authenticate = function(req, res) {
     }
 
     req.session.user = user;
+
+    // Add the instance Url for further process
+    envelope.context.instance_url = envelope.client.instanceUrl;
+    envelope.context.oauth_token = envelope.client.oauthToken;
     req.session.context = envelope.context;
 
     var redirectUrl = redirectionOnContext(envelope.context);
