@@ -61,7 +61,7 @@ var authenticateUser = function(context, callback) {
 var redirectionOnContext = function(context) {
   var mode = context.environment.parameters.mode;
 
-  if(mode === "search") {
+  if(mode === 'search') {
     return '/app/search';
   } else {
     return '/app/context';
@@ -104,11 +104,12 @@ module.exports.authenticate = function(req, res) {
     }
 
     req.session.user = user;
-
-    // Add the instance Url for further process
-    envelope.context.instance_url = envelope.client.instanceUrl;
-    envelope.context.oauth_token = envelope.client.oauthToken;
-    req.session.context = envelope.context;
+    req.session.context = {
+      params: envelope.context.environment.parameters,
+      dimensions: envelope.context.environment.dimensions,
+      instance_url: envelope.client.instanceUrl,
+      oauth_token: envelope.client.oauthToken
+    };
 
     var redirectUrl = redirectionOnContext(envelope.context);
     return res.redirect(302,redirectUrl);

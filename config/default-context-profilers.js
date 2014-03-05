@@ -5,17 +5,17 @@
  */
 module.exports = [
   {
-    object_type: 'Contact',
+    record_type: 'Contact',
     query_template: '{{Name}}',
     display_template: '{{Name}}'
   },
   {
-    object_type: 'Lead',
+    record_type: 'Lead',
     query_template: '{{Name}}',
     display_template: '{{Name}}'
   },
   {
-    object_type: 'Account',
+    record_type: 'Account',
     query_template: '{{AccountNumber}}',
     display_template: '{{Name}}'
   }

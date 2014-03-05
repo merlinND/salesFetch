@@ -9,6 +9,9 @@ var Mustache = require('mustache');
 var jsforce = require('jsforce');
 var _ = require('lodash');
 
+var mongoose = require('mongoose'),
+    Organization = mongoose.model('Organization');
+
 var anyFetchRequest = function(url, params) {
   var translatedParameters = {};
 
@@ -107,38 +110,49 @@ var retrieveDocument = function(id, cb) {
  * Display Context page
  */
 module.exports.context = function(req, res) {
-  var params = req.session.context.environment.parameters;
-  var contextDisplay= null;
+  var passedContext = req.session.context;
 
   async.waterfall([
     function(cb) {
       // Retrive the context object
       var conn = new jsforce.Connection({
-        instanceUrl : req.session.context.instance_url,
-        accessToken : req.session.context.oauth_token
+        instanceUrl : passedContext.instance_url,
+        accessToken : passedContext.oauth_token
       });
-      conn.sobject(params.record.object_type).retrieve(params.record.record_id, cb);
+      conn
+        .sobject(passedContext.params.record.object_type)
+        .retrieve(passedContext.params.record.record_id, cb);
     }, function(record, cb) {
-      // Get the search and display specification for the context
-      var orgProfilers = req.session.user.context_profilers;
-      var profiler = _.find(orgProfilers, {object_type: params.record.object_type});
+      // Retrieve the context profilers
+
+      Organization.findOne({_id: req.session.user.organization}, function(err, org) {
+
+        if (err || !org) {
+          return cb(err);
+        }
+
+        cb(null, record, org.context_profilers);
+      });
+    }, function(record, orgProfilers, cb) {
+      var profiler = _.find(orgProfilers, {object_type: passedContext.params.record.record_type});
 
       if (!profiler) {
         return cb('no_context_sepcifier');
       }
       var builtQuery = Mustache.render(profiler.query_template, record);
-      contextDisplay = Mustache.render(profiler.display_template, record);
+      passedContext.context_display = Mustache.render(profiler.display_template, record);
 
       // Retrieve documents matching the query
       retrieveDocuments(builtQuery, cb);
     }
   ], function(err, datas) {
-    if (err || 'no_context_sepcifier') {
+    if (err || err === 'no_context_sepcifier') {
+      console.log(err);
       return res.send(500);
     }
 
-    res.render('canvas/timeline.html', {
-      context: params.record,
+    res.render('app/context.html', {
+      context: passedContext,
       documents: datas
     });
   });
