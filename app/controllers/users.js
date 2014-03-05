@@ -12,32 +12,46 @@ var config = require('../../config');
  * Authenticate the user based on the request's context
  * return the the
  */
-var authenticateUser = function(context, cb) {
+var authenticateUser = function(context, callback) {
   var userContext = context.user;
-  User.findOne({userId: userContext.userId}, function(err, user) {
-    if (err) {
-      return cb(err);
-    }
+  var orgContext = context.organization;
+  async.waterfall([
+    function(cb) {
+      // Find an existing user
+      User.findOne({userId: userContext.userId}, cb);
+    }, function(user, cb) {
+      if (user) {
+        return callback(null, user);
+      }
 
-    if (user) {
-      cb(null, user);
-    } else {
-      Organization.findOne({organizationId: context.organization.organizationId}, function(err, org) {
-        if (err) {
-          return cb(err);
-        }
+      // Find the a mathcing company
+      Organization.findOne({organizationId: context.organization.organizationId}, cb);
+    }, function(org, cb) {
+      if (org) {
+        return cb(null, org);
+      }
 
-        user = new User({
-          name: userContext.fullName,
-          userId: userContext.userId,
-          email: userContext.email
-        });
+      console.log(orgContext);
 
-        return user.save(cb);
+      // Create a comapny if no one matching
+      var  newOrg = new Organization({
+        name: orgContext.name,
+        organizationId: orgContext.organizationId,
+        currency: orgContext.currencyIsoCode
       });
-    }
+      newOrg.save(cb);
+    }, function(org, cb) {
+      // Create create a user in the company
+      var user = new User({
+        name: userContext.fullName,
+        userId: userContext.userId,
+        email: userContext.email,
+        organization: org._id
+      });
 
-  });
+      user.save(cb);
+    }
+  ], callback);
 };
 
 /**
@@ -54,6 +68,9 @@ var redirectionOnContext = function(context) {
   }
 };
 
+/**
+ * Authenticate the selected user
+ */
 module.exports.authenticate = function(req, res) {
   var envelope;
 

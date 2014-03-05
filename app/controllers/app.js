@@ -7,6 +7,7 @@ var async = require('async');
 var request = require('request');
 var Mustache = require('mustache');
 var jsforce = require('jsforce');
+var _ = require('lodash');
 
 var anyFetchRequest = function(url, params) {
   var translatedParameters = {};
@@ -107,25 +108,39 @@ var retrieveDocument = function(id, cb) {
  */
 module.exports.context = function(req, res) {
   var params = req.session.context.environment.parameters;
+  var contextDisplay= null;
 
+  async.waterfall([
+    function(cb) {
+      // Retrive the context object
+      var conn = new jsforce.Connection({
+        instanceUrl : req.session.context.instance_url,
+        accessToken : req.session.context.oauth_token
+      });
+      conn.sobject(params.record.object_type).retrieve(params.record.record_id, cb);
+    }, function(record, cb) {
+      // Get the search and display specification for the context
+      var orgProfilers = req.session.user.context_profilers;
+      var profiler = _.find(orgProfilers, {object_type: params.record.object_type});
 
-  var conn = new jsforce.Connection({
-    instanceUrl : req.session.context.instance_url,
-    accessToken : req.session.context.oauth_token
-  });
+      if (!profiler) {
+        return cb('no_context_sepcifier');
+      }
+      var builtQuery = Mustache.render(profiler.query_template, record);
+      contextDisplay = Mustache.render(profiler.display_template, record);
 
-  conn.sobject(params.record.object_type).retrieve(params.record.record_id, function(err, account) {
-    if (err) { return console.error(err); }
-    console.log("Name : " + account.Name);
-  });
-
-  retrieveDocuments(params.record, function(err, datas) {
+      // Retrieve documents matching the query
+      retrieveDocuments(builtQuery, cb);
+    }
+  ], function(err, datas) {
+    if (err || 'no_context_sepcifier') {
+      return res.send(500);
+    }
 
     res.render('canvas/timeline.html', {
       context: params.record,
       documents: datas
     });
-
   });
 };
 
