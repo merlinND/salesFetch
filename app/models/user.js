@@ -12,7 +12,7 @@ var UserModel = new Schema ({
     default: Date.now
   },
   userId: {
-    type: String, //Todo: objectid
+    type: String,
     unique: true
   },
   organization: {

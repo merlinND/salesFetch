@@ -12,7 +12,7 @@ var OrgModel = new Schema ({
     default: Date.now
   },
   organizationId: {
-    type: String, //TODO: objectId
+    type: String,
     unique: true
   },
   name: String,
