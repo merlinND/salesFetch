@@ -16,7 +16,7 @@ var PinnedDocumentModel = new Schema ({
     ref: 'User'
   },
   documentId: {
-    type: String,
+    type: String, //To do : object id
     unique: true
   },
   attachedObjects: []
