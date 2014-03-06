@@ -7,7 +7,6 @@ Fetch API integration in Salesforce.
 * Dynamic request management
 
 
-
 ## Prerequisites
 * Node.js - Download and Install [Node.js](http://www.nodejs.org/download/). You can also follow [this gist](https://gist.github.com/isaacs/579814) for a quick and easy way to install Node.js and npm
 * MongoDB - Download and Install [MongoDB](http://www.mongodb.org/downloads) - Make sure it's running on the default port (27017).
@@ -18,32 +17,23 @@ Fetch API integration in Salesforce.
 
 ```
 $ npm install -g bower
+$ npm install -g grunt
 ```
-
-### Optional
-* Grunt - Download and Install [Grunt](http://gruntjs.com).
-
-
 
 ## Quick Install
 
 *Note:* A `CONSUMER_KEY` and a `CONSUMER_SECRET` is needed to launch the server, these keys are provided by salesforce.
-To request authentication keys, you'll a to setup a connected application throught the developer panel.
+To request authentication keys, you'll need to setup a connected application through the developer panel.
 
 
-Intstall dependences:
+Install dependencies:
 ```
   $ npm install
 ```
 
-If you have the change to have `grunt` installed, you can launch the server with:
+You shoud now be able to launch the server with:
 ```
   $ grunt
 ```
 
-or run
-```
-  $ node app.js
-```
-
-The server in now available on `https://localhost:<port>`. The `https`is important for securing the connection between salesFetch and Salesforce.
+The server in now available on `https://localhost:3000`. The `https`is important for securing the connection between salesFetch and Salesforce.
