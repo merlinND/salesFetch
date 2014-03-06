@@ -23,15 +23,12 @@ var authenticateUser = function(context, callback) {
       if (user) {
         return callback(null, user);
       }
-
       // Find the a mathcing company
       Organization.findOne({organizationId: context.organization.organizationId}, cb);
     }, function(org, cb) {
       if (org) {
         return cb(null, org);
       }
-
-      console.log(orgContext);
 
       // Create a comapny if no one matching
       var  newOrg = new Organization({
@@ -48,10 +45,11 @@ var authenticateUser = function(context, callback) {
         email: userContext.email,
         organization: org._id
       });
-
       user.save(cb);
+      console.log(user, org);
+
     }
-  ], callback);
+  ], function(err, res) {console.log(err, res)});
 };
 
 /**
@@ -76,7 +74,6 @@ var redirectionOnContext = function(context) {
  */
 module.exports.authenticate = function(req, res) {
   var envelope;
-
   async.waterfall([
     function(cb){
       if (!req.body.signed_request) {
@@ -102,6 +99,7 @@ module.exports.authenticate = function(req, res) {
       authenticateUser(envelope.context, cb);
     }
   ], function (err, user) {
+
     if (err) {
       return res.send(401);
     }

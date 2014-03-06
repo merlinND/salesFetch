@@ -21,13 +21,23 @@ var obj = {
       email: 'walter.white@breakingbad.com'
     },
     organization: {
-      organizationId: 'companyId'
+      organizationId: 'companyId',
+      name: 'breakingbad',
+      currencyIsoCode: 'USD'
     },
     environment: {
       parameters: {
-        mode: 'search'
+        mode: 'context',
+        record: {
+          record_type: 'Contact',
+          record_id: '003b000000LHOj3'
+        }
       }
     }
+  },
+  client: {
+    instanceUrl: 'https://eu2.salesforce.com',
+    oauth_token: 'random_token'
   }
 };
 
@@ -44,7 +54,7 @@ describe('<user controller>', function() {
         .expect(401, done);
     });
 
-    it('should authenticate user with valid credentials', function(done) {
+    it.only('should authenticate user with valid credentials', function(done) {
       var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
 
       request(app)
