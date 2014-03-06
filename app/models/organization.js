@@ -37,6 +37,30 @@ OrgModel.path('context_profilers').validate(function(contextProfilers) {
   return recordTypes.length === contextProfilers.length;
 }, 'Record type in context profilers should be unique');
 
+OrgModel.path('context_profilers').validate(function(contextProfilers) {
+  // Check if there is missing record type missing
+  var rest = _.rest(contextProfilers, function(profiler) {
+    return profiler.record_type;
+  });
+  return !rest.length;
+}, 'Record type should be set');
+
+OrgModel.path('context_profilers').validate(function(contextProfilers) {
+  // Check if there is missing record type missing
+  var rest = _.rest(contextProfilers, function(profiler) {
+    return profiler.query_template;
+  });
+  return !rest.length;
+}, 'Query template should be set');
+
+OrgModel.path('context_profilers').validate(function(contextProfilers) {
+  // Check if there is missing record type missing
+  var rest = _.rest(contextProfilers, function(profiler) {
+    return profiler.display_template;
+  });
+  return !rest.length;
+}, 'Display template should be set');
+
 /**
  * Pre-save hook
  */

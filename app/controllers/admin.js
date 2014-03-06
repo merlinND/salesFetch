@@ -85,11 +85,21 @@ module.exports.editContextProfiler = function(req, res) {
 
 module.exports.deleteContextProfiler = function(req, res) {
   var profilerId = req.params.contextProfilerId;
-  Organization.update({_id: req.session.user.organization}, {'$pull':{context_profilers: {_id: profilerId}}}, function(err) {
+  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err) {
-      console.log(err);
+      return res.redirect(500);
+    }
+    if (!org.context_profilers.id(profilerId)) {
+      return res.send(404);
     }
 
-    return res.redirect(302,'/admin');
+    org.context_profilers.id(profilerId).remove();
+    org.save(function(err) {
+      if (err) {
+        console.log(err);
+      }
+
+      res.redirect(302,'/admin');
+    });
   });
 };
