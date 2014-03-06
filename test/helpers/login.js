@@ -33,7 +33,7 @@ var obj = {
 };
 
 /**
- * Log the user in and return in the callback the user agent for futher calls
+ * Log the user in and return to the callback the user agent for futher calls
  */
 module.exports = function(request, done) {
   var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");

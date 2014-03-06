@@ -1,8 +1,8 @@
 'use strict';
 
 var async = require('async');
-var mongoose = require('mongoose'),
-    PinnedDocument = mongoose.model('PinnedDocument');
+var mongoose = require('mongoose');
+var PinnedDocument = mongoose.model('PinnedDocument');
 
 /**
  * Create a pinned document
@@ -34,6 +34,7 @@ exports.destroy = function(req, res) {
     function(cb) {
       PinnedDocument.findOne({id: documentId}, function(err, pinnedDocument) {
         if (err) {
+          //TODO : use waterfall directly, not custom errors
           return cb({ errors: err.errors });
         }
         if (!pinnedDocument) {

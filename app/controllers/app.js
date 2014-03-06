@@ -26,33 +26,21 @@ var anyFetchRequest = function(url, params) {
 var retrieveDocuments = function(context, cb) {
   async.parallel([
     function(cb) {
-      request(anyFetchRequest('http://api.anyfetch.com'), function(err, resp, body) {
-        if (err) {
-          return cb(err, null);
-        }
-
-        cb(null, body);
-      });
+      request(anyFetchRequest('http://api.anyfetch.com'), cb);
     },
     function(cb){
-      request(anyFetchRequest('http://api.anyfetch.com/documents', context), function(err, resp, body) {
-        if (err) {
-          return cb(err, null);
-        }
-
-        cb(null, body);
-      });
+      request(anyFetchRequest('http://api.anyfetch.com/documents', context), cb);
     }
   ], function(err, data){
     if (err) {
       return cb(err);
     }
-    var docReturn = JSON.parse(data[1]);
-    var rootReturn = JSON.parse(data[0]);
+    var docReturn = JSON.parse(data[1][0].body);
+    var rootReturn = JSON.parse(data[0][0].body);
 
     docReturn.datas.forEach(function(doc) {
-      var realatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
-      doc.snippet_rendered = Mustache.render(realatedTemplate, doc.datas);
+      var relatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
+      doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
       doc.provider = rootReturn.provider_status[doc.token].name;
       doc.document_type = rootReturn.document_types[doc.document_type].name;
@@ -63,36 +51,23 @@ var retrieveDocuments = function(context, cb) {
 };
 
 var retrieveDocument = function(id, cb) {
-
   async.parallel([
     function(cb) {
-      request(anyFetchRequest('http://api.anyfetch.com'), function(err, resp, body) {
-        if (err) {
-          return cb(err, null);
-        }
-
-        cb(null, body);
-      });
+      request(anyFetchRequest('http://api.anyfetch.com'), cb);
     },
     function(cb){
-      request(anyFetchRequest('http://api.anyfetch.com/documents/' + id), function(err, resp, body) {
-        if (err) {
-          return cb(err, null);
-        }
-
-        cb(null, body);
-      });
+      request(anyFetchRequest('http://api.anyfetch.com/documents/' + id), cb);
     }
   ], function(err, data){
     if (err) {
       return cb(err);
     }
 
-    var docReturn = JSON.parse(data[1]);
-    var rootReturn = JSON.parse(data[0]);
+    var docReturn = JSON.parse(data[1][0].body);
+    var rootReturn = JSON.parse(data[0][0].body);
 
-    var realatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
-    docReturn.full_rendered = Mustache.render(realatedTemplate, docReturn.datas);
+    var relatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
+    docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
 
     docReturn.provider = rootReturn.provider_status[docReturn.token].name;
     docReturn.document_type = rootReturn.document_types[docReturn.document_type].name;
@@ -107,7 +82,7 @@ var retrieveDocument = function(id, cb) {
 module.exports.context = function(req, res) {
   var params = req.session.context.environment.parameters;
   retrieveDocuments(params.record, function(err, datas) {
-
+    //TODO: handle err
     res.render('canvas/timeline.html', {
       context: params.record,
       documents: datas
@@ -120,6 +95,7 @@ module.exports.context = function(req, res) {
  * Show full document
  */
 module.exports.show = function(req, res) {
+  //TODO: handle err
   retrieveDocument(req.params.documentId, function(err, datas) {
 
     res.render('canvas/show.html', {
