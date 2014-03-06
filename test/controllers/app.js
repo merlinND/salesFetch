@@ -55,7 +55,6 @@ describe('<Application controller>', function() {
         .get(endPoint)
         .expect(401, done);
     });
-
   });
 
 });
