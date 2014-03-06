@@ -9,7 +9,8 @@ describe('<website controller>', function() {
     request(app)
       .get('/')
       .expect('Content-Type', /html/)
-      .expect(200, done);
+      .expect(200)
+      .end(done);
   });
 
 });
