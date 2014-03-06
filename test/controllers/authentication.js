@@ -54,7 +54,7 @@ describe('<user controller>', function() {
         .expect(401, done);
     });
 
-    it.only('should authenticate user with valid credentials', function(done) {
+    it('should authenticate user with valid credentials', function(done) {
       var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
 
       request(app)
@@ -64,19 +64,6 @@ describe('<user controller>', function() {
         .expect(function(res) {
           res.should.have.header('set-cookie');
           res.headers['set-cookie'][0].should.match(/connect.sid/);
-        })
-        .end(done);
-    });
-
-    it('should redirect to search path', function(done) {
-      var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
-
-      request(app)
-        .post('/authenticate')
-        .send({signed_request: postBody})
-        .expect(302)
-        .expect(function(res) {
-          res.headers.location.should.include('/app/search');
         })
         .end(done);
     });

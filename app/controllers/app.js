@@ -9,8 +9,8 @@ var Mustache = require('mustache');
 var jsforce = require('jsforce');
 var _ = require('lodash');
 
-var mongoose = require('mongoose'),
-    Organization = mongoose.model('Organization');
+var mongoose = require('mongoose');
+var Organization = mongoose.model('Organization');
 
 var anyFetchRequest = function(url, builtQuery) {
   var translatedParameters = {

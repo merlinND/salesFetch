@@ -12,7 +12,7 @@ var config = require('../../config');
  * Authenticate the user based on the request's context
  * return the user
  */
-var authenticateUser = function(context, callback) {
+var authenticateUser = function(context, done) {
   var userContext = context.user;
   var orgContext = context.organization;
   async.waterfall([
@@ -21,7 +21,7 @@ var authenticateUser = function(context, callback) {
       User.findOne({userId: userContext.userId}, cb);
     }, function(user, cb) {
       if (user) {
-        return callback(null, user);
+        return done(null, user);
       }
       // Find the a mathcing company
       Organization.findOne({organizationId: context.organization.organizationId}, cb);
@@ -37,7 +37,7 @@ var authenticateUser = function(context, callback) {
         currency: orgContext.currencyIsoCode
       });
       newOrg.save(cb);
-    }, function(org, cb) {
+    }, function(org, count, cb) {
       // Create create a user in the company
       var user = new User({
         name: userContext.fullName,
@@ -46,10 +46,8 @@ var authenticateUser = function(context, callback) {
         organization: org._id
       });
       user.save(cb);
-      console.log(user, org);
-
     }
-  ], function(err, res) {console.log(err, res)});
+  ], done);
 };
 
 /**
