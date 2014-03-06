@@ -21,13 +21,15 @@ describe('<Application controller>', function() {
     it('should reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
-        .expect(401, done);
+        .expect(401)
+        .end(done);
     });
 
     it('should allow access for authentified user', function(done) {
       var req = request(app).get(endPoint);
       agent.attachCookies(req);
-      req.expect(200, done);
+      req.expect(200)
+      .end(done);
     });
   });
 
@@ -37,13 +39,16 @@ describe('<Application controller>', function() {
     it('should reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
-        .expect(401, done);
+        .expect(401)
+        .end(done);
     });
 
     it('should allow access for authentified user', function(done) {
       var req = request(app).get(endPoint);
       agent.attachCookies(req);
-      req.expect(200, done);
+      req
+        .expect(200)
+        .end(done);
     });
   });
 
@@ -53,7 +58,8 @@ describe('<Application controller>', function() {
     it('reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
-        .expect(401, done);
+        .expect(401)
+        .end(done);
     });
   });
 
