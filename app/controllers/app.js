@@ -104,19 +104,3 @@ module.exports.show = function(req, res) {
 
   });
 };
-
-/*
- * Display Search page
- */
-module.exports.search = function(req, res) {
-  res.render('canvas/search.html', {
-    user: req.user
-  });
-};
-
-/*
- * Retrieve a single document
- */
-module.exports.document = function(req, res) {
-
-};
