@@ -8,14 +8,14 @@ var fetchAPI = require('../helpers/fetchAPI');
 describe('<Application controller>', function() {
   var agent;
 
-  before(function(done) {
-    login(request(app), function(loginAgent) {
-      agent = loginAgent;
-      fetchAPI.mount(done);
-    });
-  });
 
   describe('/context-search page', function() {
+    before(function(done) {
+      login(request(app), function(loginAgent) {
+        agent = loginAgent;
+        fetchAPI.mount(done);
+      });
+    });
     var endPoint = '/app/context-search';
 
     it('should reject unauthentified user', function(done) {
@@ -35,12 +35,27 @@ describe('<Application controller>', function() {
   });
 
   describe('/documents/:id page', function() {
-    var endPoint = '/app/documents/123';
+    before(function(done) {
+      login(request(app), function(loginAgent) {
+        agent = loginAgent;
+        fetchAPI.mount(done);
+      });
+    });
 
-    it('reject unauthentified user', function(done) {
+    var endPoint = '/app/documents/5309c57d9ba7daaa265ffdc9';
+
+    it('should reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
         .expect(401)
+        .end(done);
+    });
+
+    it('should allow access for authentified user', function(done) {
+      var req = request(app).get(endPoint);
+      agent.attachCookies(req);
+      req
+        .expect(200)
         .end(done);
     });
   });

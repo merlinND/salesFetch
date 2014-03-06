@@ -22,7 +22,6 @@ module.exports.contextSearch = function(req, res) {
 
   async.waterfall([
     function retrieveContext(cb) {
-
       salesforceHelpers.loadObject(context.instance_url, context.oauth_token, context.params.record.object_type, context.params.record.record_id, cb);
     },
     function retrieveProfiler(_record, cb) {
@@ -51,7 +50,7 @@ module.exports.contextSearch = function(req, res) {
     }
   ], function(err, datas) {
     if (err) {
-      return res.send(500, err);
+      return res.send(500);
     }
 
     res.render('app/context.html', {
@@ -65,12 +64,12 @@ module.exports.contextSearch = function(req, res) {
  * Show full document
  */
 module.exports.documentDisplay = function(req, res) {
-  //TODO: handle err
-  anyfetchHelpers.findDocument(req.params.documentId, function(err, datas) {
-
-    res.render('canvas/show.html', {
-      document: datas
+  anyfetchHelpers.findDocument(req.params.id, function(err, document) {
+    if(err) {
+      return res.send(500);
+    }
+    res.render('app/show.html', {
+      document: document
     });
-
   });
 };

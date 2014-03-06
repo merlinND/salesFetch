@@ -45,20 +45,19 @@ module.exports.findDocuments = function(params, cb) {
 module.exports.findDocument = function(id, cb) {
   async.parallel([
     function(cb) {
-      request(baseRequest('http://api.anyfetch.com', cb));
+      baseRequest('get', '/').end(function(e, r) { cb(e,r);});
     },
-    function(cb){
-      baseRequest({
-        url: 'http://api.anyfetch.com/documents/' + id,
-      }, cb);
+    function(cb) {
+      baseRequest('get', '/documents/' + id).end(function(e, r) { cb(e,r);});
     }
-  ], function(err, data){
+  ],
+  function(err, data) {
     if (err) {
       return cb(err);
     }
 
-    var docReturn = JSON.parse(data[1][0].body);
-    var rootReturn = JSON.parse(data[0][0].body);
+    var rootReturn = data[0].body;
+    var docReturn = data[1].body;
 
     var relatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
     docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
