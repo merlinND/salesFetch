@@ -2,7 +2,7 @@
 
 // Application routes use applications controller
 var applications = require('../controllers/app');
-var authorization = require('./middlewares/authorization');
+var authorization = require('../middlewares/authorization');
 
 module.exports = function(app) {
 
