@@ -15,8 +15,8 @@ describe('<Application controller>', function() {
     });
   });
 
-  describe('/context page', function() {
-    var endPoint = '/app/context';
+  describe('/context-search page', function() {
+    var endPoint = '/app/context-search';
 
     it('should reject unauthentified user', function(done) {
       request(app)

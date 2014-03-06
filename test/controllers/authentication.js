@@ -47,7 +47,6 @@ describe('<user controller>', function() {
   });
 
   describe('/authenticate endpoint', function() {
-
     it('should reject unauthenticated user', function(done) {
       request(app)
         .post('/authenticate')

@@ -82,7 +82,7 @@ var retrieveDocument = function(id, cb) {
 /**
  * Display Context page
  */
-module.exports.context = function(req, res) {
+module.exports.contextSearch = function(req, res) {
   var passedContext = req.session.context;
 
   async.waterfall([
@@ -134,7 +134,7 @@ module.exports.context = function(req, res) {
 /**
  * Show full document
  */
-module.exports.show = function(req, res) {
+module.exports.documentDisplay = function(req, res) {
   //TODO: handle err
   retrieveDocument(req.params.documentId, function(err, datas) {
 
