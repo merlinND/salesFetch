@@ -30,7 +30,7 @@ var authenticateUser = function(context, done) {
         return cb(null, org);
       }
 
-      // Create a comapny if no one matching
+      // Create a company if no one matching
       var  newOrg = new Organization({
         name: orgContext.name,
         organizationId: orgContext.organizationId,

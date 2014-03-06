@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 
-var defaultProfilers = require('../../config/default-context-profilers');
+var defaultProfilers = require('../../config/default-context-profilers.json');
 
 /**
  * Organization Schema

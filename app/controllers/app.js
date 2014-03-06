@@ -5,11 +5,11 @@
 
 var async = require('async');
 var Mustache = require('mustache');
-var jsforce = require('jsforce');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 
 var anyfetchHelpers = require('../helpers/anyfetch.js');
+var salesforceHelpers = require('../helpers/salesforce.js');
 var Organization = mongoose.model('Organization');
 
 
@@ -19,18 +19,11 @@ var Organization = mongoose.model('Organization');
 module.exports.contextSearch = function(req, res) {
   var context = req.session.context;
   var record;
-  var profiler;
 
   async.waterfall([
     function retrieveContext(cb) {
-      var conn = new jsforce.Connection({
-        instanceUrl : context.instance_url,
-        accessToken : context.oauth_token
-      });
 
-      conn
-        .sobject(context.params.record.object_type)
-        .retrieve(context.params.record.record_id, cb);
+      salesforceHelpers.loadObject(context.instance_url, context.oauth_token, context.params.record.object_type, context.params.record.record_id, cb);
     },
     function retrieveProfiler(_record, cb) {
       record = _record;
@@ -41,14 +34,15 @@ module.exports.contextSearch = function(req, res) {
         return cb(new Error("No matching organization"));
       }
 
-      cb(null, org.context_profilers);
+      cb(null, org.contextProfilers);
     },
     function buildQuery(contextProfilers, cb) {
-      var profiler = _.find(contextProfilers, {object_type: context.params.record.record_type});
+      var profiler = _.find(contextProfilers, {record_type: context.params.record.record_type});
 
       if (!profiler) {
-        return cb('no_context_sepcifier');
+        return cb(new Error('No contextProfilers for this object'));
       }
+
       var search = Mustache.render(profiler.query_template, record);
       context.context_display = Mustache.render(profiler.display_template, record);
 

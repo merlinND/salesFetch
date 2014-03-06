@@ -1,38 +1,34 @@
 'use strict';
 
 var async = require('async');
-var request = require('request');
+var request = require('superagent');
 var Mustache = require('mustache');
 
 
-var baseRequest = function() {
-  var payload = {
-    headers: {
-      'Authorization': 'Basic ' + process.env.FETCHAPI_CREDS
-    }
-  };
-
-  return request.defaults(payload);
+var baseRequest = function(method, url) {
+  return request[method]("http://api.anyfetch.com" + url).set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS);
 };
 
 
 module.exports.findDocuments = function(params, cb) {
   async.parallel([
     function loadDocumentTypes(cb) {
-      baseRequest('http://api.anyfetch.com/', cb);
+      baseRequest('get', '/')
+        .end(function(e, r) {cb(e,r);});
     },
-    function(cb){
-      baseRequest({
-        url: 'http://api.anyfetch.com/documents',
-        qs: params
-      }, cb);
+    function loadDocuments(cb) {
+      baseRequest('get', '/documents')
+        .query(params)
+        .end(function(e, r) {cb(e,r);});
     }
-  ], function(err, data){
+  ],
+  function(err, data){
     if (err) {
       return cb(err);
     }
-    var docReturn = JSON.parse(data[1][0].body);
-    var rootReturn = JSON.parse(data[0][0].body);
+
+    var rootReturn = data[0].body;
+    var docReturn = data[1].body;
 
     docReturn.datas.forEach(function(doc) {
       var relatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
