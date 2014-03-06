@@ -2,18 +2,19 @@
 
 var crypto = require('crypto');
 var async = require('async');
-var mongoose =require('mongoose'),
-    Organization = mongoose.model('Organization'),
-    User = mongoose.model('User');
+var mongoose =require('mongoose');
+var Organization = mongoose.model('Organization');
+var User = mongoose.model('User');
 var config = require('../../config');
 
 
 /**
  * Authenticate the user based on the request's context
- * return the the
+ * return the user
  */
 var authenticateUser = function(context, cb) {
   var userContext = context.user;
+  //TODO: waterfall
   User.findOne({userId: userContext.userId}, function(err, user) {
     if (err) {
       return cb(err);
@@ -60,7 +61,7 @@ module.exports.authenticate = function(req, res) {
   async.waterfall([
     function(cb){
       if (!req.body.signed_request) {
-        return cb('bad request');
+        return cb(new Error('bad request'));
       }
 
       // Extract request parts
@@ -90,6 +91,6 @@ module.exports.authenticate = function(req, res) {
     req.session.context = envelope.context;
 
     var redirectUrl = redirectionOnContext(envelope.context);
-    return res.redirect(302,redirectUrl);
+    return res.redirect(302, redirectUrl);
   });
 };

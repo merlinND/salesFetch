@@ -51,8 +51,8 @@ var retrieveDocuments = function(context, cb) {
     var rootReturn = JSON.parse(data[0]);
 
     docReturn.datas.forEach(function(doc) {
-      var realatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
-      doc.snippet_rendered = Mustache.render(realatedTemplate, doc.datas);
+      var relatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
+      doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
       doc.provider = rootReturn.provider_status[doc.token].name;
       doc.document_type = rootReturn.document_types[doc.document_type].name;
@@ -91,8 +91,8 @@ var retrieveDocument = function(id, cb) {
     var docReturn = JSON.parse(data[1]);
     var rootReturn = JSON.parse(data[0]);
 
-    var realatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
-    docReturn.full_rendered = Mustache.render(realatedTemplate, docReturn.datas);
+    var relatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
+    docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
 
     docReturn.provider = rootReturn.provider_status[docReturn.token].name;
     docReturn.document_type = rootReturn.document_types[docReturn.document_type].name;
@@ -107,7 +107,7 @@ var retrieveDocument = function(id, cb) {
 module.exports.context = function(req, res) {
   var params = req.session.context.environment.parameters;
   retrieveDocuments(params.record, function(err, datas) {
-
+    //TODO: handle err
     res.render('canvas/timeline.html', {
       context: params.record,
       documents: datas
@@ -120,6 +120,7 @@ module.exports.context = function(req, res) {
  * Show full document
  */
 module.exports.show = function(req, res) {
+  //TODO: handle err
   retrieveDocument(req.params.documentId, function(err, datas) {
 
     res.render('canvas/show.html', {

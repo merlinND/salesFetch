@@ -17,7 +17,7 @@ var config = require('./config');
 mongoose.connect(config.mongo_url);
 
 // Bootstrap models
-var models_path = __dirname + '/app/models';
+var modelsPath = __dirname + '/app/models';
 var walk = function(path) {
   fs.readdirSync(path).forEach(function(file) {
     var newPath = path + '/' + file;
@@ -29,7 +29,7 @@ var walk = function(path) {
     }
   });
 };
-walk(models_path);
+walk(modelsPath);
 
 
 // Configure server
@@ -37,7 +37,7 @@ var app = express();
 config.bootstrap(app, mongoose);
 
 // Bootstrap routes
-var routes_path = __dirname + '/app/routes';
+var routesPath = __dirname + '/app/routes';
 var walk = function(path) {
   fs.readdirSync(path).forEach(function(file) {
     var newPath = path + '/' + file;
@@ -52,7 +52,7 @@ var walk = function(path) {
     }
   });
 };
-walk(routes_path);
+walk(routesPath);
 
 
 // Start server
