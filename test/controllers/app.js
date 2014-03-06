@@ -15,24 +15,6 @@ describe('<Application controller>', function() {
     });
   });
 
-  describe('/search page', function() {
-    var endPoint = '/app/search';
-
-    it('should reject unauthentified user', function(done) {
-      request(app)
-        .get(endPoint)
-        .expect(401)
-        .end(done);
-    });
-
-    it('should allow access for authentified user', function(done) {
-      var req = request(app).get(endPoint);
-      agent.attachCookies(req);
-      req.expect(200)
-      .end(done);
-    });
-  });
-
   describe('/context page', function() {
     var endPoint = '/app/context';
 

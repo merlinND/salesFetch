@@ -71,7 +71,8 @@ var redirectionOnContext = function(context) {
 };
 
 /**
- * Authenticate the selected user
+ * Called by Salesforce with SF user credentials and current context.
+ * We'll use this to find our user / create an user.
  */
 module.exports.authenticate = function(req, res) {
   var envelope;
@@ -114,6 +115,7 @@ module.exports.authenticate = function(req, res) {
     };
 
     var redirectUrl = redirectionOnContext(envelope.context);
+
     return res.redirect(302, redirectUrl);
   });
 };
