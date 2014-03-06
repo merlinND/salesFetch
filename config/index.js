@@ -30,7 +30,7 @@ var dir_path = (__dirname + '/..');
 
 // Salesfetch configuration
 if (!process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET) {
-  console.log('[ERROR] CONSUMER_KEY or CONSUMER_SECRET is missing.');
+  console.error('[ERROR] CONSUMER_KEY or CONSUMER_SECRET is missing.');
   process.exit(1);
 }
 

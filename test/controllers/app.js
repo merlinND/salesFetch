@@ -8,8 +8,8 @@ var fetchAPI = require('../helpers/fetchAPI');
 describe('<Application controller>', function() {
   var agent;
 
-  before(function (done) {
-    login(request(app), function (loginAgent) {
+  before(function(done) {
+    login(request(app), function(loginAgent) {
       agent = loginAgent;
       fetchAPI.mount(done);
     });
@@ -18,45 +18,49 @@ describe('<Application controller>', function() {
   describe('/search page', function() {
     var endPoint = '/app/search';
 
-    it('reject unidentified user', function(done) {
+    it('should reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
-        .expect(401, done);
+        .expect(401)
+        .end(done);
     });
 
-    it('should allow access for authenticatd user', function(done) {
+    it('should allow access for authentified user', function(done) {
       var req = request(app).get(endPoint);
       agent.attachCookies(req);
-      req.expect(200, done);
+      req.expect(200)
+      .end(done);
     });
   });
 
   describe('/context page', function() {
     var endPoint = '/app/context';
 
-    it('reject unidentified user', function(done) {
+    it('should reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
-        .expect(401, done);
+        .expect(401)
+        .end(done);
     });
 
-    it('should allow access for authenticatd user', function(done) {
+    it('should allow access for authentified user', function(done) {
       var req = request(app).get(endPoint);
       agent.attachCookies(req);
-      req.expect(200, done);
+      req
+        .expect(200)
+        .end(done);
     });
-
   });
 
-  describe('/documents/:documentId page', function() {
+  describe('/documents/:id page', function() {
     var endPoint = '/app/documents/123';
 
-    it('reject unidentified user', function(done) {
+    it('reject unauthentified user', function(done) {
       request(app)
         .get(endPoint)
-        .expect(401, done);
+        .expect(401)
+        .end(done);
     });
-
   });
 
 });

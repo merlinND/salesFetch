@@ -2,7 +2,7 @@
 
 // Application routes use administration controller
 var admin = require('../controllers/admin');
-var authorization = require('./middlewares/authorization');
+var authorization = require('../middlewares/authorization');
 
 module.exports = function(app) {
 
