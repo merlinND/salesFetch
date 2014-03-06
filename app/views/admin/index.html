@@ -1,0 +1,42 @@
+{% extends './template.html' %}
+
+{% block content %}
+<div class="container">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">SalesFetch administration panel</h3>
+    </div>
+    <div class="panel-body">
+      <h3>User management</h3>
+      <p>User validation: <strong>users auto-validated</strong></p>
+
+      <hr/>
+
+      <a href="/admin/context-profiler/new" class="btn btn-primary btn-sm pull-right">New</a>
+      <h3>Context profilers</h3>
+
+      {% for profiler in profilers %}
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="btn-group btn-group-sm pull-right">
+            <a href="/admin/context-profiler/{{profiler._id.toString()}}/edit" class="btn btn-primary">Edit</a>
+            <a href="/admin/context-profiler/{{profiler._id.toString()}}/delete" class="btn btn-danger">Delete</a>
+          </div>
+          <h4>Targeted context: <strong>{{ profiler.record_type }}</strong></h4>
+          <p>
+            Query Template
+            <pre>{{ profiler.query_template }}</pre>
+          </p>
+          <p>
+            Display Template
+            <pre>{{ profiler.display_template }}</pre>
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

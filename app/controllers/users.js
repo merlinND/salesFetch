@@ -61,7 +61,9 @@ var authenticateUser = function(context, callback) {
 var redirectionOnContext = function(context) {
   var mode = context.environment.parameters.mode;
 
-  if(mode === 'search') {
+  if (mode === 'admin') {
+    return '/admin';
+  } else if(mode === 'search') {
     return '/app/search';
   } else {
     return '/app/context';
