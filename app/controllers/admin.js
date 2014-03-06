@@ -30,7 +30,6 @@ module.exports.index = function(req, res) {
     if (err || !org || !org.context_profilers) {
       return res.send(500);
     }
-    console.log(req.session.context);
     res.render('admin/index.html', {
       profilers: org.context_profilers
     });

@@ -7,18 +7,18 @@
 var fs = require('fs');
 var nock = require('nock');
 
-var fetchAPI;
+var APIs= {};
 
 /**
  * Retrieve all the paths
  */
-var walk = function(path) {
+var walk = function(path, api) {
   fs.readdirSync(path).forEach(function(file) {
     var newPath = path + '/' + file;
     var stat = fs.statSync(newPath);
     if (stat.isFile() && file.substr(file.lastIndexOf('.')+1) === 'json') {
       var endPointConfig = JSON.parse(fs.readFileSync(newPath, 'utf8'));
-      fetchAPI
+      api
         .intercept(endPointConfig.path, endPointConfig.verb)
         .reply(endPointConfig.code ,endPointConfig.reply);
 
@@ -31,20 +31,20 @@ var walk = function(path) {
 /**
  * Override all the HTTP requests on the server
  */
-module.exports.mount = function(cb) {
-  fetchAPI = nock('http://api.anyfetch.com');
+module.exports.mount = function(name, root, cb) {
+  APIs[name] = nock(root);
 
   // Walk trhought the folder to find endpoints for the mock server
-  var apiPath = __dirname + '/fetchAPI-mock';
-  walk(apiPath);
+  var apiPath = __dirname + '/' + name + '-mock';
+  walk(apiPath, APIs[name]);
 
-  cb(null, fetchAPI);
+  cb(null, APIs[name]);
 };
 
 /**
  * Reset the HTTP calls on the fetchAPI
  */
-module.exports.unmount = function() {
-  fetchAPI.restore();
+module.exports.unmount = function(name) {
+  APIs[name].restore();
   return;
 };

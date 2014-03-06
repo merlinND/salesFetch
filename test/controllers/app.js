@@ -3,7 +3,7 @@
 var request = require('supertest');
 var app = require('../../app.js');
 var login = require('../helpers/login');
-var fetchAPI = require('../helpers/fetchAPI');
+var APIs = require('../helpers/APIs');
 
 describe('<Application controller>', function() {
   var agent;
@@ -11,7 +11,7 @@ describe('<Application controller>', function() {
   before(function(done) {
     login(request(app), function(loginAgent) {
       agent = loginAgent;
-      fetchAPI.mount(done);
+      APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
     });
   });
 
