@@ -3,6 +3,7 @@
  */
 'use strict';
 
+var async = require('async');
 var mongoose = require('mongoose'),
     Organization = mongoose.model('Organization');
 
@@ -24,10 +25,19 @@ module.exports.newContextProfiler = function(req, res) {
 
 module.exports.createContextProfiler = function(req, res) {
   var newContextProfiler = req.body;
-  console.log(newContextProfiler);
-  Organization.update({_id: req.session.user.organization}, {'$push':{context_profilers: newContextProfiler}}, {upsert:true}, function(err) {
+  async.waterfall([
+    function(cb) {
+      Organization.findOne({_id: req.session.user.organization}, cb);
+    }, function(org, cb) {
+      org.context_profilers.push(newContextProfiler);
+      org.save(cb);
+    }
+  ], function(err) {
     if (err) {
-      console.log(err);
+      return res.render('admin/new.html', {
+        err: err,
+        data: newContextProfiler
+      });
     }
 
     return res.redirect(302,'/admin');
@@ -35,7 +45,21 @@ module.exports.createContextProfiler = function(req, res) {
 };
 
 module.exports.editContextProfiler = function(req, res) {
+  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
+    if (err || !org) {
+      res.send(500, err);
+    }
 
+    var contextProfiler = org.context_profilers.id(req.params.contextProfilerId);
+
+    if (!contextProfiler) {
+      res.send(500);
+    }
+
+    res.render('admin/edit.html', {
+      data: contextProfiler
+    });
+  });
 };
 
 module.exports.deleteContextProfiler = function(req, res) {

@@ -1,0 +1,22 @@
+{% if err %}
+  {% for err in err.errors %}
+    <div class="alert alert-danger">{{err.toString()}}</div>
+  {% endfor %}
+{% endif %}
+<form role="form" method="POST" action="/admin/context-profiler/">
+  <div class="form-group">
+    <label for="record_type">Targeted context</label>
+    <input type="text" class="form-control" id="record_type" name="record_type" placeholder="Contact, Lead, Account, ..." value="{{data.record_type}}" required>
+  </div>
+  <div class="form-group">
+    <label for="query_template">Query template</label>
+    <p class="help-block">Use mustache style templating.</p>
+    <input type="text" class="form-control" id="query_template" name="query_template" value="{{data.query_template}}" required>
+  </div>
+  <div class="form-group">
+    <label for="display_template">Diplay template</label>
+    <p class="help-block">Use mustache style templating.</p>
+    <input type="text" class="form-control" id="display_template" name="display_template" value="{{data.display_template}}" required>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>

@@ -33,13 +33,15 @@ var OrgModel = new Schema ({
 OrgModel.path('context_profilers').validate(function(contextProfilers) {
   // Check if there is duplication in record profilers
   var recordTypes = _.pluck(contextProfilers, 'record_type');
+  recordTypes = _.uniq(recordTypes);
   return recordTypes.length === contextProfilers.length;
-}, 'Object type in context profilers should be unique');
+}, 'Record type in context profilers should be unique');
 
 /**
  * Pre-save hook
  */
 OrgModel.pre('save', function(next) {
+
   if (!this.isNew) {
     return next();
   }
