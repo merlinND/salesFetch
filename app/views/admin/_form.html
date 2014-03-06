@@ -6,7 +6,15 @@
 <form role="form" method="POST" action="/admin/context-profiler/">
   <div class="form-group">
     <label for="record_type">Targeted context</label>
-    <input type="text" class="form-control" id="record_type" name="record_type" placeholder="Contact, Lead, Account, ..." value="{{data.record_type}}" required>
+    {% if !objects %}
+      <p class="form-control-static">{{data.record_type}}</p>
+    {% else %}
+      <select class="form-control" name="record_type">
+        {% for obj in objects %}
+        <option value="{{obj.name}}">{{obj.label}} ({{obj.name}})</option>
+        {% endfor %}
+      </select>
+    {% endif %}
   </div>
   <div class="form-group">
     <label for="query_template">Query template</label>
