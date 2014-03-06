@@ -26,9 +26,17 @@ var obj = {
     },
     environment: {
       parameters: {
-        mode: 'search'
+        mode: 'context',
+        record: {
+          record_type: 'Contact',
+          record_id: '003b000000LHOj3'
+        }
       }
     }
+  },
+  client: {
+    instanceUrl: 'https://eu2.salesforce.com',
+    oauth_token: 'random_token'
   }
 };
 

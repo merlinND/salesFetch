@@ -6,13 +6,16 @@
 var async = require('async');
 var request = require('request');
 var Mustache = require('mustache');
+var jsforce = require('jsforce');
+var _ = require('lodash');
 
-var anyFetchRequest = function(url, params) {
-  var translatedParameters = {};
+var mongoose = require('mongoose');
+var Organization = mongoose.model('Organization');
 
-  if (params && params.query) {
-    translatedParameters.search = params.query;
-  }
+var anyFetchRequest = function(url, builtQuery) {
+  var translatedParameters = {
+    search : builtQuery
+  };
 
   return {
     url: url,
@@ -23,13 +26,13 @@ var anyFetchRequest = function(url, params) {
   };
 };
 
-var retrieveDocuments = function(context, cb) {
+var retrieveDocuments = function(builtQuery, cb) {
   async.parallel([
     function(cb) {
       request(anyFetchRequest('http://api.anyfetch.com'), cb);
     },
     function(cb){
-      request(anyFetchRequest('http://api.anyfetch.com/documents', context), cb);
+      request(anyFetchRequest('http://api.anyfetch.com/documents', builtQuery), cb);
     }
   ], function(err, data){
     if (err) {
@@ -80,14 +83,51 @@ var retrieveDocument = function(id, cb) {
  * Display Context page
  */
 module.exports.context = function(req, res) {
-  var params = req.session.context.environment.parameters;
-  retrieveDocuments(params.record, function(err, datas) {
-    //TODO: handle err
-    res.render('canvas/timeline.html', {
-      context: params.record,
+  var passedContext = req.session.context;
+
+  async.waterfall([
+    function(cb) {
+      // Retrive the context object
+      var conn = new jsforce.Connection({
+        instanceUrl : passedContext.instance_url,
+        accessToken : passedContext.oauth_token
+      });
+      conn
+        .sobject(passedContext.params.record.object_type)
+        .retrieve(passedContext.params.record.record_id, cb);
+    }, function(record, cb) {
+      // Retrieve the context profilers
+
+      Organization.findOne({_id: req.session.user.organization}, function(err, org) {
+
+        if (err || !org) {
+          return cb(err);
+        }
+
+        cb(null, record, org.context_profilers);
+      });
+    }, function(record, orgProfilers, cb) {
+      var profiler = _.find(orgProfilers, {object_type: passedContext.params.record.record_type});
+
+      if (!profiler) {
+        return cb('no_context_sepcifier');
+      }
+      var builtQuery = Mustache.render(profiler.query_template, record);
+      passedContext.context_display = Mustache.render(profiler.display_template, record);
+
+      // Retrieve documents matching the query
+      retrieveDocuments(builtQuery, cb);
+    }
+  ], function(err, datas) {
+    if (err || err === 'no_context_sepcifier') {
+      console.log(err);
+      return res.send(500);
+    }
+
+    res.render('app/context.html', {
+      context: passedContext,
       documents: datas
     });
-
   });
 };
 

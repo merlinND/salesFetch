@@ -21,13 +21,23 @@ var obj = {
       email: 'walter.white@breakingbad.com'
     },
     organization: {
-      organizationId: 'companyId'
+      organizationId: 'companyId',
+      name: 'breakingbad',
+      currencyIsoCode: 'USD'
     },
     environment: {
       parameters: {
-        mode: 'search'
+        mode: 'context',
+        record: {
+          record_type: 'Contact',
+          record_id: '003b000000LHOj3'
+        }
       }
     }
+  },
+  client: {
+    instanceUrl: 'https://eu2.salesforce.com',
+    oauth_token: 'random_token'
   }
 };
 
@@ -54,19 +64,6 @@ describe('<user controller>', function() {
         .expect(function(res) {
           res.should.have.header('set-cookie');
           res.headers['set-cookie'][0].should.match(/connect.sid/);
-        })
-        .end(done);
-    });
-
-    it('should redirect to search path', function(done) {
-      var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
-
-      request(app)
-        .post('/authenticate')
-        .send({signed_request: postBody})
-        .expect(302)
-        .expect(function(res) {
-          res.headers.location.should.include('/app/search');
         })
         .end(done);
     });

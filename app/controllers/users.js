@@ -12,33 +12,42 @@ var config = require('../../config');
  * Authenticate the user based on the request's context
  * return the user
  */
-var authenticateUser = function(context, cb) {
+var authenticateUser = function(context, done) {
   var userContext = context.user;
-  //TODO: waterfall
-  User.findOne({userId: userContext.userId}, function(err, user) {
-    if (err) {
-      return cb(err);
-    }
+  var orgContext = context.organization;
+  async.waterfall([
+    function(cb) {
+      // Find an existing user
+      User.findOne({userId: userContext.userId}, cb);
+    }, function(user, cb) {
+      if (user) {
+        return done(null, user);
+      }
+      // Find the a mathcing company
+      Organization.findOne({organizationId: context.organization.organizationId}, cb);
+    }, function(org, cb) {
+      if (org) {
+        return cb(null, org);
+      }
 
-    if (user) {
-      cb(null, user);
-    } else {
-      Organization.findOne({organizationId: context.organization.organizationId}, function(err, org) {
-        if (err) {
-          return cb(err);
-        }
-
-        user = new User({
-          name: userContext.fullName,
-          userId: userContext.userId,
-          email: userContext.email
-        });
-
-        return user.save(cb);
+      // Create a comapny if no one matching
+      var  newOrg = new Organization({
+        name: orgContext.name,
+        organizationId: orgContext.organizationId,
+        currency: orgContext.currencyIsoCode
       });
+      newOrg.save(cb);
+    }, function(org, count, cb) {
+      // Create create a user in the company
+      var user = new User({
+        name: userContext.fullName,
+        userId: userContext.userId,
+        email: userContext.email,
+        organization: org._id
+      });
+      user.save(cb);
     }
-
-  });
+  ], done);
 };
 
 /**
@@ -48,13 +57,14 @@ var authenticateUser = function(context, cb) {
 var redirectionOnContext = function(context) {
   var mode = context.environment.parameters.mode;
 
-  if(mode === "search") {
+  if (mode === 'admin') {
+    return '/admin';
+  } else if(mode === 'search') {
     return '/app/search';
   } else {
     return '/app/context';
   }
 };
-
 
 /**
  * Called by Salesforce with SF user credentials and current context.
@@ -62,7 +72,6 @@ var redirectionOnContext = function(context) {
  */
 module.exports.authenticate = function(req, res) {
   var envelope;
-
   async.waterfall([
     function(cb){
       if (!req.body.signed_request) {
@@ -88,13 +97,18 @@ module.exports.authenticate = function(req, res) {
       authenticateUser(envelope.context, cb);
     }
   ], function (err, user) {
+
     if (err) {
       return res.send(401);
     }
 
     req.session.user = user;
-    // Pass this in URL
-    req.session.context = envelope.context;
+    req.session.context = {
+      params: envelope.context.environment.parameters,
+      dimensions: envelope.context.environment.dimensions,
+      instance_url: envelope.client.instanceUrl,
+      oauth_token: envelope.client.oauthToken
+    };
 
     var redirectUrl = redirectionOnContext(envelope.context);
 
