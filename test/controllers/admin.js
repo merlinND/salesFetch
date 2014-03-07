@@ -174,16 +174,11 @@ describe('<Admin controller>', function() {
               var options = res.text.match(/Targeted context/g);
               options.should.have.length(3);
             })
-            .end(function(err, res) {
-              if (err) {
-                throw err;
-              }
-
-              var id = res.text.match(/\/context-profiler\/(\w+)\/delete/)[1];
-              cb(null, id);
-            });
+            .end(cb);
         },
-        function(id, cb) {
+        function(res, cb) {
+          var id = res.text.match(/\/context-profiler\/(\w+)\/delete/)[1];
+
           var req = request(app).get(endPoint(id));
           agent.attachCookies(req);
           req

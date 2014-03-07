@@ -97,7 +97,6 @@ module.exports.context = function(req, res) {
         .retrieve(passedContext.params.record.record_id, cb);
     }, function(record, cb) {
       // Retrieve the context profilers
-      console.log(record);
       Organization.findOne({_id: req.session.user.organization}, function(err, org) {
 
         if (err || !org) {
