@@ -60,7 +60,7 @@ var bootstrapServer = function(app, db) {
   // Use less
   app.use(require('less-middleware')({
     dest: dir_path + '/public/stylesheets',
-    src: dir_path + '/app/assets/less',
+    src: dir_path + '/assets/less',
     prefix: '/stylesheets',
     paths: [dir_path + '/public/lib/bootstrap/less'],
     compress: true
