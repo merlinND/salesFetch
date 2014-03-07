@@ -26,7 +26,7 @@ var UserModel = new Schema ({
 /**
  * Statics
  */
-UserModel.statics.load = function(id, cb) {
+UserModel.statics.loadAndPopulate = function(id, cb) {
   this.findOne({
     _id: id
   }).populate('organization').exec(cb);

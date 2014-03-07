@@ -49,11 +49,11 @@ var createVisualforceContextPage = function(contextProfilers) {
  */
 module.exports.index = function(req, res) {
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err || !org || !org.context_profilers) {
+    if (err || !org || !org.contextProfilers) {
       return res.send(500);
     }
 
-    var contextProfilers = createVisualforceContextPage(org.context_profilers);
+    var contextProfilers = createVisualforceContextPage(org.contextProfilers);
 
     res.render('admin/index.html', {
       profilers: contextProfilers
@@ -82,7 +82,7 @@ module.exports.createContextProfiler = function(req, res) {
     function(cb) {
       Organization.findOne({_id: req.session.user.organization}, cb);
     }, function(org, cb) {
-      org.context_profilers.push(newContextProfiler);
+      org.contextProfilers.push(newContextProfiler);
       org.save(cb);
     }
   ], function(err) {
@@ -103,7 +103,7 @@ module.exports.editContextProfiler = function(req, res) {
       res.send(500, err);
     }
 
-    var contextProfiler = org.context_profilers.id(req.params.contextProfilerId);
+    var contextProfiler = org.contextProfilers.id(req.params.contextProfilerId);
 
     if (!contextProfiler) {
       res.send(500);
@@ -125,11 +125,11 @@ module.exports.deleteContextProfiler = function(req, res) {
     if (err) {
       return res.send(500);
     }
-    if (!org.context_profilers.id(profilerId)) {
+    if (!org.contextProfilers.id(profilerId)) {
       return res.send(404);
     }
 
-    org.context_profilers.id(profilerId).remove();
+    org.contextProfilers.id(profilerId).remove();
     org.save(function(err) {
       if (err) {
         return res.send(500);

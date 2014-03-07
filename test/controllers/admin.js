@@ -5,7 +5,7 @@ var async = require('async');
 
 var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
-var login = require('../helpers/login');
+var login = require('../helpers/login').authenticateCall;
 var APIs = require('../helpers/APIs');
 
 describe('<Admin controller>', function() {
