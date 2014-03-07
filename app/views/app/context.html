@@ -1,37 +1,17 @@
 {% extends './template.html' %}
 
 {% block content %}
-<!-- <nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    </div>
-    <div class="collapse navbar-collapse" id="navbar-collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Timeline</a></li>
-        <li><a href="/app/search">Search</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Settings</a></li>
-      </ul>
-    </div>
-  </div>
-</nav> -->
 
-<section class="container-fluid">
-  <div class= "about">
+<section class="container">
+  <h2 class= "about">
+    <div class="std-icon icon-{{context.record_type.toLowerCase()}}"></div>
     About <strong>{{context.context_display}}</strong>
-  </div>
+  </h2>
 
-  <div class="documents">
+  <div class="row">
     {% for doc in documents.datas %}
-      <a href="/app/documents/{{doc.id}}" class="snippet-container col-xs-12">
-        <header>{{doc.document_type|capitalize}} - {{doc.provider|capitalize}}</header>
+      <a href="/app/documents/{{doc.id}}" class="snippet-container col-xs-12 panel">
+        <span>{{doc.document_type|capitalize}} - {{doc.provider|capitalize}}</span>
         {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
       </a>
     {% endfor %}

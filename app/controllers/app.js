@@ -112,6 +112,8 @@ module.exports.context = function(req, res) {
       if (!profiler) {
         return cb('no_context_sepcifier');
       }
+
+      passedContext.record_type = profiler.record_type;
       var builtQuery = Mustache.render(profiler.query_template, record);
       passedContext.context_display = Mustache.render(profiler.display_template, record);
 
