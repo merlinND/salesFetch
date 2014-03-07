@@ -94,13 +94,7 @@ module.exports.authenticate = function(req, res) {
       oauth_token: envelope.client.oauthToken
     };
 
-
-    var contextToRoute = {
-      'admin': '/admin',
-      'search': '/app/search',
-      'context': '/app/context',
-    };
-    var redirectUrl = contextToRoute[envelope.context.environment.parameters.mode];
+    var redirectUrl = envelope.context.environment.parameters.url;
     return res.redirect(302, redirectUrl);
   });
 };

@@ -28,7 +28,7 @@ var obj = {
     },
     environment: {
       parameters: {
-        mode: 'context',
+        url: '/app/context',
         record: {
           record_type: 'Contact',
           record_id: '003b000000LHOj3'
