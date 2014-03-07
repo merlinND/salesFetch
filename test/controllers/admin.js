@@ -7,6 +7,8 @@ var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
 var login = require('../helpers/login').authenticateCall;
 var APIs = require('../helpers/APIs');
+var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
+
 
 describe('<Admin controller>', function() {
   var agent;
@@ -28,18 +30,13 @@ describe('<Admin controller>', function() {
     ], done);
   });
 
-  describe('/admin page', function() {
-    var endPoint = '/admin';
+  describe('GET /admin', function() {
+    var endpoint = '/admin';
 
-    it('should reject unauthentified user', function(done) {
-      request(app)
-        .get(endPoint)
-        .expect(401)
-        .end(done);
-    });
+    checkUnauthenticated(app, 'get', endpoint);
 
     it('should display the admin panel index', function(done) {
-      var req = request(app).get(endPoint);
+      var req = request(app).get(endpoint);
       agent.attachCookies(req);
       req
         .expect(200)
@@ -48,18 +45,13 @@ describe('<Admin controller>', function() {
     });
   });
 
-  describe('/admin/context-profiler/new', function() {
-    var endPoint = '/admin/context-profiler/new';
+  describe('GET /admin/context-profiler/new', function() {
+    var endpoint = '/admin/context-profiler/new';
 
-    it('should reject unauthentified user', function(done) {
-      request(app)
-        .get(endPoint)
-        .expect(401)
-        .end(done);
-    });
+    checkUnauthenticated(app, 'get', endpoint);
 
     it('should display the new formulaire', function(done) {
-      var req = request(app).get(endPoint);
+      var req = request(app).get(endpoint);
       agent.attachCookies(req);
       req
         .expect(200)
@@ -72,14 +64,16 @@ describe('<Admin controller>', function() {
     });
   });
 
-  describe('/admin/context-profiler/new', function() {
-    var endPoint = '/admin/context-profiler/';
+  describe('POST /admin/context-profiler/', function() {
+    var endpoint = '/admin/context-profiler/';
+
+    checkUnauthenticated(app, 'post', endpoint);
 
     it('should accept well formated request', function(done) {
       async.series([
         function(cb) {
           var req = request(app)
-            .post(endPoint);
+            .post(endpoint);
           agent.attachCookies(req);
 
           req
@@ -107,7 +101,7 @@ describe('<Admin controller>', function() {
 
     it('should reject if duplicate object type', function(done) {
       var req = request(app)
-        .post(endPoint);
+        .post(endpoint);
       agent.attachCookies(req);
 
       req
@@ -132,7 +126,7 @@ describe('<Admin controller>', function() {
         };
         delete contextProfiler[key];
         var req = request(app)
-          .post(endPoint);
+          .post(endpoint);
         agent.attachCookies(req);
 
         req
@@ -144,20 +138,22 @@ describe('<Admin controller>', function() {
     });
   });
 
-  describe('/admin/context-profiler/:profile/delete', function() {
-    var endPoint = function(id) {
+  describe('GET /admin/context-profiler/:profile/delete', function() {
+    var endpoint = function(id) {
       return '/admin/context-profiler/' + id + '/delete';
     };
 
+    checkUnauthenticated(app, 'get', endpoint);
+
     it('should reject unauthentified user', function(done) {
       request(app)
-        .get(endPoint('12334'))
+        .get(endpoint('12334'))
         .expect(401)
         .end(done);
     });
 
     it('should return 404 if not found', function(done) {
-      var req = request(app).get(endPoint('5318bdc7dea8330000db4757'));
+      var req = request(app).get(endpoint('5318bdc7dea8330000db4757'));
       agent.attachCookies(req);
       req
         .expect(404)
@@ -179,7 +175,7 @@ describe('<Admin controller>', function() {
         function(res, cb) {
           var id = res.text.match(/\/context-profiler\/(\w+)\/delete/)[1];
 
-          var req = request(app).get(endPoint(id));
+          var req = request(app).get(endpoint(id));
           agent.attachCookies(req);
           req
             .expect(302)

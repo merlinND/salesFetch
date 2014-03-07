@@ -62,7 +62,6 @@ var authenticatedCall = function(app, parameters, done) {
           if (err) {
             throw err;
           }
-
           agent.saveCookies(res);
           cb(null, res.headers.location, agent);
         });

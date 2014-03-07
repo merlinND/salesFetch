@@ -9,7 +9,7 @@ var authenticatedCall = require('../helpers/authenticated-call').authenticatedCa
 var APIs = require('../helpers/APIs');
 var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
-describe.only('<Application controller>', function() {
+describe('<Application controller>', function() {
   beforeEach(cleaner);
   beforeEach(function(done) {
     APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
