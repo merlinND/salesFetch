@@ -17,11 +17,11 @@ var contextPageTemplate = fs.readFileSync(__dirname + '/../views/apex/context-pa
 /**
  * Retrieve Salesforce Object acessible on the current account
  */
-var retrieveSObject = function(passedContext, cb) {
+var retrieveSObject = function(instanceUrl, oauthToken, cb) {
   // Retrive the context object
   var conn = new jsforce.Connection({
-    instanceUrl : passedContext.instance_url,
-    accessToken : passedContext.oauth_token
+    instanceUrl : instanceUrl,
+    accessToken : oauthToken,
   });
   conn.describeGlobal(function(err, data) {
     if (err) {
@@ -65,7 +65,7 @@ module.exports.index = function(req, res) {
  * Display a form to create a nex context profiler
  */
 module.exports.newContextProfiler = function(req, res) {
-  retrieveSObject(req.session.context, function(err, objects) {
+  retrieveSObject(req.session.instanceUrl, req.session.oauthToken, function(err, objects) {
     res.render('admin/new.html', {
       objects: objects
     });

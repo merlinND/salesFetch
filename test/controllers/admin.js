@@ -55,7 +55,7 @@ describe('<Admin controller>', function() {
 
     checkUnauthenticated(app, 'get', endpoint);
 
-    it('should display the new formulaire', function(done) {
+    it('should display the new form', function(done) {
       var req = request(app).get(endpoint);
       agent.attachCookies(req);
       req

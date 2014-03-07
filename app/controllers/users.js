@@ -89,12 +89,16 @@ module.exports.authenticate = function(req, res) {
     var redirectUrl = envelope.context.environment.parameters.url;
 
     req.session.user = user;
-    req.session.context = {
+    req.session.instanceUrl = envelope.client.instanceUrl;
+    req.session.oauthToken = envelope.client.oauthToken;
+
+
+    var context = {
       params: envelope.context.environment.parameters.parameters,
       dimensions: envelope.context.environment.dimensions,
-      instance_url: envelope.client.instanceUrl,
-      oauth_token: envelope.client.oauthToken
     };
+
+    redirectUrl += "?context=" + encodeURIComponent(JSON.stringify(context));
 
     return res.redirect(302, redirectUrl);
   });
