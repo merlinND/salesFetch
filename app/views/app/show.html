@@ -4,7 +4,15 @@
 <a href="#" class="back-btn">
   Return to results
 </a>
-<section class="container-fluid full-container">
-  {% autoescape false %}{{document.full_rendered}}{% endautoescape %}
+<section class="container">
+  <div class="col-xs-12 panel panel-default snippet-container">
+    <div class="panel-heading">
+      {{document.document_type|capitalize}} - {{document.provider|capitalize}}
+      <div class="bookmark pull-right"></div>
+    </div>
+    <div class="panel-body">
+      {% autoescape false %}{{document.full_rendered}}{% endautoescape %}
+    </div>
+  </div>
 </section>
 {% endblock %}
