@@ -102,7 +102,7 @@ module.exports.deleteContextProfiler = function(req, res) {
   var profilerId = req.params.contextProfilerId;
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err) {
-      return res.redirect(500);
+      return res.send(500);
     }
     if (!org.context_profilers.id(profilerId)) {
       return res.send(404);
@@ -111,7 +111,7 @@ module.exports.deleteContextProfiler = function(req, res) {
     org.context_profilers.id(profilerId).remove();
     org.save(function(err) {
       if (err) {
-        console.log(err);
+        return res.send(500);
       }
 
       res.redirect(302,'/admin');
