@@ -49,7 +49,7 @@ module.exports.contextSearch = function(req, res) {
       var params = {};
       params.search = search;
       if(req.query.query) {
-        params.search += req.query.query;
+        params.search += " " + req.query.query;
       }
       if(req.query.document_type) {
         params.document_type = req.query.document_type;
@@ -57,6 +57,7 @@ module.exports.contextSearch = function(req, res) {
       if(req.query.token) {
         params.token = req.query.token;
       }
+      console.log(params);
 
       anyfetchHelpers.findDocuments(params, cb);
     }
