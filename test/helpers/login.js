@@ -24,7 +24,7 @@ var getDefaultPayload = function() {
       environment: {
         parameters: {
           url: '/app/context',
-          record: {
+          parameters: {
             record_type: 'Contact',
             record_id: '003b000000LHOj3'
           }

@@ -86,15 +86,16 @@ module.exports.authenticate = function(req, res) {
       return res.send(401);
     }
 
+    var redirectUrl = envelope.context.environment.parameters.url;
+
     req.session.user = user;
     req.session.context = {
-      params: envelope.context.environment.parameters,
+      params: envelope.context.environment.parameters.parameters,
       dimensions: envelope.context.environment.dimensions,
       instance_url: envelope.client.instanceUrl,
       oauth_token: envelope.client.oauthToken
     };
 
-    var redirectUrl = envelope.context.environment.parameters.url;
     return res.redirect(302, redirectUrl);
   });
 };
