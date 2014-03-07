@@ -10,12 +10,12 @@
   </h2>
 
   <div class="row">
-    <form>
+    <form type="">
       <div class="col-xs-4">
         <label for="document-type">Source</label>
         <select class="form-control" id="document-type">
           {% for provider in documents.providers %}
-          <option>{{provider.name}}</option>
+          <option value="{{loop.key}}">{{provider.name}}</option>
           {% endfor %}
         </select>
       </div>
@@ -23,13 +23,13 @@
         <label for="document-type">Type</label>
         <select class="form-control">
           {% for docType in documents.document_types %}
-          <option>{{docType.name.}}</option>
+          <option value="{{value.id}}">{{docType.name}}</option>
           {% endfor %}
         </select>
       </div>
       <div class="col-xs-4">
-        <label for="document-type">Query</label>
-        <input type="text" class="form-control" id="" name="query_template">
+        <label for="query">Query</label>
+        <input type="text" class="form-control" id="query" name="query">
       </div>
     </form>
   </div>

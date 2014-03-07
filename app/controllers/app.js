@@ -54,6 +54,8 @@ module.exports.contextSearch = function(req, res) {
       return res.send(500);
     }
 
+    console.log(datas.document_types);
+
     res.render('app/context.html', {
       context: context,
       documents: datas
