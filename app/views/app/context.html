@@ -6,8 +6,33 @@
   <h2 class= "about">
     <div class="std-icon icon-{{context.record_type.toLowerCase()}}"></div>
     About <strong>{{context.context_display}}</strong>
+    <div class="filters pull-right">Filters</div>
   </h2>
 
+  <div class="row">
+    <form>
+      <div class="col-xs-4">
+        <label for="document-type">Source</label>
+        <select class="form-control" id="document-type">
+          {% for provider in documents.providers %}
+          <option>{{provider.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-xs-4">
+        <label for="document-type">Type</label>
+        <select class="form-control">
+          {% for docType in documents.document_types %}
+          <option>{{docType.name.}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-xs-4">
+        <label for="document-type">Query</label>
+        <input type="text" class="form-control" id="" name="query_template">
+      </div>
+    </form>
+  </div>
   <div class="row">
     {% for doc in documents.datas %}
       <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container">
