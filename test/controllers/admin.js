@@ -13,21 +13,15 @@ var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 describe('<Admin controller>', function() {
   var agent;
 
-  beforeEach(function(done) {
-    async.series([
-      function(cb) {
-        cleaner(cb);
-      },
-      function(cb) {
-        APIs.mount('salesforce', 'https://eu2.salesforce.com', cb);
-      },
-      function(cb) {
-        login(request(app), function(loginAgent) {
+  beforeEach(cleaner);
+  beforeEach(function(cb) {
+    APIs.mount('salesforce', 'https://eu2.salesforce.com', cb);
+  });
+  beforeEach(function(cb) {
+    login(request(app), function(loginAgent) {
           agent = loginAgent;
           cb();
         });
-      }
-    ], done);
   });
 
   describe('GET /admin', function() {
