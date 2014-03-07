@@ -6,9 +6,17 @@
 var async = require('async');
 var jsforce = require('jsforce');
 var _ = require('lodash');
+var fs = require('fs');
+var Mustache = require('mustache');
 var mongoose = require('mongoose'),
     Organization = mongoose.model('Organization');
 
+// Load in cache template for Salesforce context page
+var contextPageTemplate = fs.readFileSync(__dirname + '/../views/apex/context-page-template.apex', 'utf8');
+
+/**
+ * Retrieve Salesforce Object acessible on the current account
+ */
 var retrieveSObject = function(passedContext, cb) {
   // Retrive the context object
   var conn = new jsforce.Connection({
@@ -25,18 +33,37 @@ var retrieveSObject = function(passedContext, cb) {
   });
 };
 
+/**
+ * Return a completed template with the actual context profiler
+ */
+var createVisualforceContextPage = function(contextProfilers) {
+  contextProfilers.forEach(function(contextProfiler) {
+    contextProfiler.page = Mustache.render(contextPageTemplate, contextProfiler);
+  });
+  return contextProfilers;
+};
+
+/**
+ * Administration index page
+ * Display the context profilers settings
+ */
 module.exports.index = function(req, res) {
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err || !org || !org.context_profilers) {
+    if (err || !org || !org.contextProfilers) {
       return res.send(500);
     }
-    console.log(req.session.context);
+
+    var contextProfilers = createVisualforceContextPage(org.contextProfilers);
+
     res.render('admin/index.html', {
-      profilers: org.context_profilers
+      profilers: contextProfilers
     });
   });
 };
 
+/**
+ * Display a form to create a nex context profiler
+ */
 module.exports.newContextProfiler = function(req, res) {
   retrieveSObject(req.session.context, function(err, objects) {
     res.render('admin/new.html', {
@@ -45,13 +72,17 @@ module.exports.newContextProfiler = function(req, res) {
   });
 };
 
+/**
+ * Create a new context profiler based on the POST body
+ * Redirect to /index if work
+ */
 module.exports.createContextProfiler = function(req, res) {
   var newContextProfiler = req.body;
   async.waterfall([
     function(cb) {
       Organization.findOne({_id: req.session.user.organization}, cb);
     }, function(org, cb) {
-      org.context_profilers.push(newContextProfiler);
+      org.contextProfilers.push(newContextProfiler);
       org.save(cb);
     }
   ], function(err) {
@@ -72,7 +103,7 @@ module.exports.editContextProfiler = function(req, res) {
       res.send(500, err);
     }
 
-    var contextProfiler = org.context_profilers.id(req.params.contextProfilerId);
+    var contextProfiler = org.contextProfilers.id(req.params.contextProfilerId);
 
     if (!contextProfiler) {
       res.send(500);
@@ -84,13 +115,27 @@ module.exports.editContextProfiler = function(req, res) {
   });
 };
 
+/**
+ * Delete the selected context profiler
+ * Redirect to index if the context profiler is effectively removed
+ */
 module.exports.deleteContextProfiler = function(req, res) {
   var profilerId = req.params.contextProfilerId;
-  Organization.update({_id: req.session.user.organization}, {'$pull':{context_profilers: {_id: profilerId}}}, function(err) {
+  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err) {
-      console.log(err);
+      return res.send(500);
+    }
+    if (!org.contextProfilers.id(profilerId)) {
+      return res.send(404);
     }
 
-    return res.redirect(302,'/admin');
+    org.contextProfilers.id(profilerId).remove();
+    org.save(function(err) {
+      if (err) {
+        return res.send(500);
+      }
+
+      res.redirect(302,'/admin');
+    });
   });
 };

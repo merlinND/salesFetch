@@ -33,13 +33,14 @@ var init = function() {
   var isViewer = window.opener ? true : false;
 
   // Handle the full preview loading
-  $( ".snippet-container a" ).click(function(e) {
+  $( "[data-document-url]" ).click(function(e) {
     e.preventDefault();
 
+    var url = $(this).data("documentUrl");
     if (isOnMobile) {
-      window.location = $(this)[0].href;
+      window.location = url;
     } else if (!isViewer) {
-      displayFull($(this)[0].href);
+      displayFull(url);
     }
   });
 

@@ -10,10 +10,15 @@
 
   <div class="row">
     {% for doc in documents.datas %}
-      <a href="/app/documents/{{doc.id}}" class="snippet-container col-xs-12 panel">
-        <span>{{doc.document_type|capitalize}} - {{doc.provider|capitalize}}</span>
-        {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
-      </a>
+      <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container">
+        <div class="panel-heading">
+          {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
+          <div class="bookmark pull-right"></div>
+        </div>
+        <div class="panel-body">
+          {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
+        </div>
+      </div>
     {% endfor %}
   </div>
 </section>

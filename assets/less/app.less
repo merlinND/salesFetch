@@ -20,6 +20,15 @@ section.container-fluid {
   }
 }
 
+.panel-heading {
+  padding: 0 10px;
+  line-height: 30px;
+
+  .bookmark:hover {
+    background-color: darken(@gray-lighter, 3%);
+  }
+}
+
 .std-icon {
   height: 30px;
   width: 30px;
@@ -46,6 +55,16 @@ section.container-fluid {
   background-image: url('/img/standard-icons/opportunity.png');
 }
 
+.bookmark {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  background-size: 20px;
+  background-image: url('/img/standard-icons/bookmark.png');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .snippet-container, .snippet-container:hover {
   color: #999696;
   text-decoration: none;
@@ -53,8 +72,9 @@ section.container-fluid {
 
 .snippet-container {
   border-bottom: 1px solid #EBEBEB;
-  padding: 5px;
-  font-size: 10px;
+  margin-bottom: 10px;
+  padding: 1px;
+  font-size: 12px;
 
   header {
     color: #999696;
@@ -64,19 +84,20 @@ section.container-fluid {
   h1 {
     font-size: 15px;
     margin: 5px 0;
-    color: #333;
+    color: #2A94D6;
   }
 
   blockquote {
     margin: 0;
     padding: 0;
     border: 0;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   img {
     max-width: 93%;
-    margin: 10px 3%;
+    display: block;
+    margin: 10px auto;
   }
 }
 
