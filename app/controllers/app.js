@@ -18,6 +18,7 @@ var Organization = mongoose.model('Organization');
  */
 module.exports.contextSearch = function(req, res) {
   var context = req.session.context;
+  console.log(context);
   var record;
 
   async.waterfall([

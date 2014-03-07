@@ -50,21 +50,6 @@ var authenticateUser = function(context, done) {
   ], done);
 };
 
-/**
- * Choose the right redirection url based on the authentication
- * context.
- */
-var redirectionOnContext = function(context) {
-  var mode = context.environment.parameters.mode;
-
-  if (mode === 'admin') {
-    return '/admin';
-  } else if(mode === 'search') {
-    return '/app/search';
-  } else {
-    return '/app/context';
-  }
-};
 
 /**
  * Called by Salesforce with SF user credentials and current context.
@@ -73,7 +58,7 @@ var redirectionOnContext = function(context) {
 module.exports.authenticate = function(req, res) {
   var envelope;
   async.waterfall([
-    function(cb){
+    function checkRequestValidity(cb){
       if (!req.body.signed_request) {
         return cb(new Error('bad request'));
       }
@@ -86,18 +71,17 @@ module.exports.authenticate = function(req, res) {
       // Check the request validity
       var check = crypto.createHmac("sha256", config.consumer_secret).update(encodedEnvelope).digest("base64");
       if (check !== consumerSecret) {
-        return cb('bad request');
+        return cb(new Error("bad request"));
       }
 
       envelope = JSON.parse(new Buffer(encodedEnvelope, "base64"));
       cb(null, envelope);
     },
-    function(envelope, cb){
+    function loadUser(envelope, cb){
       // Get the user
       authenticateUser(envelope.context, cb);
     }
   ], function (err, user) {
-
     if (err) {
       return res.send(401);
     }
@@ -110,8 +94,13 @@ module.exports.authenticate = function(req, res) {
       oauth_token: envelope.client.oauthToken
     };
 
-    var redirectUrl = redirectionOnContext(envelope.context);
 
+    var contextToRoute = {
+      'admin': '/admin',
+      'search': '/app/search',
+      'context': '/app/context',
+    };
+    var redirectUrl = contextToRoute[envelope.context.environment.parameters.mode];
     return res.redirect(302, redirectUrl);
   });
 };

@@ -49,6 +49,7 @@ module.exports = function(request, done) {
   request
     .post('/authenticate')
     .send({signed_request: postBody})
+    .expect(302)
     .end(function(err, res) {
       if (err) {
         throw err;
