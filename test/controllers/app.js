@@ -4,6 +4,7 @@ require("should");
 
 var request = require('supertest');
 var app = require('../../app.js');
+var cleaner = require('../hooks/cleaner');
 var login = require('../helpers/login');
 var login = require('../helpers/login').authenticateCall;
 var APIs = require('../helpers/APIs');
@@ -11,6 +12,7 @@ var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
 describe('<Application controller>', function() {
   var agent;
+  beforeEach(cleaner);
   beforeEach(function(done) {
     login(request(app), function(loginAgent) {
       agent = loginAgent;
