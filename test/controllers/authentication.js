@@ -28,7 +28,7 @@ var obj = {
     },
     environment: {
       parameters: {
-        url: '/app/context',
+        url: '/app/context-search',
         record: {
           record_type: 'Contact',
           record_id: '003b000000LHOj3'
@@ -74,7 +74,8 @@ describe('<user controller>', function() {
         .send({signed_request: postBody})
         .expect(302)
         .expect(function(res) {
-          res.headers.location.should.equal('/app/context');
+          res.headers.location.should.containDeep('/app/context-search');
+          res.headers.location.should.containDeep('?context');
         })
         .end(done);
     });

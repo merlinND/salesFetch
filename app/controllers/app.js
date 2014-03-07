@@ -17,7 +17,7 @@ var Organization = mongoose.model('Organization');
  * Display Context page
  */
 module.exports.contextSearch = function(req, res) {
-  var context = req.session.context;
+  var context = JSON.parse(req.query.context);
   var record;
 
   async.waterfall([
@@ -48,7 +48,6 @@ module.exports.contextSearch = function(req, res) {
       anyfetchHelpers.findDocuments({search: search}, cb);
     }
   ], function(err, datas) {
-    console.log(err);
     if (err) {
       return res.send(500);
     }

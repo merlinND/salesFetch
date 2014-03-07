@@ -4,13 +4,14 @@
  * Login helpers
  */
 
+var async = require('async');
 var request = require('supertest');
 var agent = request.agent();
 var crypto = require('crypto');
 var consumerSecret = require('../../config/index').consumer_secret;
 
 
-var getDefaultPayload = function() {
+var getDefaultPayload = function(parameters) {
   var obj = {
     context: {
       user: {
@@ -22,13 +23,7 @@ var getDefaultPayload = function() {
         organizationId: 'companyId'
       },
       environment: {
-        parameters: {
-          url: '/app/context',
-          parameters: {
-            record_type: 'Contact',
-            record_id: '003b000000LHOj3'
-          }
-        }
+        parameters: parameters
       }
     },
     client: {
@@ -50,14 +45,11 @@ var createAuthHash = function(obj) {
 };
 
 
-/**
- * Log the user in and return to the callback the user agent for futher calls
- */
-var authenticateCall = function(request, done) {
-  var obj = getDefaultPayload();
+var loginUser = function(app, parameters, done) {
+  var obj = getDefaultPayload(parameters);
   var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
 
-  request
+  request(app)
     .post('/authenticate')
     .send({signed_request: postBody})
     .expect(302)
@@ -65,13 +57,31 @@ var authenticateCall = function(request, done) {
       if (err) {
         throw err;
       }
-
       agent.saveCookies(res);
-      done(agent);
+      done(null, res.headers.location, agent);
     });
+};
+
+
+/**
+ * Log the user in and return to the callback the user agent for futher calls
+ */
+var authenticatedCall = function(app, parameters, done) {
+  async.waterfall([
+    function authenticatedCall(cb) {
+      loginUser(app, parameters, cb);
+    },
+    function buildRealRequest(location, agent, cb) {
+      var req = request(app).get(location);
+      agent.attachCookies(req);
+
+      cb(null, req);
+    }
+  ], done);
 };
 
 
 module.exports.getDefaultPayload = getDefaultPayload;
 module.exports.createAuthHash = createAuthHash;
-module.exports.authenticateCall = authenticateCall;
+module.exports.loginUser = loginUser;
+module.exports.authenticatedCall = authenticatedCall;
