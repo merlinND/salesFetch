@@ -45,26 +45,31 @@ var createAuthHash = function(obj) {
 };
 
 
+var loginUser = function(app, parameters, done) {
+  var obj = getDefaultPayload(parameters);
+  var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
+
+  request(app)
+    .post('/authenticate')
+    .send({signed_request: postBody})
+    .expect(302)
+    .end(function(err, res) {
+      if (err) {
+        throw err;
+      }
+      agent.saveCookies(res);
+      done(null, res.headers.location, agent);
+    });
+};
+
+
 /**
  * Log the user in and return to the callback the user agent for futher calls
  */
 var authenticatedCall = function(app, parameters, done) {
   async.waterfall([
     function authenticatedCall(cb) {
-      var obj = getDefaultPayload(parameters);
-      var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
-
-      request(app)
-        .post('/authenticate')
-        .send({signed_request: postBody})
-        .expect(302)
-        .end(function(err, res) {
-          if (err) {
-            throw err;
-          }
-          agent.saveCookies(res);
-          cb(null, res.headers.location, agent);
-        });
+      loginUser(app, parameters, cb);
     },
     function buildRealRequest(location, agent, cb) {
       var req = request(app).get(location);
@@ -78,4 +83,5 @@ var authenticatedCall = function(app, parameters, done) {
 
 module.exports.getDefaultPayload = getDefaultPayload;
 module.exports.createAuthHash = createAuthHash;
+module.exports.loginUser = loginUser;
 module.exports.authenticatedCall = authenticatedCall;

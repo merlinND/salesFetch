@@ -5,7 +5,8 @@ var async = require('async');
 
 var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
-var login = require('../helpers/login').authenticateCall;
+var authenticatedCall = require('../helpers/authenticated-call').authenticatedCall;
+var loginUser = require('../helpers/authenticated-call').loginUser;
 var APIs = require('../helpers/APIs');
 var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
@@ -17,11 +18,11 @@ describe('<Admin controller>', function() {
   beforeEach(function(cb) {
     APIs.mount('salesforce', 'https://eu2.salesforce.com', cb);
   });
-  beforeEach(function(cb) {
-    login(request(app), function(loginAgent) {
-          agent = loginAgent;
-          cb();
-        });
+  beforeEach(function createSession(cb) {
+    loginUser(app, {url:'/'}, function(err, location, _agent) {
+      agent = _agent;
+      cb(err);
+    });
   });
 
   describe('GET /admin', function() {
@@ -30,12 +31,22 @@ describe('<Admin controller>', function() {
     checkUnauthenticated(app, 'get', endpoint);
 
     it('should display the admin panel index', function(done) {
-      var req = request(app).get(endpoint);
-      agent.attachCookies(req);
-      req
-        .expect(200)
-        .expect(/administration panel/)
-        .end(done);
+      var parameters = {
+        url: '/admin',
+        parameters: {}
+      };
+
+      async.waterfall([
+        function buildRequest(cb) {
+          authenticatedCall(app, parameters, cb);
+        },
+        function sendRequest(req, cb) {
+          req
+            .expect(200)
+            .expect(/administration panel/)
+            .end(cb);
+        }
+      ], done);
     });
   });
 
