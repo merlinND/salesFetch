@@ -75,10 +75,4 @@ $(function() {
 
     $('#filters-container').toggle();
   });
-
-  $('#filters-container').submit(function(e) {
-    e.preventDefault();
-    var self = $(this);
-    console.log(self.serialize());
-  });
 });

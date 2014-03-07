@@ -54,6 +54,7 @@ module.exports.contextSearch = function(req, res) {
     }
 
     res.render('app/context.html', {
+      query: req.query,
       context: context,
       documents: datas
     });
