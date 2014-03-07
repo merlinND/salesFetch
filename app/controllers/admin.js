@@ -6,9 +6,17 @@
 var async = require('async');
 var jsforce = require('jsforce');
 var _ = require('lodash');
+var fs = require('fs');
+var Mustache = require('mustache');
 var mongoose = require('mongoose'),
     Organization = mongoose.model('Organization');
 
+// Load in cache template for Salesforce context page
+var contextPageTemplate = fs.readFileSync(__dirname + '/../views/apex/context-page-template.apex', 'utf8');
+
+/**
+ * Retrieve Salesforce Object acessible on the current account
+ */
 var retrieveSObject = function(passedContext, cb) {
   // Retrive the context object
   var conn = new jsforce.Connection({
@@ -25,18 +33,20 @@ var retrieveSObject = function(passedContext, cb) {
   });
 };
 
+/**
+ * Return a completed template with the actual context profiler
+ */
 var createVisualforceContextPage = function(contextProfilers) {
   contextProfilers.forEach(function(contextProfiler) {
-    var page = [
-      '<apex:page id="salesFetch' + contextProfiler.record_type + 'Page" StandardController="' + contextProfiler.record_type + '">',
-      '    <c:SalesFetchIframeComponent ObjectType="' + contextProfiler.record_type + '" SalesforceRecordId="{!' + contextProfiler.record_type + '.Id}" />',
-      '</apex:page>',
-    ].join('\n');
-    contextProfiler.page = page;
+    contextProfiler.page = Mustache.render(contextPageTemplate, contextProfiler);
   });
   return contextProfilers;
 };
 
+/**
+ * Administration index page
+ * Display the context profilers settings
+ */
 module.exports.index = function(req, res) {
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err || !org || !org.context_profilers) {
@@ -51,6 +61,9 @@ module.exports.index = function(req, res) {
   });
 };
 
+/**
+ * Display a form to create a nex context profiler
+ */
 module.exports.newContextProfiler = function(req, res) {
   retrieveSObject(req.session.context, function(err, objects) {
     res.render('admin/new.html', {
@@ -59,6 +72,10 @@ module.exports.newContextProfiler = function(req, res) {
   });
 };
 
+/**
+ * Create a new context profiler based on the POST body
+ * Redirect to /index if work
+ */
 module.exports.createContextProfiler = function(req, res) {
   var newContextProfiler = req.body;
   async.waterfall([
@@ -98,6 +115,10 @@ module.exports.editContextProfiler = function(req, res) {
   });
 };
 
+/**
+ * Delete the selected context profiler
+ * Redirect to index if the context profiler is effectively removed
+ */
 module.exports.deleteContextProfiler = function(req, res) {
   var profilerId = req.params.contextProfilerId;
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
