@@ -9,9 +9,9 @@
     <div class="filters pull-right">Filters</div>
   </h2>
 
-  <div class="row">
-    <form type="">
-      <div class="col-xs-4">
+  <form>
+    <div class="row">
+      <div class="col-sm-4">
         <label for="document-type">Source</label>
         <select class="form-control" id="document-type">
           {% for provider in documents.providers %}
@@ -19,7 +19,7 @@
           {% endfor %}
         </select>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <label for="document-type">Type</label>
         <select class="form-control">
           {% for docType in documents.document_types %}
@@ -27,12 +27,17 @@
           {% endfor %}
         </select>
       </div>
-      <div class="col-xs-4">
+      <div class="col-sm-4">
         <label for="query">Query</label>
         <input type="text" class="form-control" id="query" name="query">
       </div>
-    </form>
-  </div>
+    </div>
+    <button type="button" class="btn btn-default">Submit</button>
+    </div>
+  </form>
+
+  <hr/>
+
   <div class="row">
     {% for doc in documents.datas %}
       <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container">
