@@ -5,7 +5,7 @@ require("should");
 var async = require('async');
 var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
-var authenticatedCall = require('../helpers/authenticated-call').authenticatedCall;
+var authenticatedCall = require('../helpers/login').authenticatedCall;
 var APIs = require('../helpers/APIs');
 var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
