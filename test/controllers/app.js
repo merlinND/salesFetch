@@ -4,7 +4,7 @@ require("should");
 
 var request = require('supertest');
 var app = require('../../app.js');
-var login = require('../helpers/login');
+var login = require('../helpers/login').authenticateCall;
 var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 var fetchAPI = require('../helpers/fetchAPI');
 

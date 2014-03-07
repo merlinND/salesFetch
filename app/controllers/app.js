@@ -18,11 +18,12 @@ var Organization = mongoose.model('Organization');
  */
 module.exports.contextSearch = function(req, res) {
   var context = req.session.context;
+  console.log(context);
   var record;
 
   async.waterfall([
     function retrieveContext(cb) {
-      salesforceHelpers.loadObject(context.instance_url, context.oauth_token, context.params.record.object_type, context.params.record.record_id, cb);
+      salesforceHelpers.loadObject(context.instance_url, context.oauth_token, context.params.record_type, context.params.record_id, cb);
     },
     function retrieveProfiler(_record, cb) {
       record = _record;
@@ -36,7 +37,7 @@ module.exports.contextSearch = function(req, res) {
       cb(null, org.contextProfilers);
     },
     function buildQuery(contextProfilers, cb) {
-      var profiler = _.find(contextProfilers, {record_type: context.params.record.record_type});
+      var profiler = _.find(contextProfilers, {record_type: context.params.record_type});
 
       if (!profiler) {
         return cb(new Error('No contextProfilers for this object'));
