@@ -25,13 +25,28 @@ var retrieveSObject = function(passedContext, cb) {
   });
 };
 
+var createVisualforceContextPage = function(contextProfilers) {
+  contextProfilers.forEach(function(contextProfiler) {
+    var page = [
+      '<apex:page id="salesFetch' + contextProfiler.record_type + 'Page" StandardController="' + contextProfiler.record_type + '">',
+      '    <c:SalesFetchIframeComponent ObjectType="' + contextProfiler.record_type + '" SalesforceRecordId="{!' + contextProfiler.record_type + '.Id}" />',
+      '</apex:page>',
+    ].join('\n');
+    contextProfiler.page = page;
+  });
+  return contextProfilers;
+};
+
 module.exports.index = function(req, res) {
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err || !org || !org.context_profilers) {
       return res.send(500);
     }
+
+    var contextProfilers = createVisualforceContextPage(org.context_profilers);
+
     res.render('admin/index.html', {
-      profilers: org.context_profilers
+      profilers: contextProfilers
     });
   });
 };
