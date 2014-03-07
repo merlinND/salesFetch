@@ -73,6 +73,6 @@ $(function() {
   $('#toggle-filters').click(function(e) {
     e.preventDefault();
 
-    $('.filters-container').toggle();
-  })
+    $('#filters-container').toggle();
+  });
 });
