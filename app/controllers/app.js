@@ -48,7 +48,6 @@ module.exports.contextSearch = function(req, res) {
       anyfetchHelpers.findDocuments({search: search}, cb);
     }
   ], function(err, datas) {
-    console.log(err);
     if (err) {
       return res.send(500);
     }

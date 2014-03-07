@@ -2,24 +2,18 @@
 
 require("should");
 
-var request = require('supertest');
+var async = require('async');
 var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
-var login = require('../helpers/login');
-var login = require('../helpers/login').authenticateCall;
+var authenticatedCall = require('../helpers/authenticated-call').authenticatedCall;
 var APIs = require('../helpers/APIs');
 var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
-describe('<Application controller>', function() {
-  var agent;
+describe.only('<Application controller>', function() {
   beforeEach(cleaner);
   beforeEach(function(done) {
-    login(request(app), function(loginAgent) {
-      agent = loginAgent;
-      APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
-    });
+    APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
   });
-
 
   describe('/context-search page', function() {
     var endpoint = '/app/context-search';
@@ -27,15 +21,28 @@ describe('<Application controller>', function() {
     checkUnauthenticated(app, 'get', endpoint);
 
     it("should return contextual datas", function(done) {
-      var req = request(app).get(endpoint);
-      agent.attachCookies(req);
-      req
-        .expect(200)
-        .expect(function(res) {
-          res.text.should.containDeep("Albert Einstein");
-          res.text.should.containDeep("/app/documents/5309c5913a59fda826adc1d8");
-        })
-        .end(done);
+      var parameters = {
+        url: '/app/context-search',
+        parameters: {
+          record_type: 'Contact',
+          record_id: '003b000000LHOj3'
+        }
+      };
+
+      async.waterfall([
+        function buildRequest(cb) {
+          authenticatedCall(app, parameters, cb);
+        },
+        function sendRequest(req, cb) {
+          req
+            .expect(200)
+            .expect(function(res) {
+              res.text.should.containDeep("Albert Einstein");
+              res.text.should.containDeep("/app/documents/5309c5913a59fda826adc1d8");
+            })
+            .end(cb);
+        }
+      ], done);
     });
   });
 
@@ -44,15 +51,24 @@ describe('<Application controller>', function() {
     checkUnauthenticated(app, 'get', endpoint);
 
     it("should return document datas", function(done) {
-      var req = request(app).get(endpoint);
-      agent.attachCookies(req);
-      req
-        .expect(200)
-        .expect(function(res) {
-          res.text.should.containDeep("pdf2htmlEX");
-          res.text.should.containDeep("mehdi.bouheddi@papiel.fr");
-        })
-        .end(done);
+      var parameters = {
+        url: '/app/documents/5309c57d9ba7daaa265ffdc9',
+      };
+
+      async.waterfall([
+        function buildRequest(cb) {
+          authenticatedCall(app, parameters, cb);
+        },
+        function sendRequest(req, cb) {
+          req
+            .expect(200)
+            .expect(function(res) {
+              res.text.should.containDeep("pdf2htmlEX");
+              res.text.should.containDeep("mehdi.bouheddi@papiel.fr");
+            })
+            .end(cb);
+        }
+      ], done);
     });
   });
 
