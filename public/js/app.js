@@ -28,12 +28,16 @@ var displayFull = function(url) {
   }
 };
 
-var init = function() {
-  var isOnMobile = checkIsOnMobile();
+
+/**
+ * Open documents URL in custom window
+ */
+$(function() {
   var isViewer = window.opener ? true : false;
+  var isOnMobile = checkIsOnMobile();
 
   // Handle the full preview loading
-  $( "[data-document-url]" ).click(function(e) {
+  $("[data-document-url]").click(function(e) {
     e.preventDefault();
 
     var url = $(this).data("documentUrl");
@@ -43,8 +47,15 @@ var init = function() {
       displayFull(url);
     }
   });
+});
 
+
+/**
+ * Add custom back button on SF iframe.
+ */
+$(function() {
   // Previous page button
+  var isOnMobile = checkIsOnMobile();
   if (!isOnMobile && $(".back-btn")) {
     $(".back-btn").addClass("hidden");
   }
@@ -52,8 +63,16 @@ var init = function() {
     e.preventDefault();
     history.back();
   });
-};
+});
 
-$(function () {
-  init();
+
+/**
+ * Toggle "Filters"
+ */
+$(function() {
+  $('#toggle-filters').click(function(e) {
+    e.preventDefault();
+
+    $('.filters-container').toggle();
+  })
 });
