@@ -48,16 +48,20 @@ module.exports.contextSearch = function(req, res) {
       // Retrieve documents matching the query
       var params = {};
       params.search = search;
+      context.filters = {};
+
       if(req.query.query) {
         params.search += " " + req.query.query;
+        context.filters.search = req.query.query;
       }
       if(req.query.document_type) {
         params.document_type = req.query.document_type;
+        context.filters.document_type = params.document_type;
       }
       if(req.query.token) {
         params.token = req.query.token;
+        context.filters.token = params.token;
       }
-      console.log(params);
 
       anyfetchHelpers.findDocuments(params, cb);
     }

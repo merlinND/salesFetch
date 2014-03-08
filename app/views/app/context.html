@@ -5,7 +5,21 @@
 <section class="container">
   <h2 class= "about">
     <div class="std-icon icon-{{context.record_type.toLowerCase()}}"></div>
-    About <strong>{{context.context_display}}</strong>
+    {% if context.filters.document_type %}
+    {{documents.document_types[context.filters.document_type].name|title}} about
+    {% else %}
+    About
+    {% endif %}
+
+    <strong>{{context.context_display}}</strong>
+
+    {% if context.filters.search %}
+    and "{{context.filters.search}}"
+    {% endif %}
+
+    {% if context.filters.token %}
+    in {{documents.providers[context.filters.token].name}}
+    {% endif %}
     <div class="filters pull-right"><a href="#" id="toggle-filters">Filters</a></div>
   </h2>
 
@@ -16,7 +30,7 @@
         <select class="form-control" id="token" name="token">
           <option value="">All</option>
           {% for provider in documents.providers %}
-          <option value="{{loop.key}}">{{provider.name}}</option>
+          <option value="{{loop.key}}">{{provider.name|title}}</option>
           {% endfor %}
         </select>
       </div>
@@ -25,7 +39,7 @@
         <select class="form-control" id="document_type" name="document_type">
           <option value="">All</option>
           {% for docType in documents.document_types %}
-          <option value="{{docType.id}}">{{docType.name}}</option>
+          <option value="{{docType.id}}">{{docType.name|title}}</option>
           {% endfor %}
         </select>
       </div>

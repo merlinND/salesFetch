@@ -80,7 +80,7 @@ $(function() {
 /**
  * Display the right size for pdf viewer
  */
- $(function() {
+$(function() {
   var getPdfZoom = function() {
     var containerWidth = $('#page-container').width();
     $('[data-page-no]').each(function() {
