@@ -13,7 +13,8 @@
     <div class="row">
       <div class="col-sm-4">
         <label for="document-type">Source</label>
-        <select class="form-control" id="provider" name="provider">
+        <select class="form-control" id="token" name="token">
+          <option value="">All</option>
           {% for provider in documents.providers %}
           <option value="{{loop.key}}">{{provider.name}}</option>
           {% endfor %}
@@ -21,15 +22,16 @@
       </div>
       <div class="col-sm-4">
         <label for="document-type">Type</label>
-        <select class="form-control" id="document-type" name="document-type">
+        <select class="form-control" id="document_type" name="document_type">
+          <option value="">All</option>
           {% for docType in documents.document_types %}
-          <option value="{{value.id}}">{{docType.name}}</option>
+          <option value="{{docType.id}}">{{docType.name}}</option>
           {% endfor %}
         </select>
       </div>
       <div class="col-sm-4">
         <label for="query">Query</label>
-        <input type="text" class="form-control" id="query" name="query">
+        <input type="text" class="form-control" id="query" name="query" value="{{ query.query }}">
       </div>
     </div>
     <input type="hidden" name="context" value="{{ query.context }}" />
