@@ -28,22 +28,34 @@ var displayFull = function(url) {
   }
 };
 
-var init = function() {
-  var isOnMobile = checkIsOnMobile();
+
+/**
+ * Open documents URL in custom window
+ */
+$(function() {
   var isViewer = window.opener ? true : false;
+  var isOnMobile = checkIsOnMobile();
 
   // Handle the full preview loading
-  $( ".snippet-container a" ).click(function(e) {
+  $("[data-document-url]").click(function(e) {
     e.preventDefault();
 
+    var url = $(this).data("documentUrl");
     if (isOnMobile) {
-      window.location = $(this)[0].href;
+      window.location = url;
     } else if (!isViewer) {
-      displayFull($(this)[0].href);
+      displayFull(url);
     }
   });
+});
 
+
+/**
+ * Add custom back button on SF iframe.
+ */
+$(function() {
   // Previous page button
+  var isOnMobile = checkIsOnMobile();
   if (!isOnMobile && $(".back-btn")) {
     $(".back-btn").addClass("hidden");
   }
@@ -51,8 +63,39 @@ var init = function() {
     e.preventDefault();
     history.back();
   });
-};
+});
 
-$(function () {
-  init();
+
+/**
+ * Toggle "Filters"
+ */
+$(function() {
+  $('#toggle-filters').click(function(e) {
+    e.preventDefault();
+
+    $('#filters-container').toggle();
+  });
+});
+
+/**
+ * Display the right size for pdf viewer
+ */
+$(function() {
+  var getPdfZoom = function() {
+    var containerWidth = $('#page-container').width();
+    $('[data-page-no]').each(function() {
+      var pageWidth = $(this).width();
+      var ratio = containerWidth / pageWidth - 0.005;
+      $(this).css("zoom", ratio);
+      $(this).css("-moz-transform", ratio);
+    });
+  };
+
+  if ($('#page-container')) {
+    $( window ).resize(function() {
+      getPdfZoom();
+    });
+
+    getPdfZoom();
+  }
 });

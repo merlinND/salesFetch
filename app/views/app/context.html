@@ -1,39 +1,72 @@
 {% extends './template.html' %}
 
 {% block content %}
-<!-- <nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    </div>
-    <div class="collapse navbar-collapse" id="navbar-collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Timeline</a></li>
-        <li><a href="/app/search">Search</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Settings</a></li>
-      </ul>
-    </div>
-  </div>
-</nav> -->
 
-<section class="container-fluid">
-  <div class= "about">
-    About <strong>{{context.context_display}}</strong>
+<section class="container">
+  <h2 class= "about">
+    <div class="std-icon icon-{{context.record_type.toLowerCase()}}"></div>
+    {% if context.filters.document_type %}
+    {{documents.document_types[context.filters.document_type].name|title}} about
+    {% else %}
+    About
+    {% endif %}
+
+    <strong>{{context.context_display}}</strong>
+
+    {% if context.filters.search %}
+    and "{{context.filters.search}}"
+    {% endif %}
+
+    {% if context.filters.token %}
+    in {{documents.providers[context.filters.token].name}}
+    {% endif %}
+    <div class="filters pull-right"><a href="#" id="toggle-filters">Filters</a></div>
+  </h2>
+
+  <form id="filters-container" style="display:none;" action="" method="get">
+    <div class="row">
+      <div class="col-sm-4">
+        <label for="document-type">Source</label>
+        <select class="form-control" id="token" name="token">
+          <option value="">All</option>
+          {% for provider in documents.providers %}
+          <option value="{{loop.key}}">{{provider.name|title}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label for="document-type">Type</label>
+        <select class="form-control" id="document_type" name="document_type">
+          <option value="">All</option>
+          {% for docType in documents.document_types %}
+          <option value="{{docType.id}}">{{docType.name|title}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label for="query">Query</label>
+        <input type="text" class="form-control" id="query" name="query" value="{{ query.query }}">
+      </div>
+    </div>
+    <input type="hidden" name="context" value="{{ query.context }}" />
+    <input type="submit" class="btn btn-default" value="Submit Query" />
   </div>
 
-  <div class="documents">
+  <hr/>
+
+  </form>
+
+  <div class="row">
     {% for doc in documents.datas %}
-      <a href="/app/documents/{{doc.id}}" class="snippet-container col-xs-12">
-        <header>{{doc.document_type|capitalize}} - {{doc.provider|capitalize}}</header>
-        {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
-      </a>
+      <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container">
+        <div class="panel-heading">
+          {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
+          <div class="bookmark pull-right"></div>
+        </div>
+        <div class="panel-body">
+          {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
+        </div>
+      </div>
     {% endfor %}
   </div>
 </section>

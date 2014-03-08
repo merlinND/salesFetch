@@ -30,6 +30,7 @@ module.exports.findDocuments = function(params, cb) {
     var rootReturn = data[0].body;
     var docReturn = data[1].body;
 
+    // Render the datas templated
     docReturn.datas.forEach(function(doc) {
       var relatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
       doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
@@ -37,6 +38,21 @@ module.exports.findDocuments = function(params, cb) {
       doc.provider = rootReturn.provider_status[doc.token].name;
       doc.document_type = rootReturn.document_types[doc.document_type].name;
     });
+
+    // Return all the documents types
+    for (var docType in docReturn.document_types) {
+      if (docType) {
+        docReturn.document_types[docType] = rootReturn.document_types[docType];
+      }
+    }
+
+    // Return all the providers
+    docReturn.providers = {};
+    for (var provider in docReturn.tokens) {
+      if (provider) {
+        docReturn.providers[provider] = rootReturn.provider_status[provider];
+      }
+    }
 
     cb(null, docReturn);
   });

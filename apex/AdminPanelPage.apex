@@ -1,0 +1,7 @@
+<apex:page sidebar="false">
+  <apex:canvasApp applicationName="salesFetch_dev"
+    parameters="{url: '/admin'}"
+    scrolling="yes"
+    width="100%"
+  />
+</apex:page>

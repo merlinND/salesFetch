@@ -41,11 +41,29 @@ module.exports.contextSearch = function(req, res) {
         return cb(new Error('No contextProfilers for this object'));
       }
 
+      context.record_type = profiler.record_type;
       var search = Mustache.render(profiler.query_template, record);
       context.context_display = Mustache.render(profiler.display_template, record);
 
       // Retrieve documents matching the query
-      anyfetchHelpers.findDocuments({search: search}, cb);
+      var params = {};
+      params.search = search;
+      context.filters = {};
+
+      if(req.query.query) {
+        params.search += " " + req.query.query;
+        context.filters.search = req.query.query;
+      }
+      if(req.query.document_type) {
+        params.document_type = req.query.document_type;
+        context.filters.document_type = params.document_type;
+      }
+      if(req.query.token) {
+        params.token = req.query.token;
+        context.filters.token = params.token;
+      }
+
+      anyfetchHelpers.findDocuments(params, cb);
     }
   ], function(err, datas) {
     if (err) {
@@ -53,6 +71,7 @@ module.exports.contextSearch = function(req, res) {
     }
 
     res.render('app/context.html', {
+      query: req.query,
       context: context,
       documents: datas
     });
