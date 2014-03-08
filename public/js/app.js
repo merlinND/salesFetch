@@ -76,3 +76,26 @@ $(function() {
     $('#filters-container').toggle();
   });
 });
+
+/**
+ * Display the right size for pdf viewer
+ */
+ $(function() {
+  var getPdfZoom = function() {
+    var containerWidth = $('#page-container').width();
+    $('[data-page-no]').each(function() {
+      var pageWidth = $(this).width();
+      var ratio = containerWidth / pageWidth - 0.005;
+      $(this).css("zoom", ratio);
+      $(this).css("-moz-transform", ratio);
+    });
+  };
+
+  if ($('#page-container')) {
+    $( window ).resize(function() {
+      getPdfZoom();
+    });
+
+    getPdfZoom();
+  }
+});
