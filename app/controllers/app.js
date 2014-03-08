@@ -22,7 +22,7 @@ module.exports.contextSearch = function(req, res) {
 
   async.waterfall([
     function retrieveContext(cb) {
-      salesforceHelpers.loadObject(context.instance_url, context.oauth_token, context.params.record_type, context.params.record_id, cb);
+      salesforceHelpers.loadObject(req.session.instanceUrl, req.session.oauthToken, context.params.record_type, context.params.record_id, cb);
     },
     function retrieveProfiler(_record, cb) {
       record = _record;

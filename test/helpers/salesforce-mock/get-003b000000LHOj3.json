@@ -1,0 +1,12 @@
+{
+  "path" : "/services/data/v29.0/sobjects/Contact/003b000000LHOj3",
+  "verb" : "GET",
+  "code": 200,
+  "reply": {
+    "attributes": {
+      "type": "Contact",
+      "url": "'/services/data/v29.0/sobjects/Contact/003b000000LHOj3AAH'"
+    },
+   "Name": "Albert Einstein"
+  }
+}
