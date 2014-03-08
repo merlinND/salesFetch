@@ -9,7 +9,7 @@
     <div class="filters pull-right"><a href="#" id="toggle-filters">Filters</a></div>
   </h2>
 
-  <form id="filters-container" action="" method="get">
+  <form id="filters-container" style="display:none;" action="" method="get">
     <div class="row">
       <div class="col-sm-4">
         <label for="document-type">Source</label>
@@ -36,10 +36,11 @@
     </div>
     <input type="hidden" name="context" value="{{ query.context }}" />
     <input type="submit" class="btn btn-default" value="Submit Query" />
-    </div>
-  </form>
+  </div>
 
   <hr/>
+
+  </form>
 
   <div class="row">
     {% for doc in documents.datas %}
