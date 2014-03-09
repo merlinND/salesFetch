@@ -56,8 +56,8 @@ $(function() {
 $(function() {
   // Previous page button
   var isOnMobile = checkIsOnMobile();
-  if (!isOnMobile && $(".back-btn")) {
-    $(".back-btn").addClass("hidden");
+  if (isOnMobile && $(".back-btn")) {
+    $(".back-btn").removeClass("hidden");
   }
   $(".back-btn").click(function(e) {
     e.preventDefault();
