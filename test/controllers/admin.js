@@ -150,13 +150,6 @@ describe('<Admin controller>', function() {
 
     checkUnauthenticated(app, 'get', endpoint);
 
-    it('should reject unauthentified user', function(done) {
-      request(app)
-        .get(endpoint('12334'))
-        .expect(401)
-        .end(done);
-    });
-
     it('should return 404 if not found', function(done) {
       var req = request(app).get(endpoint('5318bdc7dea8330000db4757'));
       agent.attachCookies(req);

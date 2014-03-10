@@ -48,7 +48,6 @@ describe('<user controller>', function() {
   });
 
   describe('/authenticate endpoint', function() {
-    checkUnauthenticated(app, 'post', '/authenticate');
 
     it('should authenticate user with valid credentials', function(done) {
       var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
