@@ -16,7 +16,7 @@ var Organization = mongoose.model('Organization');
 /**
  * Display Context page
  */
-module.exports.contextSearch = function(req, res) {
+module.exports.contextSearch = function(req, res, next) {
   var context = JSON.parse(req.query.context);
   var record;
 
@@ -38,7 +38,7 @@ module.exports.contextSearch = function(req, res) {
       var profiler = _.find(contextProfilers, {record_type: context.params.record_type});
 
       if (!profiler) {
-        return cb(new Error('No contextProfilers for this object'));
+        return cb(new Error("No contextProfilers for this object"));
       }
 
       context.record_type = profiler.record_type;
@@ -67,7 +67,7 @@ module.exports.contextSearch = function(req, res) {
     }
   ], function(err, datas) {
     if (err) {
-      return res.send(500);
+      return next(err);
     }
 
     res.render('app/context.html', {
@@ -81,10 +81,10 @@ module.exports.contextSearch = function(req, res) {
 /**
  * Show full document
  */
-module.exports.documentDisplay = function(req, res) {
+module.exports.documentDisplay = function(req, res, next) {
   anyfetchHelpers.findDocument(req.params.id, function(err, document) {
     if(err) {
-      return res.send(500);
+      return next(err);
     }
     res.render('app/show.html', {
       document: document

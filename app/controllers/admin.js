@@ -47,10 +47,13 @@ var createVisualforceContextPage = function(contextProfilers) {
  * Administration index page
  * Display the context profilers settings
  */
-module.exports.index = function(req, res) {
+module.exports.index = function(req, res, next) {
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err || !org || !org.contextProfilers) {
-      return res.send(500);
+    if (err) {
+      return next(err);
+    }
+    if (!org || !org.contextProfilers) {
+      return next(new Error("No matching organization or context profilers."));
     }
 
     var contextProfilers = createVisualforceContextPage(org.contextProfilers);
@@ -97,16 +100,16 @@ module.exports.createContextProfiler = function(req, res) {
   });
 };
 
-module.exports.editContextProfiler = function(req, res) {
+module.exports.editContextProfiler = function(req, res, next) {
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err || !org) {
-      res.send(500, err);
+      return next(err);
     }
 
     var contextProfiler = org.contextProfilers.id(req.params.contextProfilerId);
 
     if (!contextProfiler) {
-      res.send(500);
+      return next(new Error("No context profiler."));
     }
 
     res.render('admin/edit.html', {
@@ -119,20 +122,23 @@ module.exports.editContextProfiler = function(req, res) {
  * Delete the selected context profiler
  * Redirect to index if the context profiler is effectively removed
  */
-module.exports.deleteContextProfiler = function(req, res) {
+module.exports.deleteContextProfiler = function(req, res, next) {
   var profilerId = req.params.contextProfilerId;
   Organization.findOne({_id: req.session.user.organization}, function(err, org) {
     if (err) {
-      return res.send(500);
+      return next(err);
     }
     if (!org.contextProfilers.id(profilerId)) {
-      return res.send(404);
+      return next({
+        error: new Error("Context profiler not found."),
+        status: 404
+      });
     }
 
     org.contextProfilers.id(profilerId).remove();
     org.save(function(err) {
       if (err) {
-        return res.send(500);
+        return next(err);
       }
 
       res.redirect(302,'/admin');

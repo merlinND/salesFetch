@@ -55,12 +55,12 @@ var authenticateUser = function(context, done) {
  * Called by Salesforce with SF user credentials and current context.
  * We'll use this to find our user / create an user.
  */
-module.exports.authenticate = function(req, res) {
+module.exports.authenticate = function(req, res, next) {
   var envelope;
   async.waterfall([
     function checkRequestValidity(cb){
       if (!req.body.signed_request) {
-        return cb(new Error('bad request'));
+        return next({message: "bad request", status: 401});
       }
 
       // Extract request parts
@@ -71,7 +71,7 @@ module.exports.authenticate = function(req, res) {
       // Check the request validity
       var check = crypto.createHmac("sha256", config.consumer_secret).update(encodedEnvelope).digest("base64");
       if (check !== consumerSecret) {
-        return cb(new Error("bad request"));
+        return next({message: "bad request", status: 401});
       }
 
       envelope = JSON.parse(new Buffer(encodedEnvelope, "base64"));
