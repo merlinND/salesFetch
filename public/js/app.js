@@ -11,7 +11,10 @@ var checkIsOnMobile = function() {
 var displayFull = function(url) {
   if (!attachedViewer) {
     // Create a new viewer and display the right Url
-    attachedViewer = window.open(url,"_blank","toolbar=yes, scrollbars=yes, resizable=yes, width=800, height=1000");
+    attachedViewer = window.open(null,"_blank","toolbar=yes, scrollbars=yes, resizable=yes, width=800, height=1000");
+    attachedViewer.document.write('loading...');
+    attachedViewer.location = url;
+
     var interval = window.setInterval(function() {
         try {
           if (attachedViewer === null || attachedViewer.closed) {
@@ -23,6 +26,7 @@ var displayFull = function(url) {
         }
       }, 200);
   } else {
+    attachedViewer.document.write('loading...');
     attachedViewer.location = url;
     attachedViewer.focus();
   }
