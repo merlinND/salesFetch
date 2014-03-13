@@ -3,8 +3,8 @@
 {% block content %}
 
 <section class="container">
-  <h2 class= "about">
-    <div class="std-icon icon-{{context.record_type.toLowerCase()}}"></div>
+  <h2 class= "about about-{{context.record_type.toLowerCase()}}">
+    <div class="icon"></div>
     {% if context.filters.document_type %}
     {{documents.document_types[context.filters.document_type].name|title}} about
     {% else %}
