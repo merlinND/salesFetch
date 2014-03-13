@@ -61,7 +61,6 @@
       <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container">
         <div class="panel-heading">
           {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
-          <div class="bookmark pull-right"></div>
         </div>
         <div class="panel-body">
           {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
