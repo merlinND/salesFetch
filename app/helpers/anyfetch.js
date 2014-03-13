@@ -76,7 +76,10 @@ module.exports.findDocument = function(id, cb) {
     var docReturn = data[1].body;
 
     var relatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
+    var titleTemplate = rootReturn.document_types[docReturn.document_type].template_title;
+
     docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
+    docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
 
     docReturn.provider = rootReturn.provider_status[docReturn.token].name;
     docReturn.document_type = rootReturn.document_types[docReturn.document_type].name;

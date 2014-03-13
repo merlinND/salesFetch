@@ -7,10 +7,24 @@
 <section class="container full">
   <div class="col-xs-12 panel panel-default snippet-container">
     <div class="panel-heading">
-      {{document.document_type|capitalize}} - {{document.provider|capitalize}}
-      <div class="bookmark pull-right"></div>
+      {{document.title_rendered|capitalize}}
     </div>
     <div class="panel-body">
+
+      <div class="actions-container">
+        {{document.document_type|capitalize}} - {{document.provider|capitalize}}
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+              Action <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            {% for action in document.actions %}
+            <li><a href="{{action}}">{{loop.key}}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
       {% autoescape false %}{{document.full_rendered}}{% endautoescape %}
     </div>
   </div>
