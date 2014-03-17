@@ -46,7 +46,9 @@ module.exports.contextSearch = function(req, res, next) {
       context.context_display = Mustache.render(profiler.display_template, record);
 
       // Retrieve documents matching the query
-      var params = {};
+      var params = {
+        sort: '-creationDate'
+      };
       params.search = search;
       context.filters = {};
 
@@ -69,6 +71,7 @@ module.exports.contextSearch = function(req, res, next) {
     if (err) {
       return next(err);
     }
+
 
     res.render('app/context.html', {
       query: req.query,
