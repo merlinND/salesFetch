@@ -9,3 +9,4 @@ public/lib
 coverage
 *.sublime-*
 keys.sh
+apex/config

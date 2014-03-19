@@ -1,0 +1,15 @@
+<apex:page standardController="Contact">
+
+<h3 class="card-header">
+  <span class="header-icon">
+    <apex:image value="{!$Resource.SalesFetchLogo}"/>
+  </span>
+  <span class="header-label">Show context</span>
+</h3>
+
+<div id="canvas-app">
+    <c:SalesFetchIframeComponent_Dev ObjectType="Contact" SalesforceRecordId="{!Contact.Id}" />
+</div>
+
+               
+</apex:page>

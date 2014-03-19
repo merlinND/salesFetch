@@ -1,8 +1,8 @@
 <apex:component >
   <apex:attribute name="ObjectType" description="Salesforce Object API Name. e.g Account/Contact/Opportunity/Lead/Case/Custom_Object__c." type="String" required="true"/>
   <apex:attribute name="SalesforceRecordId" description="Salesforce record Id of Account/Contact/Opportunity/Lead/Custom Object in context." type="String" required="true"/>
-
-  <apex:canvasApp applicationName="salesFetch_dev"
+    
+  <apex:canvasApp applicationName="SalesFetch" 
     parameters="{url: '/app/context-search', parameters:{record_type: '{!ObjectType}', record_id:'{!SalesforceRecordId}'}}"
     scrolling="yes"
     height="500px"

@@ -1,0 +1,4 @@
+<apex:page >
+  <h1>DEV search page</h1>
+  <apex:canvasApp applicationName="salesFetch_dev" parameters="{mode: 'search'}"/>
+</apex:page>
