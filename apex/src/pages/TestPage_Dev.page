@@ -1,3 +1,16 @@
 <apex:page id="salesFetchLeadPage" StandardController="Lead"  docType="html-5.0">
+<style type="text/css">
+  html, body, .loader{
+    height: 100%;
+    width: 100%;
+  }
+
+  .loader {
+    background-color: #EEE;
+  }
+</style>
+    <div class="loader">
+      Saslesfetch is loading
+    </div>
     <c:TestComponent_Dev ObjectType="Lead" SalesforceRecordId="{!Lead.Id}"/>
 </apex:page>
