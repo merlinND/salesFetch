@@ -20,6 +20,7 @@ var OrgModel = new Schema ({
   },
   name: String,
   currency: String,
+  masterKey: String,
   contextProfilers: [{
     record_type: String,
     query_template: String,

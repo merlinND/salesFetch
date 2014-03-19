@@ -40,12 +40,27 @@ var certificates = {
   cert: fs.readFileSync(dir_path + '/config/ssl-cert.pem')
 };
 
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+  // intercept OPTIONS method
+  if ('OPTIONS' === req.method) {
+    res.send(200);
+  }
+  else {
+    next();
+  }
+};
+
 /**
  * Server bootstrap
  */
 var bootstrapServer = function(app, db) {
 
   // Sessions
+  app.use(allowCrossDomain);
   app.use(express.cookieParser());
   app.use(express.session({
     secret: node_env,

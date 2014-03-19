@@ -5,16 +5,14 @@ var async = require('async');
 var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
-var config = require('../../config');
 
 
 /**
  * Authenticate the user based on the request's context
  * return the user
  */
-var authenticateUser = function(context, done) {
+var authenticateUser = function(context, org, done) {
   var userContext = context.user;
-  var orgContext = context.organization;
   async.waterfall([
     function(cb) {
       // Find an existing user
@@ -23,29 +21,15 @@ var authenticateUser = function(context, done) {
       if (user) {
         return done(null, user);
       }
-      // Find the a mathcing company
-      Organization.findOne({organizationId: context.organization.organizationId}, cb);
-    }, function(org, cb) {
-      if (org) {
-        return cb(null, org);
-      }
 
-      // Create a company if no one matching
-      var  newOrg = new Organization({
-        name: orgContext.name,
-        organizationId: orgContext.organizationId,
-        currency: orgContext.currencyIsoCode
-      });
-      newOrg.save(cb);
-    }, function(org, count, cb) {
       // Create create a user in the company
-      var user = new User({
-        name: userContext.fullName,
-        userId: userContext.userId,
+      var newUser = new User({
+        name: userContext.name,
+        userId: userContext.id,
         email: userContext.email,
         organization: org._id
       });
-      user.save(cb);
+      newUser.save(cb);
     }
   ], done);
 };
@@ -56,49 +40,43 @@ var authenticateUser = function(context, done) {
  * We'll use this to find our user / create an user.
  */
 module.exports.authenticate = function(req, res, next) {
-  var envelope;
+  var organization;
+
   async.waterfall([
-    function checkRequestValidity(cb){
-      if (!req.body.signed_request) {
+    function retrieveCompany(cb) {
+      if (!req.body.org.id) {
         return next({message: "bad request", status: 401});
       }
 
-      // Extract request parts
-      var bodyArray = req.body.signed_request.split(".");
-      var consumerSecret = bodyArray[0];
-      var encodedEnvelope = bodyArray[1];
+      Organization.findOne({organizationId: req.body.org.id}, cb);
+    },
+    function checkRequestValidity(org, cb){
+      organization = org;
+      var hash = req.body.org.id + req.body.user.id + "Bob" + "SalesFetch4TheWin";
 
       // Check the request validity
-      var check = crypto.createHmac("sha256", config.consumer_secret).update(encodedEnvelope).digest("base64");
-      if (check !== consumerSecret) {
+      var check = crypto.createHash('sha1').update(hash).digest("base64");
+      if (check !== req.body.hash) {
         return next({message: "bad request", status: 401});
       }
 
-      envelope = JSON.parse(new Buffer(encodedEnvelope, "base64"));
-      cb(null, envelope);
+      cb(null, req.body);
     },
     function loadUser(envelope, cb){
-      // Get the user
-      authenticateUser(envelope.context, cb);
+      authenticateUser(envelope, organization, cb);
     }
   ], function (err, user) {
     if (err) {
       return res.send(401);
     }
 
-    var redirectUrl = envelope.context.environment.parameters.url;
+    var redirectUrl = req.body.params.url;
 
     req.session.user = user;
-    req.session.instanceUrl = envelope.client.instanceUrl;
-    req.session.oauthToken = envelope.client.oauthToken;
+    req.session.instanceUrl = req.body['instance-url'];
+    req.session.oauthToken = req.body['session-id'];
 
-
-    var context = {
-      params: envelope.context.environment.parameters.parameters,
-      dimensions: envelope.context.environment.dimensions,
-    };
-
-    redirectUrl += "?context=" + encodeURIComponent(JSON.stringify(context));
+    redirectUrl += "?context=" + encodeURIComponent(JSON.stringify(req.body));
 
     return res.redirect(302, redirectUrl);
   });

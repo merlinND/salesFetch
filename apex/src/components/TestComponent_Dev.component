@@ -31,10 +31,20 @@
                 $j('.loader').text("Not enough height. Ask your administrator at least 400px height.");
             }
 
-            $j.post(params['salesfetch-api-url'], params)
-                .done(function(data){
-                    console.log(data);
-                });
+            $j.ajax({
+                url: params['salesfetch-api-url'] + '/authenticate',
+                type: "POST",
+                crossDomain: true,
+                data: params,
+                dataType: "json",
+                success: function (response) {
+                    var resp = JSON.parse(response)
+                    alert(resp.status);
+                },
+                error: function (xhr, status) {
+                    $j('.loader').text("Error : " + status);
+                }
+            });
         });
     </script>
 </apex:component>
