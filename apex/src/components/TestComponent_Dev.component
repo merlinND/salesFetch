@@ -39,12 +39,12 @@
                 crossDomain: true,
                 data: params,
                 dataType: "json",
-                success: function (response) {
-                    var resp = JSON.parse(response)
-                    alert(resp.status);
+                statusCode: {
+                    302: function () { alert(' received redirect 302'); },
+                    301: function () { alert(' received redirect 301'); }
                 },
                 error: function (xhr, status) {
-                    $j('.loader').text("Error : " + status);
+                    console.log(xhr, status)
                 }
             });
         });
