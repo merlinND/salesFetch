@@ -70,10 +70,9 @@ module.exports.authenticate = function(req, res, next) {
       return res.send(401);
     }
 
-    var redirectUrl = req.body.params.url;
+    var redirectUrl = req.body['redirect-url'];
 
     req.session.user = user;
-    req.session.instanceUrl = req.body['instance-url'];
     req.session.oauthToken = req.body['session-id'];
 
     redirectUrl += "?context=" + encodeURIComponent(JSON.stringify(req.body));

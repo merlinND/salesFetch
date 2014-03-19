@@ -31,6 +31,8 @@
                 $j('.loader').text("Not enough height. Ask your administrator at least 400px height.");
             }
 
+            params['redirect-url'] = '/app/context-search';
+
             $j.ajax({
                 url: params['salesfetch-api-url'] + '/authenticate',
                 type: "POST",
