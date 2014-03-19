@@ -36,4 +36,7 @@ You shoud now be able to launch the server with:
   $ grunt
 ```
 
-The server in now available on `https://localhost:3000`. The `https`is important for securing the connection between salesFetch and Salesforce.
+The server in now available on `https://localhost:3000`. The `https` is important for securing the connection between salesFetch and Salesforce.
+
+## SalesForce project management
+You can use [MavensMate](http://mavensmate.com/) and the integration into the SublimText3 text editor to manage the Apex code. To connect an existing project to the plugin [use this link](http://mavensmate.com/Plugins/Sublime_Text/Existing_Projects).
