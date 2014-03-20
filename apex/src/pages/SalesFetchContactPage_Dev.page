@@ -1,3 +1,0 @@
-<apex:page id="salesFetchContactPage" StandardController="Contact">
-    <c:SalesFetchIframeComponent_Dev ObjectType="Contact" SalesforceRecordId="{!Contact.Id}" />
-</apex:page>

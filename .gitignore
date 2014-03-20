@@ -10,3 +10,4 @@ coverage
 *.sublime-*
 keys.sh
 apex/config
+apex/apex-scripts

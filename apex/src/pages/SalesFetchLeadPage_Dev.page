@@ -1,3 +1,0 @@
-<apex:page id="salesFetchLeadPage" StandardController="Lead">
-  <c:SalesFetchIframeComponent_Dev ObjectType="Lead" SalesforceRecordId="{!Lead.Id}" />
-</apex:page>

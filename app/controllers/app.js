@@ -7,17 +7,20 @@ var async = require('async');
 var Mustache = require('mustache');
 var _ = require('lodash');
 var mongoose = require('mongoose');
+var queryString = require('querystring');
 
 var anyfetchHelpers = require('../helpers/anyfetch.js');
 var salesforceHelpers = require('../helpers/salesforce.js');
 var Organization = mongoose.model('Organization');
 
 
+
 /**
  * Display Context page
  */
 module.exports.contextSearch = function(req, res, next) {
-  var context = JSON.parse(req.query.context);
+  console.log("vite")
+  var context = decodeURIComponent(JSON.parse(req.query.context));
   var record;
 
   async.waterfall([

@@ -5,6 +5,7 @@ var async = require('async');
 var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
+var queryString = require('querystring');
 
 
 /**
@@ -75,7 +76,7 @@ module.exports.authenticate = function(req, res, next) {
     req.session.user = user;
     req.session.oauthToken = req.body['session-id'];
 
-    redirectUrl += "?context=" + encodeURIComponent(JSON.stringify(req.body));
+    redirectUrl += "?context=" + encodeURIComponent(JSON.stringify(req.body['context-obj']));
 
     return res.redirect(302, redirectUrl);
   });
