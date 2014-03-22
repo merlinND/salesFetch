@@ -5,28 +5,25 @@
 
 var anyfetchHelpers = require('../helpers/anyfetch.js');
 
-
-
 /**
  * Display Context page
  */
 module.exports.contextSearch = function(req, res, next) {
-  var context = req.data;
+  var data = req.data;
 
   var params = {
     sort: '-creationDate',
-    search: context.context['templated-query']
+    search: data.context['templated-query']
   };
 
-  anyfetchHelpers.findDocuments(context['anyfetch-api-url'], params, function(err, datas) {
+  anyfetchHelpers.findDocuments(data['anyfetch-api-url'], params, function(err, documents) {
     if (err) {
       return next(err);
     }
 
     res.render('app/context.html', {
-      query: req.query,
-      context: context,
-      documents: datas
+      data: data,
+      documents: documents
     });
   });
 };
@@ -35,11 +32,14 @@ module.exports.contextSearch = function(req, res, next) {
  * Show full document
  */
 module.exports.documentDisplay = function(req, res, next) {
-  anyfetchHelpers.findDocument(req.params.id, function(err, document) {
+  var data = req.data;
+
+  anyfetchHelpers.findDocument(data['anyfetch-api-url'], req.params.id, function(err, document) {
     if(err) {
       return next(err);
     }
     res.render('app/show.html', {
+      data: data,
       document: document
     });
   });

@@ -63,13 +63,13 @@ module.exports.findDocuments = function(url, params, cb) {
   });
 };
 
-module.exports.findDocument = function(id, cb) {
+module.exports.findDocument = function(url, id, cb) {
   async.parallel([
     function(cb) {
-      baseRequest('get', '/').end(function(e, r) { cb(e,r);});
+      baseRequest(url, 'get', '/').end(function(e, r) { cb(e,r);});
     },
     function(cb) {
-      baseRequest('get', '/documents/' + id).end(function(e, r) { cb(e,r);});
+      baseRequest(url, 'get', '/documents/' + id).end(function(e, r) { cb(e,r);});
     }
   ],
   function(err, data) {

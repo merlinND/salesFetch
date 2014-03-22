@@ -7,6 +7,6 @@ var authorization = require('../middlewares/authorization');
 module.exports = function(app) {
 
   app.get('/app/context-search', authorization.requiresLogin, appControllers.contextSearch);
-  app.post('/app/documents/:id', authorization.requiresLogin, appControllers.documentDisplay);
+  app.get('/app/documents/:id', authorization.requiresLogin, appControllers.documentDisplay);
 
 };

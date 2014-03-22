@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block bare-js %}
+  <!-- Store current state -->
+  <script type="text/javascript">
+    window.data = {{JSON.stringify(data)|safe}};
+  </script>
+
   <!-- Salesforce -->
   <script type="text/javascript" src="/lib/canvas-sdk/js/canvas-all.js"></script>
 

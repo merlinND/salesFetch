@@ -1,6 +1,7 @@
 'use strict';
 
 var attachedViewer = null;
+var data = window.data;
 
 var checkIsOnMobile = function() {
   var check = false;
@@ -8,12 +9,17 @@ var checkIsOnMobile = function() {
   return check;
 };
 
+var goToLocation = function(window, url) {
+  var urlWithDatas = url + "?data=" + encodeURIComponent(JSON.stringify(data));
+  window.location = urlWithDatas;
+};
+
 var displayFull = function(url) {
   if (!attachedViewer) {
     // Create a new viewer and display the right Url
     attachedViewer = window.open(null,"_blank","toolbar=yes, scrollbars=yes, resizable=yes, width=800, height=1000");
     attachedViewer.document.write('loading...');
-    attachedViewer.location = url;
+    goToLocation(attachedViewer, url);
 
     var interval = window.setInterval(function() {
         try {
@@ -27,7 +33,7 @@ var displayFull = function(url) {
       }, 200);
   } else {
     attachedViewer.document.write('loading...');
-    attachedViewer.location = url;
+    goToLocation(attachedViewer, url);
     attachedViewer.focus();
   }
 };
@@ -46,7 +52,7 @@ $(function() {
 
     var url = $(this).data("documentUrl");
     if (isOnMobile) {
-      window.location = url;
+      goToLocation(window, url);
     } else if (!isViewer) {
       displayFull(url);
     }

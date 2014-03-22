@@ -38,7 +38,6 @@ var authenticateUser = function(context, org, done) {
  */
 exports.requiresLogin = function(req, res, next) {
   var organization;
-
   var data = JSON.parse(req.query.data);
 
   async.waterfall([
