@@ -5,19 +5,19 @@ var request = require('superagent');
 var Mustache = require('mustache');
 
 
-var baseRequest = function(method, url) {
-  return request[method]("http://api.anyfetch.com" + url).set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS);
+var baseRequest = function(endpoint, method, url) {
+  return request[method](endpoint + url).set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS);
 };
 
 
-module.exports.findDocuments = function(params, cb) {
+module.exports.findDocuments = function(url, params, cb) {
   async.parallel([
     function loadDocumentTypes(cb) {
-      baseRequest('get', '/')
+      baseRequest(url, 'get', '/')
         .end(function(e, r) {cb(e,r);});
     },
     function loadDocuments(cb) {
-      baseRequest('get', '/documents')
+      baseRequest(url, 'get', '/documents')
         .query(params)
         .end(function(e, r) {cb(e,r);});
     }
@@ -29,6 +29,11 @@ module.exports.findDocuments = function(params, cb) {
 
     var rootReturn = data[0].body;
     var docReturn = data[1].body;
+
+
+    if (!docReturn.datas) {
+      return cb(null, docReturn);
+    }
 
     // Render the datas templated
     docReturn.datas.forEach(function(doc) {

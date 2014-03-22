@@ -1,24 +1,77 @@
 'use strict';
 
-var mongoose = require('mongoose');
+var crypto = require('crypto');
+var async = require('async');
+var mongoose =require('mongoose');
+var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
+
+/**
+ * Authenticate the user based on the request's context
+ * return the user
+ */
+var authenticateUser = function(context, org, done) {
+  var userContext = context.user;
+  async.waterfall([
+    function(cb) {
+      // Find an existing user
+      User.findOne({userId: userContext.userId}, cb);
+    }, function(user, cb) {
+      if (user) {
+        return done(null, user);
+      }
+
+      // Create create a user in the company
+      var newUser = new User({
+        name: userContext.name,
+        userId: userContext.id,
+        email: userContext.email,
+        organization: org._id
+      });
+      newUser.save(cb);
+    }
+  ], done);
+};
 
 /**
  * Generic require login routing middleware
  */
 exports.requiresLogin = function(req, res, next) {
-  console.log(req)
+  var organization;
 
-  if (!req.session.user) {
-    return res.render('401.html');
-  }
+  var data = JSON.parse(req.query.data);
 
-  User.loadAndPopulate(req.session.user._id, function(err, user) {
+  async.waterfall([
+    function retrieveCompany(cb) {
+      if (!data.org.id) {
+        return next({message: "bad request", status: 401});
+      }
+
+      Organization.findOne({organizationId: data.org.id}, cb);
+    },
+    function checkRequestValidity(org, cb){
+      organization = org;
+
+      var hash = data.org.id + data.user.id + "Bob" + "SalesFetch4TheWin";
+      var check = crypto.createHash('sha1').update(hash).digest("base64");
+
+      if (check !== data.hash) {
+        return next({message: "bad request", status: 401});
+      }
+
+      cb(null, data);
+    },
+    function loadUser(envelope, cb){
+      authenticateUser(envelope, organization, cb);
+    }
+  ], function (err, user) {
     if (err) {
-      return res.render('401.html');
+      return next({status: 401});
     }
 
-    req.user = user;
+    req.session.user = user;
+    req.data = data;
+
     next();
   });
 };
