@@ -69,6 +69,7 @@ module.exports.findDocument = function(id, cb) {
   ];
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
+  console.log('/batch?pages=' + batchParams);
   baseRequest('get', '/batch?pages=' + batchParams, function(err, res) {
     if (err) {
       return cb(err);
