@@ -11,38 +11,41 @@ var baseRequest = function(method, url) {
 
 
 module.exports.findDocuments = function(params, cb) {
-  async.parallel([
-    function loadDocumentTypes(cb) {
-      baseRequest('get', '/')
-        .end(function(e, r) {cb(e,r);});
-    },
-    function loadDocuments(cb) {
-      baseRequest('get', '/documents')
-        .query(params)
-        .end(function(e, r) {cb(e,r);});
-    }
-  ],
-  function(err, data){
+  var query = [];
+  for(var key in params) {
+    query.push(key + "=" + encodeURIComponent(params[key]));
+  }
+
+  var pages = [
+    '/document_types',
+    '/providers',
+    '/documents?' + query.join('&')
+  ];
+
+  var batchParams = pages.map(encodeURIComponent).join('&pages=');
+  baseRequest('get', '/batch?pages=' + batchParams, function(err, res) {
     if (err) {
       return cb(err);
     }
 
-    var rootReturn = data[0].body;
-    var docReturn = data[1].body;
+    var body = res.body;
+    var documentTypes = body[pages[0]];
+    var providers = body[pages[1]];
+    var docReturn = body[pages[1]];
 
     // Render the datas templated
     docReturn.datas.forEach(function(doc) {
-      var relatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
+      var relatedTemplate = documentTypes[doc.document_type].template_snippet;
       doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
-      doc.provider = rootReturn.provider_status[doc.token].name;
-      doc.document_type = rootReturn.document_types[doc.document_type].name;
+      doc.provider = providers[doc.token].name;
+      doc.document_type = documentTypes[doc.document_type].name;
     });
 
     // Return all the documents types
     for (var docType in docReturn.document_types) {
       if (docType) {
-        docReturn.document_types[docType] = rootReturn.document_types[docType];
+        docReturn.document_types[docType] = documentTypes[docType];
       }
     }
 
@@ -50,7 +53,7 @@ module.exports.findDocuments = function(params, cb) {
     docReturn.providers = {};
     for (var provider in docReturn.tokens) {
       if (provider) {
-        docReturn.providers[provider] = rootReturn.provider_status[provider];
+        docReturn.providers[provider] = providers[provider];
       }
     }
 

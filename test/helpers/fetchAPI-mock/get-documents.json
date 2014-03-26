@@ -1,5 +1,5 @@
 {
-  "path" : "/documents?sort=-creationDate&search=Albert%20Einstein",
+  "path" : "/batch?pages=%2F&pages=%2Fdocuments%3Fsort%3D-creationDate%26search%3DAlbert%2520Einstein",
   "verb" : "GET",
   "code": 200,
   "reply": {
