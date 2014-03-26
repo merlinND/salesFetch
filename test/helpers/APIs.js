@@ -16,17 +16,17 @@ var walk = function(path, api) {
   fs.readdirSync(path).forEach(function(file) {
     var newPath = path + '/' + file;
     var stat = fs.statSync(newPath);
-    if (stat.isFile() && file.substr(file.lastIndexOf('.')+1) === 'json') {
-      var endPointConfig = JSON.parse(fs.readFileSync(newPath, 'utf8'));
+    if (stat.isFile() && file.substr(file.lastIndexOf('.') + 1) === 'json') {
+      var endPointConfig = require(newPath);
       api
         .intercept(endPointConfig.path, endPointConfig.verb)
         .reply(endPointConfig.code ,endPointConfig.reply);
-
     } else if (stat.isDirectory()) {
-      walk(newPath);
+      walk(newPath, api);
     }
   });
 };
+
 
 /**
  * Override all the HTTP requests on the server
@@ -34,12 +34,13 @@ var walk = function(path, api) {
 module.exports.mount = function(name, root, cb) {
   APIs[name] = nock(root);
 
-  // Walk trhought the folder to find endpoints for the mock server
+  // Walk through the folder to find endpoints for the mock server
   var apiPath = __dirname + '/' + name + '-mock';
   walk(apiPath, APIs[name]);
 
   cb(null, APIs[name]);
 };
+
 
 /**
  * Reset the HTTP calls on the fetchAPI
