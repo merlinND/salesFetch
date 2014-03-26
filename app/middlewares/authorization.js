@@ -42,16 +42,16 @@ exports.requiresLogin = function(req, res, next) {
 
   async.waterfall([
     function retrieveCompany(cb) {
-      if (!data.org.id) {
+      if (!data.organization.id) {
         return next({message: "bad request", status: 401});
       }
 
-      Organization.findOne({organizationId: data.org.id}, cb);
+      Organization.findOne({organizationId: data.organization.id}, cb);
     },
     function checkRequestValidity(org, cb){
       organization = org;
 
-      var hash = data.org.id + data.user.id + "Bob" + "SalesFetch4TheWin";
+      var hash = data.organization.id + data.user.id + "Bob" + "SalesFetch4TheWin";
       var check = crypto.createHash('sha1').update(hash).digest("base64");
 
       if (check !== data.hash) {
@@ -68,8 +68,8 @@ exports.requiresLogin = function(req, res, next) {
       return next({status: 401});
     }
 
-    req.session.user = user;
-    req.data = data;
+    req.user = user;
+    req.reqParams = data;
 
     next();
   });

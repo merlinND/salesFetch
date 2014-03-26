@@ -9,20 +9,20 @@ var anyfetchHelpers = require('../helpers/anyfetch.js');
  * Display Context page
  */
 module.exports.contextSearch = function(req, res, next) {
-  var data = req.data;
+  var reqParams = req.reqParams;
 
   var params = {
     sort: '-creationDate',
-    search: data.context['templated-query']
+    search: reqParams.templatedQuery
   };
 
-  anyfetchHelpers.findDocuments(data['anyfetch-api-url'], params, function(err, documents) {
+  anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, function(err, documents) {
     if (err) {
       return next(err);
     }
 
     res.render('app/context.html', {
-      data: data,
+      data: reqParams,
       documents: documents
     });
   });
