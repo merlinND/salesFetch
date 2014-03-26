@@ -20,7 +20,7 @@ describe('<Application controller>', function() {
 
     checkUnauthenticated(app, 'get', endpoint);
 
-    it("should return contextual datas", function(done) {
+    it.skip("should return contextual datas", function(done) {
       var parameters = {
         url: '/app/context-search',
         parameters: {
@@ -50,7 +50,7 @@ describe('<Application controller>', function() {
     var endpoint = '/app/documents/5309c57d9ba7daaa265ffdc9';
     checkUnauthenticated(app, 'get', endpoint);
 
-    it("should return document datas", function(done) {
+    it.skip("should return document datas", function(done) {
       var parameters = {
         url: '/app/documents/5309c57d9ba7daaa265ffdc9',
       };
