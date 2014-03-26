@@ -3,97 +3,58 @@
   "verb" : "GET",
   "code": 200,
   "reply": {
-    "document_types": {
-      "5252ce4ce4cfcd16f55cfa3c": 4
+  "/": {
+    "user_email": "anyfetch@gmail.com",
+    "documents_url": "/documents/",
+    "document_types_url": "/document_types/",
+    "providers_url": "/providers/",
+    "users_url": "/users/",
+    "current_user_url": "/users/52fb7b90c8318c4dc800006c",
+    "update_url": "/company/update",
+    "reset_url": "/company/reset",
+    "token_url": "/token",
+    "server_time": "2014-03-26T10:41:44.077Z"
+  },
+  "/documents?sort=-creationDate&search=Albert%20Einstein": {
+    "facets": {
+      "document_types": {
+        "5252ce4ce4cfcd16f55cfa3d": 2,
+        "5252ce4ce4cfcd16f55cfa3f": 1
+      },
+      "tokens": {
+        "5320a682c8318cba94000040": 2,
+        "5320a6abc8318cc5d1000049": 1
+      },
+      "creation_dates": {
+        "1393632000000": 3
+      }
     },
-    "tokens": {
-      "5309c559c8318cba94000002": 2
-    },
-    "datas": [{
+    "datas": [
+      {
         "_type": "Document",
-        "id": "5309c5913a59fda826adc1d8",
-        "creation_date": "2014-02-23T09:55:29.068Z",
-        "token": "5309c559c8318cba94000002",
+        "id": "5320a7705ee6eed51339a1b0",
+        "creation_date": "2014-03-10T19:36:50.000Z",
+        "token": "5320a6abc8318cc5d1000049",
         "company": "52fb7b90c8318c4dc800006b",
-        "document_type": "5252ce4ce4cfcd16f55cfa3c",
+        "document_type": "5252ce4ce4cfcd16f55cfa3f",
         "actions": {
-            "show": "https://www.dropbox.com/home%2FSkillCard%20-%20John%20Smith.xlsx"
+          "show": "https://mail.google.com/mail/b/anyfetch@gmail.com/?cm#all/144ad48c321261db"
         },
-        "document_url": "/documents/5309c5913a59fda826adc1d8",
+        "document_url": "/documents/5320a7705ee6eed51339a1b0",
         "datas": {
-            "title": "SkillCard   John Smith",
-            "path": "/SkillCard - <span class=\"hlt\">John</span> Smith.xlsx",
-            "snippet": "List1\nSkillCard - <span class=\"hlt\">John</span> Smith\nSKILL\tKNOWLEDGE/EXPERIENCE\tSINCE\nv\tAdvanced\t1990\nMS Word\tAdvanced\t2000\nGerman language\tBeginner\t2001\nMS Excel\tIntermediate\t2004\nDriving\tIntermediate\t2005\nWordpress\tAdvanced\t2007\nCooking\tBeginner\t2007\nSQL\tIntermediate\t2008\nPHP\tIntermediate\t2008\nJava\tBeginner\t2010\n"
+          "from": "Matthieu Bacconnier <matthieu.bacconnier@papiel.fr>",
+          "to": "anyfetch@gmail.com",
+          "subject": "Inquiry",
+          "snippet": "<span class=\"hlt\">Albert</span> <span class=\"hlt\">Einstein</span> is an awesome customer.\r\nWe need to convert him to our premium plan.\r\n\r\n\r\nMatthieu Bacconnier\r\n+336 69 34 70 15\r\nhttps://papiel.fr\r\n",
+          "date": "Monday, March 10, 2014"
         },
-        "related": 0
-    }, {
-        "_type": "Document",
-        "id": "5309c5949ba7daaa265ffdd8",
-        "creation_date": "2014-02-23T09:55:32.740Z",
-        "token": "5309c559c8318cba94000002",
-        "company": "52fb7b90c8318c4dc800006b",
-        "document_type": "5252ce4ce4cfcd16f55cfa3c",
-        "actions": {
-            "show": "https://www.dropbox.com/home%2Finvoice-2334889-JohnDoe.pdf"
-        },
-        "document_url": "/documents/5309c5949ba7daaa265ffdd8",
-        "datas": {
-            "title": "invoice 2334889 JohnDoe",
-            "path": "/invoice-2334889-JohnDoe.pdf",
-            "snippet": "\nSalesFetch INVOICE\n123 Your Street\nSan Francisco CA\n(123) 456 789\nemail@yourcompany.com\n15-November-2013\nInvoice #2334889\nPO 456001200\nMr. <span class=\"hlt\">John</span> Doe\nSarce.com\nDear Mr. <span class=\"hlt\">John</span> Doe,\nPlease find below"
-        },
-        "related": 0
-    }, {
-        "_type": "Document",
-        "id": "5309c5949ba7daaa265ffdd6",
-        "creation_date": "2014-02-23T09:55:32.714Z",
-        "token": "5309c559c8318cba94000002",
-        "company": "52fb7b90c8318c4dc800006b",
-        "document_type": "5252ce4ce4cfcd16f55cfa3c",
-        "actions": {
-            "show": "https://www.dropbox.com/home%2FJohn%20Smith%20Profile.docx"
-        },
-        "document_url": "/documents/5309c5949ba7daaa265ffdd6",
-        "datas": {
-            "title": "John Smith Profile",
-            "path": "/<span class=\"hlt\">John</span> Smith Profile.docx",
-            "snippet": " and the 22nd day of July 2013, by the Coroner’s Court of the said State, constituted of , , into the death of Trevor <span class=\"hlt\">John</span> Smith.\nThe said Court finds that Trevor <span class=\"hlt\">John</span> Smith aged 62 years, late of 5 Holmeswood"
-        },
-        "related": 0
-    }, {
-        "_type": "Document",
-        "id": "5309c5793a59fda826adc1cf",
-        "creation_date": "2014-02-23T09:55:05.201Z",
-        "token": "5309c559c8318cba94000002",
-        "company": "52fb7b90c8318c4dc800006b",
-        "document_type": "5252ce4ce4cfcd16f55cfa3c",
-        "actions": {
-            "show": "https://www.dropbox.com/home%2Fstartup-lecture_slides-lecture10-intermediate-js.pdf"
-        },
-        "document_url": "/documents/5309c5793a59fda826adc1cf",
-        "datas": {
-            "title": "startup lecture slides lecture10 intermediate js",
-            "path": "/startup-lecture_slides-lecture10-intermediate-js.pdf",
-            "snippet": " Omicron Theta Phi’ ] ]\n97 */\n98\n99\n100 // 3. Case-insensitive\n101 var ex3 = \"<span class=\"hlt\">John</span> is here.\";\n102 var re3s = /<span class=\"hlt\">JOHN</span>/;\n103 var re3i = /<span class=\"hlt\">JOHN</span>/i;\n104 re3s.test(ex3); // false\n105 re3i.test(ex3); // true"
-        },
-        "related": 0
-    }, {
-        "_type": "Document",
-        "id": "5309c5729ba7daaa265ffdc2",
-        "creation_date": "2014-02-23T09:54:58.797Z",
-        "token": "5309c559c8318cba94000002",
-        "company": "52fb7b90c8318c4dc800006b",
-        "document_type": "5252ce4ce4cfcd16f55cfa3c",
-        "actions": {
-            "show": "https://www.dropbox.com/home%2Flecture_slides-lecture4b-developer-environment.pdf"
-        },
-        "document_url": "/documents/5309c5729ba7daaa265ffdc2",
-        "datas": {
-            "title": "lecture slides lecture4b developer environment",
-            "path": "/lecture_slides-lecture4b-developer-environment.pdf",
-            "snippet": " if you have\ninstalled git (except for the apt-get invocations, which are specific to Ubuntu).\n8\n1 sudo apt-get install -y git-core\n2 mkdir myrepo\n3 cd myrepo\n4 git config --global user.name \"<span class=\"hlt\">John</span> Smith\"\n5"
-        },
-        "related": 0
-    }]
+        "related": 0,
+        "score": null
+      }
+    ],
+    "max_score": null,
+    "next_page_url": "coming",
+    "previous_page_url": "coming"
   }
+}
 }
