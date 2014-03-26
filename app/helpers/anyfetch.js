@@ -62,30 +62,31 @@ module.exports.findDocuments = function(params, cb) {
 };
 
 module.exports.findDocument = function(id, cb) {
-  async.parallel([
-    function(cb) {
-      baseRequest('get', '/').end(function(e, r) { cb(e,r);});
-    },
-    function(cb) {
-      baseRequest('get', '/documents/' + id).end(function(e, r) { cb(e,r);});
-    }
-  ],
-  function(err, data) {
+  var pages = [
+    '/document_types',
+    '/providers',
+    '/documents/' + id
+  ];
+
+  var batchParams = pages.map(encodeURIComponent).join('&pages=');
+  baseRequest('get', '/batch?pages=' + batchParams, function(err, res) {
     if (err) {
       return cb(err);
     }
 
-    var rootReturn = data[0].body;
-    var docReturn = data[1].body;
+    var body = res.body;
+    var documentTypes = body[pages[0]];
+    var providers = body[pages[1]];
+    var docReturn = body[pages[1]];
 
-    var relatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
-    var titleTemplate = rootReturn.document_types[docReturn.document_type].template_title;
+    var relatedTemplate = documentTypes[docReturn.document_type].template_full;
+    var titleTemplate = documentTypes[docReturn.document_type].template_title;
 
     docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
     docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
 
-    docReturn.provider = rootReturn.provider_status[docReturn.token].name;
-    docReturn.document_type = rootReturn.document_types[docReturn.document_type].name;
+    docReturn.provider = providers[docReturn.token].name;
+    docReturn.document_type = documentTypes[docReturn.document_type].name;
 
     cb(null, docReturn);
   });
