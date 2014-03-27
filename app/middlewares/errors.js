@@ -11,8 +11,6 @@ function logErrors(err, req, res, next) {
   var error = err.error || err;
   var status = err.status || 500;
 
-  console.error(error);
-
   res.json({message: message, error: error}, status);
 }
 

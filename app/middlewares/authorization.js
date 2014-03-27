@@ -38,6 +38,10 @@ var authenticateUser = function(context, org, done) {
  */
 exports.requiresLogin = function(req, res, next) {
   var organization;
+
+  if (!req.query.data) {
+    return next({message: "bad request", status: 401});
+  }
   var data = JSON.parse(req.query.data);
 
   async.waterfall([
