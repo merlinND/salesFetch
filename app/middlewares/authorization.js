@@ -55,7 +55,7 @@ exports.requiresLogin = function(req, res, next) {
     function checkRequestValidity(org, cb){
       organization = org;
 
-      var hash = data.organization.id + data.user.id + "Bob" + "SalesFetch4TheWin";
+      var hash = data.organization.id + data.user.id + org.masterKey + "SalesFetch4TheWin";
       var check = crypto.createHash('sha1').update(hash).digest("base64");
 
       if (check !== data.hash) {
