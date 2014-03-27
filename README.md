@@ -1,4 +1,6 @@
 # salesFetch
+[![Build Status](https://travis-ci.org/Papiel/salesFetch.svg?branch=coveralls)](https://travis-ci.org/Papiel/salesFetch)
+[![Coverage Status](https://coveralls.io/repos/Papiel/salesFetch/badge.png)](https://coveralls.io/r/Papiel/salesFetch)
 
 Fetch API integration in Salesforce.
 
