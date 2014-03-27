@@ -1,34 +1,41 @@
 'use strict';
 
-var async = require('async');
 var request = require('superagent');
 var Mustache = require('mustache');
 
 
-var baseRequest = function(endpoint, method, url) {
-  return request[method](endpoint + url).set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS);
+var baseRequest = function(url, endpoint, cb) {
+  var urlToCall = url + endpoint;
+  return request.get(urlToCall)
+    .set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS)
+    .end(function(e, r) {cb(e,r);});
 };
 
 
 module.exports.findDocuments = function(url, params, cb) {
-  async.parallel([
-    function loadDocumentTypes(cb) {
-      baseRequest(url, 'get', '/')
-        .end(function(e, r) {cb(e,r);});
-    },
-    function loadDocuments(cb) {
-      baseRequest(url, 'get', '/documents')
-        .query(params)
-        .end(function(e, r) {cb(e,r);});
-    }
-  ],
-  function(err, data){
+  var query = [];
+  for(var key in params) {
+    query.push(key + "=" + encodeURIComponent(params[key]));
+  }
+
+  var pages = [
+    '/document_types',
+    '/providers',
+    '/documents?' + query.join('&')
+  ];
+
+  var batchParams = pages.map(encodeURIComponent).join('&pages=');
+
+  baseRequest(url, '/batch?pages=' + batchParams, function(err, res) {
     if (err) {
       return cb(err);
     }
 
-    var rootReturn = data[0].body;
-    var docReturn = data[1].body;
+    var body = res.body;
+
+    var documentTypes = body[pages[0]];
+    var providers = body[pages[1]];
+    var docReturn = body[pages[2]];
 
 
     if (!docReturn.datas) {
@@ -37,17 +44,17 @@ module.exports.findDocuments = function(url, params, cb) {
 
     // Render the datas templated
     docReturn.datas.forEach(function(doc) {
-      var relatedTemplate = rootReturn.document_types[doc.document_type].template_snippet;
+      var relatedTemplate = documentTypes[doc.document_type].template_snippet;
       doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
-      doc.provider = rootReturn.provider_status[doc.token].name;
-      doc.document_type = rootReturn.document_types[doc.document_type].name;
+      doc.provider = providers[doc.token].name;
+      doc.document_type = documentTypes[doc.document_type].name;
     });
 
     // Return all the documents types
     for (var docType in docReturn.document_types) {
       if (docType) {
-        docReturn.document_types[docType] = rootReturn.document_types[docType];
+        docReturn.document_types[docType] = documentTypes[docType];
       }
     }
 
@@ -55,7 +62,7 @@ module.exports.findDocuments = function(url, params, cb) {
     docReturn.providers = {};
     for (var provider in docReturn.tokens) {
       if (provider) {
-        docReturn.providers[provider] = rootReturn.provider_status[provider];
+        docReturn.providers[provider] = providers[provider];
       }
     }
 
@@ -63,31 +70,32 @@ module.exports.findDocuments = function(url, params, cb) {
   });
 };
 
-module.exports.findDocument = function(url, id, cb) {
-  async.parallel([
-    function(cb) {
-      baseRequest(url, 'get', '/').end(function(e, r) { cb(e,r);});
-    },
-    function(cb) {
-      baseRequest(url, 'get', '/documents/' + id).end(function(e, r) { cb(e,r);});
-    }
-  ],
-  function(err, data) {
+module.exports.findDocument = function(id, cb) {
+  var pages = [
+    '/document_types',
+    '/providers',
+    '/documents/' + id
+  ];
+
+  var batchParams = pages.map(encodeURIComponent).join('&pages=');
+  baseRequest('get', '/batch?pages=' + batchParams, function(err, res) {
     if (err) {
       return cb(err);
     }
 
-    var rootReturn = data[0].body;
-    var docReturn = data[1].body;
+    var body = res.body;
+    var documentTypes = body[pages[0]];
+    var providers = body[pages[1]];
+    var docReturn = body[pages[1]];
 
-    var relatedTemplate = rootReturn.document_types[docReturn.document_type].template_full;
-    var titleTemplate = rootReturn.document_types[docReturn.document_type].template_title;
+    var relatedTemplate = documentTypes[docReturn.document_type].template_full;
+    var titleTemplate = documentTypes[docReturn.document_type].template_title;
 
     docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
     docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
 
-    docReturn.provider = rootReturn.provider_status[docReturn.token].name;
-    docReturn.document_type = rootReturn.document_types[docReturn.document_type].name;
+    docReturn.provider = providers[docReturn.token].name;
+    docReturn.document_type = documentTypes[docReturn.document_type].name;
 
     cb(null, docReturn);
   });

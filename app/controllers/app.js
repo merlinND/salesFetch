@@ -13,7 +13,7 @@ module.exports.contextSearch = function(req, res, next) {
 
   var params = {
     sort: '-creationDate',
-    search: reqParams.templatedQuery
+    search: reqParams.context.templatedQuery
   };
 
   anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, function(err, documents) {
