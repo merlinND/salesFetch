@@ -32,14 +32,14 @@ module.exports.contextSearch = function(req, res, next) {
  * Show full document
  */
 module.exports.documentDisplay = function(req, res, next) {
-  var data = req.data;
+  var reqParams = req.reqParams;
 
-  anyfetchHelpers.findDocument(data['anyfetch-api-url'], req.params.id, function(err, document) {
+  anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, function(err, document) {
     if(err) {
       return next(err);
     }
     res.render('app/show.html', {
-      data: data,
+      data: reqParams,
       document: document
     });
   });

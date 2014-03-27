@@ -70,7 +70,7 @@ module.exports.findDocuments = function(url, params, cb) {
   });
 };
 
-module.exports.findDocument = function(id, cb) {
+module.exports.findDocument = function(url, id, cb) {
   var pages = [
     '/document_types',
     '/providers',
@@ -78,15 +78,16 @@ module.exports.findDocument = function(id, cb) {
   ];
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
-  baseRequest('get', '/batch?pages=' + batchParams, function(err, res) {
+  baseRequest(url, '/batch?pages=' + batchParams, function(err, res) {
     if (err) {
       return cb(err);
     }
 
     var body = res.body;
+
     var documentTypes = body[pages[0]];
     var providers = body[pages[1]];
-    var docReturn = body[pages[1]];
+    var docReturn = body[pages[2]];
 
     var relatedTemplate = documentTypes[docReturn.document_type].template_full;
     var titleTemplate = documentTypes[docReturn.document_type].template_title;
