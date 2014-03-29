@@ -6,13 +6,9 @@
 var async = require('async');
 var jsforce = require('jsforce');
 var _ = require('lodash');
-var fs = require('fs');
-var Mustache = require('mustache');
-var mongoose = require('mongoose'),
-    Organization = mongoose.model('Organization');
-
-// Load in cache template for Salesforce context page
-var contextPageTemplate = fs.readFileSync(__dirname + '/../views/apex/context-page-template.apex', 'utf8');
+var mongoose = require('mongoose');
+var Organization = mongoose.model('Organization');
+var User = mongoose.model('User');
 
 /**
  * Retrieve Salesforce Object acessible on the current account
@@ -34,32 +30,31 @@ var retrieveSObject = function(instanceUrl, oauthToken, cb) {
 };
 
 /**
- * Return a completed template with the actual context profiler
- */
-var createVisualforceContextPage = function(contextProfilers) {
-  contextProfilers.forEach(function(contextProfiler) {
-    contextProfiler.page = Mustache.render(contextPageTemplate, contextProfiler);
-  });
-  return contextProfilers;
-};
-
-/**
  * Administration index page
  * Display the context profilers settings
  */
-module.exports.index = function(req, res, next) {
-  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err) {
-      return next(err);
-    }
-    if (!org || !org.contextProfilers) {
-      return next(new Error("No matching organization or context profilers."));
-    }
+module.exports.index = function(req, res) {
+  var contextProfilers;
+  async.waterfall([
+    function getContextProfiler(cb) {
+      var conn = new jsforce.Connection({
+        instanceUrl : req.reqParams.instanceURL,
+        accessToken : req.reqParams.sessionId,
+      });
 
-    var contextProfilers = createVisualforceContextPage(org.contextProfilers);
+      conn.sobject("sFetch_test__Context_Profiler__c")
+        .select("*")
+        .execute(cb);
+    }, function getCountUser(cp, cb) {
+      contextProfilers = cp;
 
+      User.count({organization: req.organization._id}, cb);
+    }
+  ], function(err, count) {
     res.render('admin/index.html', {
-      profilers: contextProfilers
+      userCount: count,
+      organization: req.organization,
+      contextProfilers: contextProfilers
     });
   });
 };
