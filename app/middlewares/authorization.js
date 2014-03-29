@@ -40,14 +40,14 @@ exports.requiresLogin = function(req, res, next) {
   var organization;
 
   if (!req.query.data) {
-    return next({message: "bad request", status: 401});
+    return next({message: "Bad Request", status: 401});
   }
   var data = JSON.parse(req.query.data);
 
   async.waterfall([
     function retrieveCompany(cb) {
       if (!data.organization.id) {
-        return next({message: "bad request", status: 401});
+        return next({message: "Bad Request", status: 401});
       }
 
       Organization.findOne({organizationId: data.organization.id}, cb);
@@ -55,14 +55,13 @@ exports.requiresLogin = function(req, res, next) {
     function checkRequestValidity(org, cb){
       organization = org;
       if (!org) {
-        return next({message: "bad request", status: 401});
+        return next({message: "No matching company has been found", status: 401});
       }
 
       var hash = data.organization.id + data.user.id + org.masterKey + "SalesFetch4TheWin";
       var check = crypto.createHash('sha1').update(hash).digest("base64");
-
       if (check !== data.hash) {
-        return next({message: "bad request", status: 401});
+        return next({message: "Bad Request. Please check your salesFetch Master Key!", status: 401});
       }
 
       cb(null, data);
