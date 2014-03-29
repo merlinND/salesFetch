@@ -15,7 +15,7 @@ var authenticateUser = function(context, org, done) {
   async.waterfall([
     function(cb) {
       // Find an existing user
-      User.findOne({userId: userContext.userId}, cb);
+      User.findOne({userId: userContext.id}, cb);
     }, function(user, cb) {
       if (user) {
         return done(null, user);
@@ -72,6 +72,7 @@ exports.requiresLogin = function(req, res, next) {
     }
   ], function (err, user) {
     if (err) {
+      console.log(err)
       return next({status: 401});
     }
 
