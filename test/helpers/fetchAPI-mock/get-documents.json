@@ -1,5 +1,5 @@
 {
-  "path" : "/batch?pages=%2F&pages=%2Fdocuments%3Fsort%3D-creationDate%26search%3DAlbert%2520Einstein",
+  "path" : "/batch?pages=%2Fdocument_types&pages=%2Fproviders&pages=%2Fdocuments%3Fsort%3D-creationDate%26search%3DWalter%2520White",
   "verb" : "GET",
   "code": 200,
   "reply": {

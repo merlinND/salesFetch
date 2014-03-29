@@ -3,9 +3,11 @@
 require("should");
 
 var async = require('async');
+var request = require('supertest');
+
 var app = require('../../app.js');
 var cleaner = require('../hooks/cleaner');
-var authenticatedCall = require('../helpers/login').authenticatedCall;
+var requestBuilder = require('../helpers/login').requestBuilder;
 var APIs = require('../helpers/APIs');
 var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
@@ -21,20 +23,21 @@ describe('<Application controller>', function() {
     checkUnauthenticated(app, 'get', endpoint);
 
     it.skip("should return contextual datas", function(done) {
-      var parameters = {
-        url: '/app/context-search',
-        parameters: {
-          record_type: 'Contact',
-          record_id: '003b000000LHOj3'
-        }
+
+      var context = {
+        recordType: 'Contact',
+        recordId: '003b000000LHOj3',
+        templatedQuery: 'Walter White',
+        templatedDisplay: 'Walter White'
       };
 
       async.waterfall([
         function buildRequest(cb) {
-          authenticatedCall(app, parameters, cb);
+          requestBuilder(endpoint, context, cb);
         },
-        function sendRequest(req, cb) {
-          req
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
             .expect(200)
             .expect(function(res) {
               res.text.should.containDeep("Albert Einstein");
@@ -45,31 +48,4 @@ describe('<Application controller>', function() {
       ], done);
     });
   });
-
-  describe('/documents/:id page', function() {
-    var endpoint = '/app/documents/5309c57d9ba7daaa265ffdc9';
-    checkUnauthenticated(app, 'get', endpoint);
-
-    it.skip("should return document datas", function(done) {
-      var parameters = {
-        url: '/app/documents/5309c57d9ba7daaa265ffdc9',
-      };
-
-      async.waterfall([
-        function buildRequest(cb) {
-          authenticatedCall(app, parameters, cb);
-        },
-        function sendRequest(req, cb) {
-          req
-            .expect(200)
-            .expect(function(res) {
-              res.text.should.containDeep("pdf2htmlEX");
-              res.text.should.containDeep("mehdi.bouheddi@papiel.fr");
-            })
-            .end(cb);
-        }
-      ], done);
-    });
-  });
-
 });

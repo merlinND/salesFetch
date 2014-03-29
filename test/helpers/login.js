@@ -5,83 +5,52 @@
  */
 
 var async = require('async');
-var request = require('supertest');
-var agent = request.agent();
 var crypto = require('crypto');
-var consumerSecret = require('../../config/index').consumer_secret;
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+var Organization = mongoose.model('Organization');
 
 
-var getDefaultPayload = function(parameters) {
-  var obj = {
-    context: {
-      user: {
-        userId: 'userId',
-        fullName: 'Walter White',
-        email: 'walter.white@breakingbad.com'
-      },
-      organization: {
-        organizationId: 'companyId'
-      },
-      environment: {
-        parameters: parameters
-      }
-    },
-    client: {
-      instanceUrl: 'https://eu2.salesforce.com',
-      oauth_token: 'random_token'
-    }
-  };
+module.exports.requestBuilder = function (endpoint, context, cb) {
+  var createdOrg;
 
-  return obj;
-};
-
-
-/**
- * Create an envelope to use for authenticating call
- */
-var createAuthHash = function(obj) {
-  var encodedContent = new Buffer(JSON.stringify(obj)).toString("base64");
-  return crypto.createHmac("sha256", consumerSecret).update(encodedContent).digest("base64");
-};
-
-
-var loginUser = function(app, parameters, done) {
-  var obj = getDefaultPayload(parameters);
-  var postBody = createAuthHash(obj) + '.' + new Buffer(JSON.stringify(obj)).toString("base64");
-
-  request(app)
-    .post('/authenticate')
-    .send({signed_request: postBody})
-    .expect(302)
-    .end(function(err, res) {
-      if (err) {
-        throw err;
-      }
-      agent.saveCookies(res);
-      done(null, res.headers.location, agent);
-    });
-};
-
-
-/**
- * Log the user in and return to the callback the user agent for futher calls
- */
-var authenticatedCall = function(app, parameters, done) {
   async.waterfall([
-    function authenticatedCall(cb) {
-      loginUser(app, parameters, cb);
-    },
-    function buildRealRequest(location, agent, cb) {
-      var req = request(app).get(location);
-      agent.attachCookies(req);
+    function createCompany(cb) {
+      var org = new Organization({
+        name: "anyFetch",
+        organizationId: '1234'
+      });
 
-      cb(null, req);
+      org.save(cb);
+    }, function createUser(org, _, cb) {
+      createdOrg = org;
+
+      var user = new User({
+        userId: '5678',
+        name: 'Walter White',
+        email: 'walter.white@breaking-bad.com',
+        organization: org.id
+      });
+
+      user.save(cb);
     }
-  ], done);
+  ], function(err, user) {
+    if (err) {
+      return cb(err);
+    }
+
+    var hash = createdOrg.organizationId + user.userId + createdOrg.masterKey + "SalesFetch4TheWin";
+    hash = crypto.createHash('sha1').update(hash).digest("base64");
+
+    var authObj = {
+      hash: hash,
+      organization: {id: createdOrg.organizationId},
+      user: {id: user.userId},
+      context: context,
+      anyFetchURL: 'http://api.anyfetch.com'
+    };
+
+    var ret = endpoint + '?data=' + encodeURIComponent(JSON.stringify(authObj));
+    cb(null, ret);
+  });
 };
-
-
-module.exports.getDefaultPayload = getDefaultPayload;
-module.exports.createAuthHash = createAuthHash;
-module.exports.loginUser = loginUser;
-module.exports.authenticatedCall = authenticatedCall;

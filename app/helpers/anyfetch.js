@@ -25,8 +25,8 @@ module.exports.findDocuments = function(url, params, cb) {
   ];
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
-
   baseRequest(url, '/batch?pages=' + batchParams, function(err, res) {
+
     if (err) {
       return cb(err);
     }
