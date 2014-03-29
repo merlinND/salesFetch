@@ -72,7 +72,6 @@ exports.requiresLogin = function(req, res, next) {
     }
   ], function (err, user) {
     if (err) {
-      console.log(err)
       return next({status: 401});
     }
 

@@ -5,7 +5,6 @@
 
 
 var express = require('express');
-var MongoStore = require('connect-mongo')(express);
 var swig = require('swig');
 var fs = require('fs');
 
@@ -27,12 +26,6 @@ var mongo_url = process.env.MONGO_URL || "mongodb://localhost/salesfetch_" + nod
 
 // directory path
 var dir_path = (__dirname + '/..');
-
-// Salesfetch configuration
-if (!process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET) {
-  console.error('[ERROR] CONSUMER_KEY or CONSUMER_SECRET is missing.');
-  process.exit(1);
-}
 
 // Certification
 var certificates = {
@@ -57,18 +50,11 @@ var allowCrossDomain = function(req, res, next) {
 /**
  * Server bootstrap
  */
-var bootstrapServer = function(app, db) {
+var bootstrapServer = function(app) {
 
   // Sessions
   app.use(allowCrossDomain);
   app.use(express.cookieParser());
-  app.use(express.session({
-    secret: node_env,
-    store: new MongoStore({
-      mongoose_connection: db.connections[0],
-      auto_reconnect: true
-    })
-  }));
 
   // Use less
   app.use(require('less-middleware')({
@@ -106,9 +92,6 @@ module.exports = {
   port: process.env.PORT || default_port,
   mongo_url: mongo_url,
   certif: certificates,
-
-  consumer_key: process.env.CONSUMER_KEY,
-  consumer_secret: process.env.CONSUMER_SECRET,
 
   bootstrap: bootstrapServer
 };

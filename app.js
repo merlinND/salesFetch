@@ -31,7 +31,7 @@ walk(modelsPath, function(path) { require(path); });
 
 // Configure server
 var app = express();
-config.bootstrap(app, mongoose);
+config.bootstrap(app);
 
 // Bootstrap routes
 var routesPath = __dirname + '/app/routes';
