@@ -54,6 +54,9 @@ exports.requiresLogin = function(req, res, next) {
     },
     function checkRequestValidity(org, cb){
       organization = org;
+      if (!org) {
+        return next({message: "bad request", status: 401});
+      }
 
       var hash = data.organization.id + data.user.id + org.masterKey + "SalesFetch4TheWin";
       var check = crypto.createHash('sha1').update(hash).digest("base64");
