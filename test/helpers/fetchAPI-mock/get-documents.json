@@ -1,60 +1,116 @@
 {
-  "path" : "/batch?pages=%2Fdocument_types&pages=%2Fproviders&pages=%2Fdocuments%3Fsort%3D-creationDate%26search%3DWalter%2520White",
+  "path" : "/batch?pages[0]=%2Fdocument_types&pages[1]=%2Fproviders&pages[2]=%2Fdocuments%3Fsort%3D-creationDate%26search%3DWalter%2520White",
   "verb" : "GET",
   "code": 200,
   "reply": {
-  "/": {
-    "user_email": "anyfetch@gmail.com",
-    "documents_url": "/documents/",
-    "document_types_url": "/document_types/",
-    "providers_url": "/providers/",
-    "users_url": "/users/",
-    "current_user_url": "/users/52fb7b90c8318c4dc800006c",
-    "update_url": "/company/update",
-    "reset_url": "/company/reset",
-    "token_url": "/token",
-    "server_time": "2014-03-26T10:41:44.077Z"
-  },
-  "/documents?sort=-creationDate&search=Albert%20Einstein": {
-    "facets": {
-      "document_types": {
-        "5252ce4ce4cfcd16f55cfa3d": 2,
-        "5252ce4ce4cfcd16f55cfa3f": 1
-      },
-      "tokens": {
-        "5320a682c8318cba94000040": 2,
-        "5320a6abc8318cc5d1000049": 1
-      },
-      "creation_dates": {
-        "1393632000000": 3
-      }
+    "/providers": {
+        "53234698c8318cc5d100004f": {
+            "application": "53232d1dc8318cba94000042",
+            "name": "Evernote",
+            "updated": "2014-03-14T18:15:37.603Z",
+            "document_count": 2
+        },
+        "5320a682c8318cba94000040": {
+            "application": "52bff114c8318c29e9000005",
+            "name": "Dropbox",
+            "updated": "2014-03-21T16:48:16.486Z",
+            "document_count": 14
+        },
+        "5320a6abc8318cc5d1000049": {
+            "application": "53047faac8318c2d65000096",
+            "name": "GMail",
+            "updated": "2014-03-28T13:53:35.513Z",
+            "document_count": 28
+        }
     },
-    "datas": [
-      {
-        "_type": "Document",
-        "id": "5320a7705ee6eed51339a1b0",
-        "creation_date": "2014-03-10T19:36:50.000Z",
-        "token": "5320a6abc8318cc5d1000049",
-        "company": "52fb7b90c8318c4dc800006b",
-        "document_type": "5252ce4ce4cfcd16f55cfa3f",
-        "actions": {
-          "show": "https://mail.google.com/mail/b/anyfetch@gmail.com/?cm#all/144ad48c321261db"
+    "/document_types": {
+        "5252ce4ce4cfcd16f55cfa3c": {
+            "_type": "DocumentType",
+            "id": "5252ce4ce4cfcd16f55cfa3c",
+            "name": "document",
+            "template_snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
+            "template_full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
+            "template_title": "{{ title }}",
+            "updated": "2014-03-28T13:53:35.513Z",
+            "documents": 7
         },
-        "document_url": "/documents/5320a7705ee6eed51339a1b0",
-        "datas": {
-          "from": "Matthieu Bacconnier <matthieu.bacconnier@papiel.fr>",
-          "to": "anyfetch@gmail.com",
-          "subject": "Inquiry",
-          "snippet": "<span class=\"hlt\">Albert</span> <span class=\"hlt\">Einstein</span> is an awesome customer.\r\nWe need to convert him to our premium plan.\r\n\r\n\r\nMatthieu Bacconnier\r\n+336 69 34 70 15\r\nhttps://papiel.fr\r\n",
-          "date": "Monday, March 10, 2014"
+        "5252ce4ce4cfcd16f55cfa3d": {
+            "_type": "DocumentType",
+            "id": "5252ce4ce4cfcd16f55cfa3d",
+            "name": "image",
+            "template_snippet": "<article>\n  <h1>{{{ title }}}</h1>\n\n  <img src=\"{{ thumb }}\" />\n</article>\n",
+            "template_full": "<article>\n  <h1>{{{ title }}}</h1>\n\n  <img src=\"{{ display }}\" />\n</article>\n",
+            "template_title": "{{ title }}",
+            "updated": null,
+            "documents": 7
         },
-        "related": 0,
-        "score": null
-      }
-    ],
-    "max_score": null,
-    "next_page_url": "coming",
-    "previous_page_url": "coming"
+        "5252ce4ce4cfcd16f55cfa41": {
+            "_type": "DocumentType",
+            "id": "5252ce4ce4cfcd16f55cfa41",
+            "name": "task",
+            "template_snippet": "<article>\n\t<h1>{{{subject}}}</h1>\n\t<span>Status: {{status}}</span>\n  <p>{{{description}}}</p>\n</article>\n",
+            "template_full": "<article>\n  <section>\n    <h1>{{{subject}}}</h1>\n    <span>Status: {{status}}</span>\n  </section>\n\n  <p>{{{description}}}</p>\n</article>\n",
+            "template_title": "{{ title }}",
+            "updated": "2014-03-14T18:15:37.603Z",
+            "documents": 2
+        },
+        "5252ce4ce4cfcd16f55cfa3b": {
+            "_type": "DocumentType",
+            "id": "5252ce4ce4cfcd16f55cfa3b",
+            "name": "file",
+            "template_snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <code>{{{ path }}}</code>\n</article>\n",
+            "template_full": "<article>\n  <h1>{{{ title }}}</h1>\n  <code>{{{ path }}}</code>\n</article>\n",
+            "template_title": "{{ title }}",
+            "updated": "2014-03-21T16:48:16.486Z",
+            "documents": 1
+        },
+        "5252ce4ce4cfcd16f55cfa3f": {
+            "_type": "DocumentType",
+            "id": "5252ce4ce4cfcd16f55cfa3f",
+            "name": "email",
+            "template_snippet": "<article>\n  <h1>{{{subject}}}</h1>\n  <div class=\"two-columns\">\n    <span><small>{{from}} &rarr; {{to}}</small></span>\n    <span>{{ date }}</span>\n  </div>\n  <blockquote>{{{snippet}}}</blockquote>\n</article>\n",
+            "template_full": "<article class=\"email-projection\">\n <header>\n     <h1>{{{subject}}}</h1>\n     <small>{{ date }}</small>\n     <small>From: <strong><a href=\"anyfetch://search/{{from}}\">{{from}}</a></strong></small>\n     <small>To: <strong><a href=\"anyfetch://search/{{to}}\">{{to}}</a></strong></small>\n </header>\n\n <main>\n       {{{html}}}\n </main>\n</article>\n",
+            "template_title": "{{ subject }}",
+            "updated": "2014-03-28T13:53:24.454Z",
+            "documents": 27
+        }
+    },
+    "/documents?sort=-creationDate&search=Walter%20White": {
+        "facets": {
+            "document_types": {
+                "5252ce4ce4cfcd16f55cfa3c": 1
+            },
+            "tokens": {
+                "5320a682c8318cba94000040": 1
+            },
+            "creation_dates": {
+                "1393632000000": 1
+            }
+        },
+        "datas": [
+            {
+                "_type": "Document",
+                "id": "5320a773bc2e51d7135f0c8f",
+                "creation_date": "2014-03-12T18:29:07.150Z",
+                "token": "5320a682c8318cba94000040",
+                "company": "52fb7b90c8318c4dc800006b",
+                "document_type": "5252ce4ce4cfcd16f55cfa3c",
+                "actions": {
+                    "show": "https://www.dropbox.com/home%2Fall%2FSecuringtheRetailStore-SecuringtheData.docx.docx"
+                },
+                "document_url": "/documents/5320a773bc2e51d7135f0c8f",
+                "datas": {
+                    "title": "SecuringtheRetailStore SecuringtheData.docx",
+                    "path": "/all/SecuringtheRetailStore-SecuringtheData.docx.docx",
+                    "snippet": "Microsoft®U.S. National Security Team <span class=\"hlt\">White</span> Paper\nMicrosoft U.K-PL. National Security Team Marin Pawlowski HQmicoTecNet\nSecuring the Retail Store:\nSecuring the Data\nProduced by John Smith, CTO"
+                },
+                "related": 0,
+                "score": null
+            }
+        ],
+        "max_score": null,
+        "next_page_url": "coming",
+        "previous_page_url": "coming"
+    }
   }
-}
 }

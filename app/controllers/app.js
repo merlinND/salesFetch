@@ -38,6 +38,7 @@ module.exports.documentDisplay = function(req, res, next) {
     if(err) {
       return next(err);
     }
+
     res.render('app/show.html', {
       data: reqParams,
       document: document

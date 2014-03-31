@@ -22,7 +22,7 @@ describe('<Application controller>', function() {
 
     checkUnauthenticated(app, 'get', endpoint);
 
-    it.skip("should return contextual datas", function(done) {
+    it("should return contextual datas", function(done) {
 
       var context = {
         recordType: 'Contact',
@@ -40,8 +40,8 @@ describe('<Application controller>', function() {
             .get(url)
             .expect(200)
             .expect(function(res) {
-              res.text.should.containDeep("Albert Einstein");
-              res.text.should.containDeep("/app/documents/5309c5913a59fda826adc1d8");
+              res.text.should.containDeep("Walter White");
+              res.text.should.containDeep("/app/documents/5320a773bc2e51d7135f0c8f");
             })
             .end(cb);
         }
