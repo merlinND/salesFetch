@@ -3,13 +3,13 @@
     <div class="alert alert-danger">{{err.toString()}}</div>
   {% endfor %}
 {% endif %}
-<form role="form" method="POST" action="/admin/context-profiler/">
+<form role="form" method="POST" action="/admin/context-profiler" id="form">
   <div class="form-group">
     <label for="record_type">Targeted context</label>
     {% if !objects %}
       <p class="form-control-static">{{data.record_type}}</p>
     {% else %}
-      <select class="form-control" name="record_type">
+      <select class="form-control" name="sFetch_test__Record_Type__c">
         {% for obj in objects %}
         <option value="{{obj.name}}">{{obj.label}} ({{obj.name}})</option>
         {% endfor %}
@@ -19,12 +19,12 @@
   <div class="form-group">
     <label for="query_template">Query template</label>
     <p class="help-block">Use mustache style templating.</p>
-    <input type="text" class="form-control" id="query_template" name="query_template" value="{{data.query_template}}" required>
+    <input type="text" class="form-control" id="sFetch_test__Query_Template__c" name="sFetch_test__Query_Template__c" value="{{data.query_template}}" required>
   </div>
   <div class="form-group">
     <label for="display_template">Diplay template</label>
     <p class="help-block">Use mustache style templating.</p>
-    <input type="text" class="form-control" id="display_template" name="display_template" value="{{data.display_template}}" required>
+    <input type="text" class="form-control" id="sFetch_test__Display_Template__c" name="sFetch_test__Display_Template__c" value="{{data.display_template}}" required>
   </div>
   <button type="submit" class="btn btn-default">Submit</button>
 </form>

@@ -8,24 +8,52 @@ var jsforce = require('jsforce');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var Organization = mongoose.model('Organization');
-var User = mongoose.model('User');
 
 /**
  * Retrieve Salesforce Object acessible on the current account
  */
-var retrieveSObject = function(instanceUrl, oauthToken, cb) {
-  // Retrive the context object
+var retrieveAvailableSObject = function(params, cb) {
   var conn = new jsforce.Connection({
-    instanceUrl : instanceUrl,
-    accessToken : oauthToken,
+    instanceUrl : params.instanceURL,
+    accessToken : params.sessionId,
   });
-  conn.describeGlobal(function(err, data) {
-    if (err) {
-      return cb(err);
+
+  async.parallel([
+    function retrieveObject(cb) {
+      conn.describeGlobal(function(err, data) {
+        if (err) {
+          return cb(err);
+        }
+
+        var availableObjects = _.where(data.sobjects, {'layoutable': true, 'activateable': false});
+        cb(null, availableObjects);
+      });
+    }, function getAllContextProfilers(cb) {
+      conn.sobject("sFetch_test__Context_Profiler__c")
+        .select("*")
+        .execute(cb);
+    }
+  ], function(err, data) {
+    if(err) {
+      console.log(err);
     }
 
-    var availableObjects = _.where(data.sobjects, {'layoutable': true, 'activateable': false});
-    cb(null, availableObjects);
+    var allObj = data[0];
+    var existingCP = data[1];
+
+    existingCP.forEach(function(cP) {
+      var found = false;
+
+      for (var i = 0; i < allObj.length && !found; i++) {
+        if (allObj[i].name === cP.sFetch_test__Record_Type__c) {
+          found = true;
+          allObj.splice(i,1);
+        }
+      }
+
+    });
+    
+    cb(null, allObj);
   });
 };
 
@@ -34,7 +62,6 @@ var retrieveSObject = function(instanceUrl, oauthToken, cb) {
  * Display the context profilers settings
  */
 module.exports.index = function(req, res) {
-  var contextProfilers;
   async.waterfall([
     function getContextProfiler(cb) {
       var conn = new jsforce.Connection({
@@ -45,16 +72,13 @@ module.exports.index = function(req, res) {
       conn.sobject("sFetch_test__Context_Profiler__c")
         .select("*")
         .execute(cb);
-    }, function getCountUser(cp, cb) {
-      contextProfilers = cp;
-
-      User.count({organization: req.organization._id}, cb);
     }
-  ], function(err, count) {
+  ], function(err, contextProfilers) {
+
     res.render('admin/index.html', {
-      userCount: count,
       organization: req.organization,
-      contextProfilers: contextProfilers
+      contextProfilers: contextProfilers,
+      data: req.reqParams
     });
   });
 };
@@ -63,9 +87,10 @@ module.exports.index = function(req, res) {
  * Display a form to create a nex context profiler
  */
 module.exports.newContextProfiler = function(req, res) {
-  retrieveSObject(req.session.instanceUrl, req.session.oauthToken, function(err, objects) {
+  retrieveAvailableSObject(req.reqParams, function(err, objects) {
     res.render('admin/new.html', {
-      objects: objects
+      objects: objects,
+      data: req.reqParams
     });
   });
 };
@@ -76,22 +101,29 @@ module.exports.newContextProfiler = function(req, res) {
  */
 module.exports.createContextProfiler = function(req, res) {
   var newContextProfiler = req.body;
+  newContextProfiler.name = newContextProfiler.sFetch_test__Record_Type__c;
+
   async.waterfall([
     function(cb) {
-      Organization.findOne({_id: req.session.user.organization}, cb);
-    }, function(org, cb) {
-      org.contextProfilers.push(newContextProfiler);
-      org.save(cb);
+      var conn = new jsforce.Connection({
+        instanceUrl : req.reqParams.instanceURL,
+        accessToken : req.reqParams.sessionId,
+      });
+
+      conn.sobject("sFetch_test__Context_Profiler__c")
+        .create(newContextProfiler, cb);
     }
-  ], function(err) {
-    if (err) {
+  ], function(err, ret) {
+    console.log(ret);
+
+    if (err || !ret.success) {
       return res.render('admin/new.html', {
-        err: err,
+        err: err || ret,
         data: newContextProfiler
       });
     }
 
-    return res.redirect(302,'/admin');
+    return res.send({sucess: true});
   });
 };
 
@@ -117,26 +149,16 @@ module.exports.editContextProfiler = function(req, res, next) {
  * Delete the selected context profiler
  * Redirect to index if the context profiler is effectively removed
  */
-module.exports.deleteContextProfiler = function(req, res, next) {
+module.exports.deleteContextProfiler = function(req, res) {
   var profilerId = req.params.contextProfilerId;
-  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err) {
-      return next(err);
-    }
-    if (!org.contextProfilers.id(profilerId)) {
-      return next({
-        error: new Error("Context profiler not found."),
-        status: 404
-      });
-    }
+  var conn = new jsforce.Connection({
+    instanceUrl : req.reqParams.instanceURL,
+    accessToken : req.reqParams.sessionId,
+  });
 
-    org.contextProfilers.id(profilerId).remove();
-    org.save(function(err) {
-      if (err) {
-        return next(err);
-      }
+  conn.sobject("sFetch_test__Context_Profiler__c").destroy(profilerId, function(err, ret) {
+    if (err || !ret.success) { return console.error(err, ret); }
 
-      res.redirect(302,'/admin');
-    });
+    res.redirect(302,'/admin?data=' + encodeURIComponent(JSON.stringify(req.reqParams)) );
   });
 };

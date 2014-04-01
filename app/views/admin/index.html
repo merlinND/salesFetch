@@ -8,20 +8,15 @@
       <h3 class="panel-title">SalesFetch administration panel : {{organization.name}}</h3>
     </div>
     <div class="panel-body">
-      <h3>User management</h3>
-      <p>User count: {{userCount}}</p>
 
-      <hr/>
-
-      <a href="/admin/context-profiler/new" class="btn btn-primary btn-sm pull-right">New</a>
+      <a href="#" data-admin-url="/admin/context-profiler/new" class="btn btn-primary btn-sm pull-right">New</a>
       <h3>Context profilers</h3>
 
       {% for profiler in contextProfilers %}
       <div class="panel panel-default">
         <div class="panel-body">
           <div class="btn-group btn-group-sm pull-right">
-            <a href="/admin/context-profiler/{{profiler._id.toString()}}/edit" class="btn btn-primary">Edit</a>
-            <a href="/admin/context-profiler/{{profiler._id.toString()}}/delete" class="btn btn-danger">Delete</a>
+            <a href="#" data-admin-url="/admin/context-profiler/{{profiler.Id}}/delete" class="btn btn-danger">Delete</a>
           </div>
           <h4>Targeted context: <strong>{{ profiler.sFetch_test__Record_Type__c }}</strong></h4>
           <p>
@@ -35,6 +30,7 @@
         </div>
       </div>
       {% endfor %}
+      
     </div>
   </div>
 
