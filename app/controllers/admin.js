@@ -3,6 +3,7 @@
  */
 'use strict';
 
+var async = require('async');
 var SFDChelper = require('../helpers/salesforce');
 
 
@@ -40,20 +41,19 @@ module.exports.newContextProfiler = function(req, res) {
 
 /**
  * Create a new context profiler based on the POST body
- * Redirect to /index if work
  */
-module.exports.createContextProfiler = function(req, res) {
+module.exports.createContextProfiler = function(req, res, next) {
   var newContextProfiler = req.body;
   newContextProfiler.name = newContextProfiler.sFetch_test__Record_Type__c;
 
-  SFDChelper.createContextProfiler(req.reqParams, newContextProfiler, function(err) {
-    if(err) {
-      console.log(err);
-      return res.send(500);
+  async.waterfall([
+    function createCP(cb) {
+      SFDChelper.createContextProfiler(req.reqParams, newContextProfiler, cb);
+    }, function sendEmptyReturn(_, cb) {
+      res.send(204);
+      cb();
     }
-
-    res.send(200);
-  });
+  ], next);
 };
 
 
