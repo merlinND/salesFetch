@@ -17,7 +17,7 @@ describe('<Admin controller>', function() {
     APIs.mount('salesforce', 'https://eu2.salesforce.com', done);
   });
 
-  describe('/admin page', function() {
+  describe('GET /admin page', function() {
     var endpoint = '/admin';
 
     checkUnauthenticated(app, 'get', endpoint);
@@ -41,7 +41,7 @@ describe('<Admin controller>', function() {
     });
   });
 
-  describe('/admin page', function() {
+  describe('GET /admincontext-profiler/create page', function() {
     var endpoint = '/admin/context-profiler/new';
 
     checkUnauthenticated(app, 'get', endpoint);
@@ -66,4 +66,56 @@ describe('<Admin controller>', function() {
       ], done);
     });
   });
+
+  describe('GET /admin/context-profiler/:id/delete page', function() {
+    var endpoint = '/admin/context-profiler/005b000000167GlAAI/delete';
+
+    checkUnauthenticated(app, 'get', endpoint);
+
+    it("should render all not existing context profiler", function(done) {
+
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(302)
+            .expect(function(res) {
+              res.header.location.should.startWith('/admin');
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+  });
+
+  describe('POST /admin/context-profiler/', function() {
+    var endpoint = '/admin/context-profiler/';
+
+    checkUnauthenticated(app, 'post', endpoint);
+
+    it.skip("should render all not existing context profiler", function(done) {
+
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .post(url)
+            .send({
+              name: "Contact",
+              sFetch_test__Record_Type__c: "Contact",
+              sFetch_test__Display_Template__c: "{{Name}}",
+              sFetch_test__Query_Template__c: "{{Name}}"
+            })
+            .expect(204)
+            .end(cb);
+        }
+      ], done);
+    });
+  });
+
 });
