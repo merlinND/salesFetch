@@ -47,7 +47,8 @@ module.exports.requestBuilder = function (endpoint, context, cb) {
       organization: {id: createdOrg.organizationId},
       user: {id: user.userId},
       context: context,
-      anyFetchURL: 'http://api.anyfetch.com'
+      anyFetchURL: 'http://api.anyfetch.com',
+      instanceURL: 'https://eu2.salesforce.com'
     };
 
     var ret = endpoint + '?data=' + encodeURIComponent(JSON.stringify(authObj));
