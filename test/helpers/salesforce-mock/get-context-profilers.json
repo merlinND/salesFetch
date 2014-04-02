@@ -1,0 +1,29 @@
+{
+  "path": "/services/data/v29.0/query?q=SELECT%20Id%2C%20OwnerId%2C%20IsDeleted%2C%20Name%2C%20CreatedDate%2C%20CreatedById%2C%20LastModifiedDate%2C%20LastModifiedById%2C%20SystemModstamp%2C%20LastViewedDate%2C%20LastReferencedDate%2C%20sFetch_test__Record_Type__c%2C%20sFetch_test__Display_Template__c%2C%20sFetch_test__Query_Template__c%20FROM%20sFetch_test__Context_Profiler__c",
+  "verb" : "GET",
+  "code": 200,
+  "reply": {
+    "totalSize": 1,
+    "done": true,
+    "records": [{
+        "attributes": {
+           "type": "sFetch_test__Context_Profiler__c",
+           "url": "/services/data/v29.0/sobjects/sFetch_test__Context_Profiler__c/a0Bb0000004VXoBEAW"
+         },
+        "OwnerId": "005b000000167GlAAI",
+        "IsDeleted": false,
+        "CreatedDate": "2014-04-02T08:15:42.000+0000",
+        "CreatedById": "005b000000167GlAAI",
+        "LastModifiedDate": "2014-04-02T08:15:42.000+0000",
+        "LastModifiedById": "005b000000167GlAAI",
+        "SystemModstamp": "2014-04-02T08:15:42.000+0000",
+        "LastViewedDate": "2014-04-02T08:15:42.000+0000",
+        "LastReferencedDate": "2014-04-02T08:15:42.000+0000",
+        "Id": "a0Bb0000004VXoBEAW",
+        "Name": "Contact",
+        "sFetch_test__Record_Type__c": "Contact",
+        "sFetch_test__Display_Template__c": "{{Name}}",
+        "sFetch_test__Query_Template__c": "{{Name}}"
+    }]
+  }
+}

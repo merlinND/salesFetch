@@ -4,144 +4,69 @@
 'use strict';
 
 var async = require('async');
-var jsforce = require('jsforce');
-var _ = require('lodash');
-var fs = require('fs');
-var Mustache = require('mustache');
-var mongoose = require('mongoose'),
-    Organization = mongoose.model('Organization');
+var SFDChelper = require('../helpers/salesforce');
 
-// Load in cache template for Salesforce context page
-var contextPageTemplate = fs.readFileSync(__dirname + '/../views/apex/context-page-template.apex', 'utf8');
-
-/**
- * Retrieve Salesforce Object acessible on the current account
- */
-var retrieveSObject = function(instanceUrl, oauthToken, cb) {
-  // Retrive the context object
-  var conn = new jsforce.Connection({
-    instanceUrl : instanceUrl,
-    accessToken : oauthToken,
-  });
-  conn.describeGlobal(function(err, data) {
-    if (err) {
-      return cb(err);
-    }
-
-    var availableObjects = _.where(data.sobjects, {'layoutable': true, 'activateable': false});
-    cb(null, availableObjects);
-  });
-};
-
-/**
- * Return a completed template with the actual context profiler
- */
-var createVisualforceContextPage = function(contextProfilers) {
-  contextProfilers.forEach(function(contextProfiler) {
-    contextProfiler.page = Mustache.render(contextPageTemplate, contextProfiler);
-  });
-  return contextProfilers;
-};
 
 /**
  * Administration index page
  * Display the context profilers settings
  */
-module.exports.index = function(req, res, next) {
-  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err) {
-      return next(err);
+module.exports.index = function(req, res) {
+  SFDChelper.getContextProfilers(req.reqParams, function(err, contextProfilers) {
+    if(err) {
+      console.log(err);
     }
-    if (!org || !org.contextProfilers) {
-      return next(new Error("No matching organization or context profilers."));
-    }
-
-    var contextProfilers = createVisualforceContextPage(org.contextProfilers);
 
     res.render('admin/index.html', {
-      profilers: contextProfilers
+      organization: req.organization,
+      contextProfilers: contextProfilers,
+      data: req.reqParams
     });
   });
 };
+
 
 /**
  * Display a form to create a nex context profiler
  */
 module.exports.newContextProfiler = function(req, res) {
-  retrieveSObject(req.session.instanceUrl, req.session.oauthToken, function(err, objects) {
+  SFDChelper.avaibleSObjectsForContextProfilers(req.reqParams, function(err, sObjects) {
     res.render('admin/new.html', {
-      objects: objects
+      objects: sObjects,
+      data: req.reqParams
     });
   });
 };
+
 
 /**
  * Create a new context profiler based on the POST body
- * Redirect to /index if work
  */
-module.exports.createContextProfiler = function(req, res) {
+module.exports.createContextProfiler = function(req, res, next) {
   var newContextProfiler = req.body;
+  newContextProfiler.name = newContextProfiler.sFetch_test__Record_Type__c;
+
   async.waterfall([
-    function(cb) {
-      Organization.findOne({_id: req.session.user.organization}, cb);
-    }, function(org, cb) {
-      org.contextProfilers.push(newContextProfiler);
-      org.save(cb);
+    function createCP(cb) {
+      SFDChelper.createContextProfiler(req.reqParams, newContextProfiler, cb);
+    }, function sendEmptyReturn(_, cb) {
+      res.send(204);
+      cb();
     }
-  ], function(err) {
-    if (err) {
-      return res.render('admin/new.html', {
-        err: err,
-        data: newContextProfiler
-      });
-    }
-
-    return res.redirect(302,'/admin');
-  });
+  ], next);
 };
 
-module.exports.editContextProfiler = function(req, res, next) {
-  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err || !org) {
-      return next(err);
-    }
-
-    var contextProfiler = org.contextProfilers.id(req.params.contextProfilerId);
-
-    if (!contextProfiler) {
-      return next(new Error("No context profiler."));
-    }
-
-    res.render('admin/edit.html', {
-      data: contextProfiler
-    });
-  });
-};
 
 /**
  * Delete the selected context profiler
  * Redirect to index if the context profiler is effectively removed
  */
-module.exports.deleteContextProfiler = function(req, res, next) {
+module.exports.deleteContextProfiler = function(req, res) {
   var profilerId = req.params.contextProfilerId;
-  Organization.findOne({_id: req.session.user.organization}, function(err, org) {
-    if (err) {
-      return next(err);
-    }
-    if (!org.contextProfilers.id(profilerId)) {
-      return next({
-        error: new Error("Context profiler not found."),
-        status: 404
-      });
-    }
 
-    org.contextProfilers.id(profilerId).remove();
-    org.save(function(err) {
-      if (err) {
-        return next(err);
-      }
+  SFDChelper.deleteContextProfiler( req.reqParams, profilerId, function(err, ret) {
+    if (err || !ret.success) { return console.error(err, ret); }
 
-      res.redirect(302,'/admin');
-    });
+    res.redirect(302,'/admin?data=' + encodeURIComponent(JSON.stringify(req.reqParams)) );
   });
 };

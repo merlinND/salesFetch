@@ -75,6 +75,7 @@ exports.requiresLogin = function(req, res, next) {
     }
 
     req.user = user;
+    req.organization = organization;
     req.reqParams = data;
 
     next();

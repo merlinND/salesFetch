@@ -38,6 +38,7 @@ module.exports.findDocuments = function(url, params, cb) {
     var providers = body[pages[1]];
     var docReturn = body[pages[2]];
 
+    console.log(res.body);
 
     if (!docReturn.datas) {
       return cb(null, docReturn);
