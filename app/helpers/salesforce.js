@@ -77,10 +77,14 @@ module.exports.createContextProfiler = function(params, newCP, cb) {
         apiVersion: 29.0,
         description: 'Context profiler visual page for ' + newCP.name +'. \n /!\\ Please use the SalesFetch Panel to delete the page!',
         fullName: newCP.name + 'ContextProfilerPage',
-        label: newCP.name + 'ContextProfilerPage'
+        label: newCP.name + 'ContextProfilerPage',
+        availableInTouch: true
       };
 
-      conn.metadata.create('ApexPage', data).complete(cb);
+      conn.metadata.create('ApexPage', data).complete(function(err, data) {
+        console.log(err, data);
+        cb(err, data);
+      });
     }
   ], cb);
 };
