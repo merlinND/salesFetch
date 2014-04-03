@@ -62,7 +62,8 @@ var bootstrapServer = function(app) {
     src: dir_path + '/assets/less',
     prefix: '/stylesheets',
     paths: [dir_path + '/public/lib/bootstrap/less'],
-    compress: true
+    compress: true,
+    debug: true
   }));
 
   // Views engine
