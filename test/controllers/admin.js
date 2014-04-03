@@ -26,7 +26,7 @@ describe('<Admin controller>', function() {
 
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, null, cb);
+          requestBuilder(endpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
@@ -50,7 +50,7 @@ describe('<Admin controller>', function() {
 
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, null, cb);
+          requestBuilder(endpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
@@ -76,7 +76,7 @@ describe('<Admin controller>', function() {
 
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, null, cb);
+          requestBuilder(endpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
@@ -100,7 +100,7 @@ describe('<Admin controller>', function() {
 
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, null, cb);
+          requestBuilder(endpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)

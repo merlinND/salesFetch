@@ -11,7 +11,7 @@ var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
 
 
-module.exports.requestBuilder = function (endpoint, context, cb) {
+module.exports.requestBuilder = function (endpoint, context, env, cb) {
   var createdOrg;
 
   async.waterfall([
@@ -42,8 +42,15 @@ module.exports.requestBuilder = function (endpoint, context, cb) {
     var hash = createdOrg.organizationId + user.userId + createdOrg.masterKey + "SalesFetch4TheWin";
     hash = crypto.createHash('sha1').update(hash).digest("base64");
 
+    var contextEnv = env || {
+      deviseType: 'desktop',
+      height: 500,
+      width: 500
+    };
+
     var authObj = {
       hash: hash,
+      env: contextEnv,
       organization: {id: createdOrg.organizationId},
       user: {id: user.userId},
       context: context,
