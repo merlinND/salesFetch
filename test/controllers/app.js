@@ -33,7 +33,7 @@ describe('<Application controller>', function() {
 
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, context, cb);
+          requestBuilder(endpoint, context, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
@@ -42,6 +42,53 @@ describe('<Application controller>', function() {
             .expect(function(res) {
               res.text.should.containDeep("Walter White");
               res.text.should.containDeep("/app/documents/5320a773bc2e51d7135f0c8f");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+
+    it("should display error if no template found", function(done) {
+
+      var context = {
+        recordType: 'Contact',
+        recordId: '003b000000LHOj3',
+        templatedDisplay: 'Walter White'
+      };
+
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, context, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(200)
+            .expect(function(res) {
+              res.text.should.containDeep("a template is missing");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+
+    it("should display error if height above 400px", function(done) {
+
+      var env = {
+        deviseType: 'desktop',
+        height: 200
+      };
+
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, null, env, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(200)
+            .expect(function(res) {
+              res.text.should.containDeep("height");
             })
             .end(cb);
         }

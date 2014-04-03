@@ -38,7 +38,7 @@ var routesPath = __dirname + '/app/routes';
 walk(routesPath, function(path) { require(path)(app); });
 
 // Error Handeling
-require('./app/middlewares/errors')(app);
+require('./app/middlewares/errors').addErrorsPages(app);
 
 
 // Start server
