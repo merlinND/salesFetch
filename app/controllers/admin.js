@@ -51,7 +51,7 @@ module.exports.createContextProfiler = function(req, res, next) {
       SFDChelper.createContextProfiler(req.reqParams, newContextProfiler, cb);
     }, function sendEmptyReturn(_, cb) {
       res.send(204);
-      cb();
+      return cb(null);
     }
   ], next);
 };

@@ -81,10 +81,7 @@ module.exports.createContextProfiler = function(params, newCP, cb) {
         availableInTouch: true
       };
 
-      conn.metadata.create('ApexPage', data).complete(function(err, data) {
-        console.log(err, data);
-        cb(err, data);
-      });
+      conn.metadata.create('ApexPage', data).complete(cb);
     }
   ], cb);
 };
