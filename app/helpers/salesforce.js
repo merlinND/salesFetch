@@ -70,24 +70,30 @@ module.exports.createContextPage = function(params, contextProfilerId, isMobile,
   async.waterfall([
     function retrieveContextProfiler(cb) {
       conn.sobject("sFetch_test__Context_Profiler__c")
-        .retrieve("contextProfilerId", cb);
-    }, function createAssociatedPage(cb, contextProfiler) {
+        .retrieve(contextProfilerId, cb);
+    }, function createAssociatedPage(contextProfiler, cb) {
       var type = isMobile ? 'Desktop' : 'Mobile';
 
-      var template = '<apex:page id="salesFetch' + contextProfiler.name + 'Page" StandardController="'+ contextProfiler.name +'"  docType="html-5.0"> \n';
-      template += '  <c:IframeContextComponent ObjectType="'+ contextProfiler.name +'" ObjectId="{!'+ contextProfiler.name +'.Id}"/> \n';
+      var template = '<apex:page id="salesFetch' + contextProfiler.Name + 'Page" StandardController="'+ contextProfiler.Name +'"  docType="html-5.0"> \n';
+      template += '  <c:IframeContextComponent ObjectType="'+ contextProfiler.Name +'" ObjectId="{!'+ contextProfiler.Name +'.Id}"/> \n';
       template += '</apex:page>';
 
       var data = {
         content: new Buffer(template).toString('base64'),
         apiVersion: 29.0,
-        description: 'Context profiler visual page for ' + contextProfiler.name +'. \n /!\\ Please use the SalesFetch Panel to delete the page!',
-        fullName: contextProfiler.name + 'ContextPage_' + type,
-        label: contextProfiler.name + 'ContextPage_' + type,
+        description: 'Context profiler visual page for ' + contextProfiler.Name +'. \n /!\\ Please use the SalesFetch Panel to delete the page!',
+        fullName: contextProfiler.Name + 'ContextPage' + type,
+        label: contextProfiler.Name + 'ContextPage' + type,
         availableInTouch: isMobile
       };
 
-      conn.metadata.create('ApexPage', data).complete(cb);
+      conn.metadata.create('ApexPage', data).complete(function(err,data){
+        if (data.state === 'Error') {
+          err = 'Templating error on Salesforce';
+        }
+
+        cb(err,data);
+      });
     }
   ], cb);
 };

@@ -82,7 +82,7 @@ module.exports.createContextPage = function(req, res, next) {
 
   async.waterfall([
     function(cb) {
-      SFDChelper.createContextPage( req.reqParams, profilerId, isMobile, cb);
+      SFDChelper.createContextPage(req.reqParams, profilerId, isMobile, cb);
     }, function() {
       return res.redirect(302,'/admin?data=' + encodeURIComponent(JSON.stringify(req.reqParams)) );
     }
