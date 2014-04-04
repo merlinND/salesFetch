@@ -4,7 +4,8 @@ var attachedViewer = null;
 var data = window.data;
 
 var goToLocation = function(window, url) {
-  var urlWithDatas = url + "?data=" + encodeURIComponent(JSON.stringify(data));
+  var linker = url.indexOf('?') !== -1 ? '&' : '?';
+  var urlWithDatas = url + linker + "data=" + encodeURIComponent(JSON.stringify(data));
   window.location = urlWithDatas;
 };
 
