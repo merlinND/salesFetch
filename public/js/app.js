@@ -41,7 +41,7 @@ $(function() {
   if ($('.about').length !== 0) {
 
     var isViewer = window.opener ? true : false;
-    var isOnMobile = data.env.deviceType === "mobile";
+    var isOnMobile = data.env.deviseType === "mobile";
 
     // Handle the full preview loading
     $("[data-document-url]").click(function(e) {
