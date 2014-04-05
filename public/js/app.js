@@ -38,7 +38,7 @@ var displayFull = function(url) {
  * Open documents URL in custom window
  */
 $(function() {
-  if ($('.about').length !== 0) {
+  if ($('.document').length !== 0) {
 
     var isViewer = window.opener ? true : false;
     var isOnMobile = data.env.deviseType === "mobile";

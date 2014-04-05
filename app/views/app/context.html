@@ -12,7 +12,7 @@
 
   <div class="row">
     {% for doc in documents.datas %}
-      <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container">
+      <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container document">
         <div class="panel-heading">
           {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
         </div>
