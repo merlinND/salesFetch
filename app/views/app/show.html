@@ -1,10 +1,13 @@
 {% extends './template.html' %}
 
 {% block content %}
-<a href="#" class="back-btn hidden">
+{% if data.env.deviseType === "mobile" %}
+<a href="#" data-document-url="/app/context-search">
   Return to results
 </a>
-<section class="container full">
+{% endif %}
+
+<section class="container full document">
   <div class="col-xs-12 panel panel-default snippet-container">
     <div class="panel-heading">
       {{document.title_rendered|capitalize}}

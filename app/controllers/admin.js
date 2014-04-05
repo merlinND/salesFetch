@@ -51,7 +51,7 @@ module.exports.createContextProfiler = function(req, res, next) {
       SFDChelper.createContextProfiler(req.reqParams, newContextProfiler, cb);
     }, function sendEmptyReturn(_, cb) {
       res.send(204);
-      cb();
+      return cb(null);
     }
   ], next);
 };
@@ -69,4 +69,22 @@ module.exports.deleteContextProfiler = function(req, res) {
 
     res.redirect(302,'/admin?data=' + encodeURIComponent(JSON.stringify(req.reqParams)) );
   });
+};
+
+
+/**
+ * Delete the selected context profiler
+ * Redirect to index if the context profiler is effectively removed
+ */
+module.exports.createContextPage = function(req, res, next) {
+  var isMobile = req.query.mobile || false;
+  var profilerId = req.params.contextProfilerId;
+
+  async.waterfall([
+    function(cb) {
+      SFDChelper.createContextPage(req.reqParams, profilerId, isMobile, cb);
+    }, function() {
+      return res.redirect(302,'/admin?data=' + encodeURIComponent(JSON.stringify(req.reqParams)) );
+    }
+  ], next);
 };

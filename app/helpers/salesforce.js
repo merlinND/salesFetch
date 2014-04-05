@@ -4,7 +4,6 @@ var jsforce = require('jsforce');
 var async = require('async');
 var _ = require('lodash');
 
-
 var salesforceConn = function(params) {
   return new jsforce.Connection({
     instanceUrl : params.instanceURL,
@@ -61,29 +60,39 @@ module.exports.avaibleSObjectsForContextProfilers = function(params, cb) {
 };
 
 module.exports.createContextProfiler = function(params, newCP, cb) {
+  salesforceConn(params).conn.sobject("sFetch_test__Context_Profiler__c")
+    .create(newCP, cb);
+};
+
+module.exports.createContextPage = function(params, contextProfilerId, isMobile, cb) {
   var conn = salesforceConn(params);
 
-  async.parallel([
-    function createRecord(cb) {
+  async.waterfall([
+    function retrieveContextProfiler(cb) {
       conn.sobject("sFetch_test__Context_Profiler__c")
-        .create(newCP, cb);
-    }, function createAssociatedPage(cb) {
-      var template = '<apex:page id="salesFetch' + newCP.name + 'Page" StandardController="'+ newCP.name +'"  docType="html-5.0"> \n';
-      template += '  <c:IframeContextComponent ObjectType="'+ newCP.name +'" ObjectId="{!'+ newCP.name +'.Id}"/> \n';
+        .retrieve(contextProfilerId, cb);
+    }, function createAssociatedPage(contextProfiler, cb) {
+      var type = isMobile ? 'Desktop' : 'Mobile';
+
+      var template = '<apex:page id="salesFetch' + contextProfiler.Name + 'Page" StandardController="'+ contextProfiler.Name +'"  docType="html-5.0"> \n';
+      template += '  <c:IframeContextComponent ObjectType="'+ contextProfiler.Name +'" ObjectId="{!'+ contextProfiler.Name +'.Id}"/> \n';
       template += '</apex:page>';
 
       var data = {
         content: new Buffer(template).toString('base64'),
         apiVersion: 29.0,
-        description: 'Context profiler visual page for ' + newCP.name +'. \n /!\\ Please use the SalesFetch Panel to delete the page!',
-        fullName: newCP.name + 'ContextProfilerPage',
-        label: newCP.name + 'ContextProfilerPage',
-        availableInTouch: true
+        description: 'Context profiler visual page for ' + contextProfiler.Name +'. \n /!\\ Please use the SalesFetch Panel to delete the page!',
+        fullName: contextProfiler.Name + 'ContextPage' + type,
+        label: contextProfiler.Name + 'ContextPage' + type,
+        availableInTouch: isMobile
       };
 
-      conn.metadata.create('ApexPage', data).complete(function(err, data) {
-        console.log(err, data);
-        cb(err, data);
+      conn.metadata.create('ApexPage', data).complete(function(err,data){
+        if (data.state === 'Error') {
+          err = 'Templating error on Salesforce';
+        }
+
+        cb(err,data);
       });
     }
   ], cb);
