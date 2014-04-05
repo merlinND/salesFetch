@@ -1,6 +1,6 @@
 # salesFetch
 [![Build Status](https://travis-ci.org/Papiel/salesFetch.svg?branch=coveralls)](https://travis-ci.org/Papiel/salesFetch)
-[![Coverage Status](https://coveralls.io/repos/Papiel/salesFetch/badge.png)](https://coveralls.io/r/Papiel/salesFetch)
+[![Coverage Status](https://coveralls.io/repos/Papiel/salesFetch/badge.png?branch=coveralls)](https://coveralls.io/r/Papiel/salesFetch?branch=coveralls)
 
 Fetch API integration in Salesforce.
 
@@ -24,11 +24,7 @@ $ npm install -g grunt
 
 ## Quick Install
 
-*Note:* A `CONSUMER_KEY` and a `CONSUMER_SECRET` is needed to launch the server, these keys are provided by salesforce.
-To request authentication keys, you'll need to setup a connected application through the developer panel.
-
-
-Install dependencies:
+Install dependencies, all the grunt dependences will be loaded through a post-install script:
 ```
   $ npm install
 ```
@@ -38,7 +34,13 @@ You shoud now be able to launch the server with:
   $ grunt
 ```
 
-The server in now available on `https://localhost:3000`. The `https` is important for securing the connection between salesFetch and Salesforce.
+The server in now available on `https://localhost:3000`. The `https` is important for securing the connection between salesFetch and Salesforce, be sure to access a random page first to avoid any problem in salesforce because of the invalid SSL certificate.
 
-## SalesForce project management
+## Apex code management
+All the apex code is in the repo [salesFetch-Apex](https://github.com/Papiel/salesFetch-Apex).
+
+### With Eclipse (prefered)
+You can use [Force.com IDE](https://wiki.developerforce.com/page/Force.com_IDE) directecly integrated into Eclipse IDE. This allow to manage the code, sync it with the dist Salesforce server, and return test into the IDE. More informations in the [introduction](https://wiki.developerforce.com/page/An_Introduction_to_Force_IDE).
+
+### With Sublim Text 3
 You can use [MavensMate](http://mavensmate.com/) and the integration into the SublimText3 text editor to manage the Apex code. To connect an existing project to the plugin [use this link](http://mavensmate.com/Plugins/Sublime_Text/Existing_Projects).
