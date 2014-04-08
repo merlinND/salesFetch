@@ -26,7 +26,8 @@ module.exports.findDocuments = function(url, params, cb) {
 
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
-  baseRequest(url, '/batch?pages=' + batchParams, function(err, res) {
+  var batchUrl = '/batch?pages=' + batchParams;
+  baseRequest(url, batchUrl, function(err, res) {
 
     if (err) {
       return cb(err);
@@ -52,18 +53,37 @@ module.exports.findDocuments = function(url, params, cb) {
     });
 
     // Return all the documents types
-    for (var docType in docReturn.document_types) {
+    docReturn.document_types = [];
+    for (var docType in docReturn.facets.document_types) {
       if (docType) {
-        docReturn.document_types[docType] = documentTypes[docType];
+        var dT = {
+          id: docType,
+          count: docReturn.facets.document_types[docType],
+          name: documentTypes[docType].name
+        };
+
+        docReturn.document_types.push(dT);
       }
     }
 
     // Return all the providers
-    docReturn.providers = {};
-    for (var provider in docReturn.tokens) {
+    docReturn.providers = [];
+    for (var provider in docReturn.facets.tokens) {
       if (provider) {
-        docReturn.providers[provider] = providers[provider];
+        var p = {
+          id: provider,
+          count: docReturn.facets.tokens[provider],
+          name: providers[provider].name
+        };
+
+        docReturn.providers.push(p);
       }
+    }
+
+    // Result number
+    docReturn.count = 0;
+    for(var token in docReturn.facets.tokens) {
+      docReturn.count += docReturn.facets.tokens[token];
     }
 
     cb(null, docReturn);

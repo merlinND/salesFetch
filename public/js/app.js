@@ -81,9 +81,34 @@ $(function() {
       }
     });
   });
-
 });
 
+
+$(function() {
+  $("#show-filters").click(function(e) {
+    e.preventDefault();
+    $("#about-string").addClass("hidden");
+    $("#filters-container").removeClass("hidden");
+  });
+
+  $("#hide-filters").click(function(e) {
+    e.preventDefault();
+    $("#about-string").removeClass("hidden");
+    $("#filters-container").addClass("hidden");
+  });
+
+  $("#send-filters").click(function(e) {
+    e.preventDefault();
+    var filters = {
+      token: $('#token').val(),
+      document_type: $('#document_type').val()
+    };
+
+    var url = '/app/context-search?filters=' + encodeURIComponent(JSON.stringify(filters));
+
+    goToLocation(window, url);
+  });
+});
 /**
  * Display the right size for pdf viewer
  */
