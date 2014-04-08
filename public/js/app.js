@@ -99,10 +99,18 @@ $(function() {
 
   $("#send-filters").click(function(e) {
     e.preventDefault();
-    var filters = {
-      token: $('#token').val(),
-      document_type: $('#document_type').val()
-    };
+
+    var filters = {};
+
+    var token = $('#token').val();
+    if (token.length > 0) {
+      filters.token = token;
+    }
+
+    var dT = $('#document_type').val();
+    if (dT.length > 0) {
+      filters.document_type = dT;
+    }
 
     var url = '/app/context-search?filters=' + encodeURIComponent(JSON.stringify(filters));
 

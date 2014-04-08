@@ -4,6 +4,7 @@
 'use strict';
 
 var anyfetchHelpers = require('../helpers/anyfetch.js');
+var _ = require("lodash");
 
 /**
  * Display Context page
@@ -20,6 +21,13 @@ module.exports.contextSearch = function(req, res, next) {
     search: reqParams.context.templatedQuery
   };
 
+
+  var filters;
+  if (req.query.filters) {
+    filters = JSON.parse(req.query.filters);
+    params = _.merge(params, filters);
+  }
+
   anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, function(err, documents) {
     if (err) {
       return next(err);
@@ -27,7 +35,8 @@ module.exports.contextSearch = function(req, res, next) {
 
     res.render('app/context.html', {
       data: reqParams,
-      documents: documents
+      documents: documents,
+      filters: filters
     });
   });
 };

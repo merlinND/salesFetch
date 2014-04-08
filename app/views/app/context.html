@@ -5,7 +5,20 @@
 <section class="container">
   <h2 class= "about about-{{data.context.recordType|lower}}" id="about-string">
     <div class="icon"></div>
-    About <strong>{{data.context.templatedDisplay}}</strong> <small>( {{documents.count}} results - <a href="#" id="show-filters">filter</a> )</small>
+
+    {% if filters.document_type %}
+    {{documents.document_types[filters.document_type].name|capitalize}} about
+    {% else %}
+    About
+    {% endif %}
+
+    <strong>{{data.context.templatedDisplay}}</strong>
+
+    {% if filters.token %}
+    in {{documents.providers[filters.token].name}}
+    {% endif %}
+
+    <small><a href="#" id="show-filters">filter</a></small>
   </h2>
 
   <form id="filters-container" action="" method="get" class="hidden">

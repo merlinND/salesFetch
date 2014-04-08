@@ -24,6 +24,7 @@ module.exports.findDocuments = function(url, params, cb) {
     '/documents?' + query.join('&')
   ];
 
+  console.log(pages);
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
   var batchUrl = '/batch?pages=' + batchParams;
@@ -53,7 +54,7 @@ module.exports.findDocuments = function(url, params, cb) {
     });
 
     // Return all the documents types
-    docReturn.document_types = [];
+    docReturn.document_types = {};
     for (var docType in docReturn.facets.document_types) {
       if (docType) {
         var dT = {
@@ -62,12 +63,12 @@ module.exports.findDocuments = function(url, params, cb) {
           name: documentTypes[docType].name
         };
 
-        docReturn.document_types.push(dT);
+        docReturn.document_types[docType] = dT;
       }
     }
 
     // Return all the providers
-    docReturn.providers = [];
+    docReturn.providers = {};
     for (var provider in docReturn.facets.tokens) {
       if (provider) {
         var p = {
@@ -76,7 +77,7 @@ module.exports.findDocuments = function(url, params, cb) {
           name: providers[provider].name
         };
 
-        docReturn.providers.push(p);
+        docReturn.providers[provider] = p;
       }
     }
 
