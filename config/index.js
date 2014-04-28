@@ -82,7 +82,9 @@ var bootstrapServer = function(app) {
   app.use(express.json());
 
   // Logger
-  app.use(logger);
+  if (node_env !== 'test') {
+    app.use(logger);
+  }
 
   // Static
   app.use(express.static(dir_path + '/public'));
