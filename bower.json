@@ -9,7 +9,6 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "bootstrap": "3.1.0",
-    "canvas-sdk": "forcedotcom/SalesforceCanvasJavascriptSDK"
+    "bootstrap": "3.1.0"
   }
 }

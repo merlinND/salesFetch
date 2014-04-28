@@ -34,7 +34,8 @@
     "mustache": "0.8.x",
     "jsforce": "1.x.x",
     "lodash": "2.4.1",
-    "superagent": "~0.16.0"
+    "superagent": "~0.16.0",
+    "colors": "0.6.x"
   },
   "devDependencies": {
     "mocha": "1.15.x",

@@ -8,6 +8,8 @@ var express = require('express');
 var swig = require('swig');
 var fs = require('fs');
 
+var logger = require('../app/middlewares/logger.js');
+
 /**
  * Constant settings
  */
@@ -62,8 +64,7 @@ var bootstrapServer = function(app) {
     src: dir_path + '/assets/less',
     prefix: '/stylesheets',
     paths: [dir_path + '/public/lib/bootstrap/less'],
-    compress: true,
-    debug: true
+    compress: true
   }));
 
   // Views engine
@@ -79,9 +80,9 @@ var bootstrapServer = function(app) {
   // Use
   app.use(express.urlencoded());
   app.use(express.json());
-  if (node_env === 'development') {
-    app.use(express.logger());
-  }
+
+  // Logger
+  app.use(logger);
 
   // Static
   app.use(express.static(dir_path + '/public'));
