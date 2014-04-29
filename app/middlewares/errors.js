@@ -14,13 +14,13 @@ function logErrors(err, req, res, next) {
 
   var page = status + '.html';
 
-  res.render( page, {
+  res.render(page, {
     message: message,
     error: error
   });
 }
 
-var patchRoute = function  (route) {
+var patchRoute = function(route) {
   route.callbacks.push(logErrors);
 };
 
