@@ -7,6 +7,8 @@
 var express = require('express');
 var swig = require('swig');
 var fs = require('fs');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
 var logger = require('../app/middlewares/logger.js');
 
@@ -56,16 +58,24 @@ var bootstrapServer = function(app) {
 
   // Sessions
   app.use(allowCrossDomain);
-  app.use(express.cookieParser());
+  app.use(cookieParser());
 
   // Use less
-  app.use(require('less-middleware')({
-    dest: dir_path + '/public/stylesheets',
-    src: dir_path + '/assets/less',
-    prefix: '/stylesheets',
-    paths: [dir_path + '/public/lib/bootstrap/less'],
-    compress: true
-  }));
+  app.use(require('less-middleware')(
+    dir_path + '/assets/less',
+    {
+      preprocess: {
+        path: dir_path + '/public/stylesheets',
+      },
+      prefix: '/stylesheets'
+    },
+    {
+      paths: [dir_path + '/public/lib/bootstrap/less'],
+    },
+    {
+      compress: true
+    }
+  ));
 
   // Views engine
   swig.setDefaults({
@@ -78,8 +88,7 @@ var bootstrapServer = function(app) {
   app.set('views', dir_path + '/app/views');
 
   // Use
-  app.use(express.urlencoded());
-  app.use(express.json());
+  app.use(bodyParser());
 
   // Logger
   if (node_env !== 'test') {
