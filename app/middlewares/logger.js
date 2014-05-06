@@ -7,7 +7,7 @@ colors.setTheme({
   assets: 'blue'
 });
 
-module.exports = function(req, res, next){
+module.exports = function(req, res, next) {
   var publicFolder = /img|js|lib|stylesheet/;
   var timeStamp = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 

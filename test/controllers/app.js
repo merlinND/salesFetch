@@ -48,7 +48,7 @@ describe('<Application controller>', function() {
       ], done);
     });
 
-    it.only("should display error if no template found", function(done) {
+    it("should display error if no template found", function(done) {
 
       var context = {
         recordType: 'Contact',
@@ -65,8 +65,7 @@ describe('<Application controller>', function() {
             .get(url)
             .expect(500)
             .expect(function(res) {
-              console.log(res);
-              res.text.message.should.containDeep("a template is missing");
+              res.text.should.containDeep("a template is missing");
             })
             .end(cb);
         }

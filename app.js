@@ -35,7 +35,9 @@ config.bootstrap(app);
 
 // Bootstrap routes
 var routesPath = __dirname + '/app/routes';
-walk(routesPath, function(path) { require(path)(app); });
+walk(routesPath, function(path) {
+  require(path)(app);
+});
 
 // Error Handeling
 require('./app/middlewares/errors').addErrorsPages(app);
