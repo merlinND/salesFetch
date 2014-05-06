@@ -28,7 +28,8 @@ module.exports.checkHeight = function(req, res, next) {
   var env = req.reqParams.env;
 
   if(env && env.deviseType === 'desktop' && (env.height < 400)) {
-    return next({message: "The context page need a minimum of 400px height to be displayed.", status: 401});
+    res.send(401, "The context page need a minimum of 400px height to be displayed.");
+    return next();
   }
 
   next();

@@ -13,7 +13,7 @@ module.exports.contextSearch = function(req, res, next) {
   var reqParams = req.reqParams;
 
   if(!reqParams.context || !reqParams.context.templatedQuery || !reqParams.context.templatedDisplay) {
-    return next({message: 'Check your context profiler configuration, a template is missing.'});
+    return next(new Error('Check your context profiler configuration, a template is missing.'));
   }
 
   var params = {

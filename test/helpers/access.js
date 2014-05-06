@@ -10,10 +10,7 @@ module.exports.checkUnauthenticated = function checkUnauthenticated(app, verb, e
 
     request(app)
       [verb](endpoint)
-      .expect(200)
-      .expect(function(res) {
-        res.text.should.containDeep("error");
-      })
+      .expect(401)
       .end(done);
   });
 };

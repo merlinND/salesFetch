@@ -63,7 +63,7 @@ describe('<Application controller>', function() {
         function sendRequest(url, cb) {
           request(app)
             .get(url)
-            .expect(200)
+            .expect(500)
             .expect(function(res) {
               res.text.should.containDeep("a template is missing");
             })
@@ -72,7 +72,7 @@ describe('<Application controller>', function() {
       ], done);
     });
 
-    it("should display error if height above 400px", function(done) {
+    it("should display error if height is above 400px", function(done) {
 
       var env = {
         deviseType: 'desktop',
@@ -86,7 +86,7 @@ describe('<Application controller>', function() {
         function sendRequest(url, cb) {
           request(app)
             .get(url)
-            .expect(200)
+            .expect(401)
             .expect(function(res) {
               res.text.should.containDeep("height");
             })
