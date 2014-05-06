@@ -8,18 +8,13 @@ module.exports = function(grunt) {
       js: {
         files: ['gruntfile.js', 'app.js', 'config/**/*.js', 'app/**/*.js', 'public/js/**', 'test/**/*.js'],
         tasks: ['jshint']
-      },
-      html: {
-        files: ['public/views/**']
-      },
-      css: {
-        files: ['public/css/**']
       }
     },
 
     jshint: {
       options: {
-        jshintrc: '.jshintrc'
+        jshintrc: '.jshintrc',
+        force: true
       },
       all: {
         src: ['gruntfile.js', 'app.js', 'config/**/*.js', 'app/**/*.js', 'public/js/**', 'test/**/*.js']
@@ -28,9 +23,8 @@ module.exports = function(grunt) {
 
     nodemon: {
       dev: {
+        script: 'app.js',
         options: {
-          file: 'app.js',
-          args: [],
           ignoredFiles: ['public/**'],
           watchedExtensions: ['js'],
           nodeArgs: ['--debug'],

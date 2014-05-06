@@ -40,52 +40,7 @@ module.exports.findDocuments = function(url, params, cb) {
     var providers = body[pages[1]];
     var docReturn = body[pages[2]];
 
-    if (!docReturn.datas) {
-      return cb(null, docReturn);
-    }
 
-    // Render the datas templated
-    docReturn.datas.forEach(function(doc) {
-      var relatedTemplate = documentTypes[doc.document_type].template_snippet;
-      doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
-
-      doc.provider = providers[doc.token].name;
-      doc.document_type = documentTypes[doc.document_type].name;
-    });
-
-    // Return all the documents types
-    docReturn.document_types = {};
-    for (var docType in docReturn.facets.document_types) {
-      if (docType) {
-        var dT = {
-          id: docType,
-          count: docReturn.facets.document_types[docType],
-          name: documentTypes[docType].name
-        };
-
-        docReturn.document_types[docType] = dT;
-      }
-    }
-
-    // Return all the providers
-    docReturn.providers = {};
-    for (var provider in docReturn.facets.tokens) {
-      if (provider) {
-        var p = {
-          id: provider,
-          count: docReturn.facets.tokens[provider],
-          name: providers[provider].name
-        };
-
-        docReturn.providers[provider] = p;
-      }
-    }
-
-    // Result number
-    docReturn.count = 0;
-    for(var token in docReturn.facets.tokens) {
-      docReturn.count += docReturn.facets.tokens[token];
-    }
 
     cb(null, docReturn);
   });
