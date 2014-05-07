@@ -9,7 +9,9 @@ var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
 
-
+/**
+ * Execute query and return a list of templated sinppets
+ */
 var baseRequest = function(url, endpoint, cb) {
   var urlToCall = url + endpoint;
   return request.get(urlToCall)
@@ -95,6 +97,9 @@ module.exports.findDocuments = function(url, params, cb) {
   });
 };
 
+/**
+ * Find and return a single templated document
+ */
 module.exports.findDocument = function(url, id, cb) {
   var pages = [
     '/document_types',
@@ -127,6 +132,11 @@ module.exports.findDocument = function(url, id, cb) {
   });
 };
 
+
+/**
+ * Create a subcompany and an admin on the FetchAPi
+ * Store the linking informations btw Salesforce and FetchApi
+ */
 module.exports.initAccount = function(data, cb) {
   var endpoint = 'http://api.anyfetch.com';
 
@@ -155,6 +165,8 @@ module.exports.initAccount = function(data, cb) {
         .end(function(e, r) {cb(e,r);});
     },
     function retrieveUserToken(anyFetchUser, cb) {
+      user.anyFetchId = anyFetchUser.id;
+
       request.get(endpoint + '/token')
         .set('Authorization', 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64'))
         .end(function(err, res) {
@@ -185,7 +197,24 @@ module.exports.initAccount = function(data, cb) {
       localOrg.save(cb);
     },
     function saveLocalUser(localOrganization, cb) {
+      org = localOrganization;
 
+      var localUser = new User({
+        name: user.name,
+        email: user.email,
+        SFDCId: user.id,
+        anyFetchId: user.anyFetchId,
+        token: user.token,
+        organization: localOrganization._id
+      });
+
+      localUser.save(cb);
     }
-  ], cb);
+  ], function(err) {
+    if (err) {
+      return cb(err);
+    }
+
+    cb(null, org);
+  });
 };
