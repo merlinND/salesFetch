@@ -5,15 +5,14 @@ require("should");
 var async = require('async');
 var request = require('supertest');
 var app = require('../../app.js');
+var APIs = require('../helpers/APIs');
+var cleaner = require('../hooks/cleaner');
+var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
 
-
-var APIs = require('../helpers/APIs');
-var cleaner = require('../hooks/cleaner');
-var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
 describe('<Admin controller>', function() {
   beforeEach(cleaner);
@@ -30,7 +29,7 @@ describe('<Admin controller>', function() {
   describe('POST /admin/init', function() {
     var endpoint = '/admin/init';
 
-    it.only('should create a user and a company', function(done) {
+    it('should create a user and a company', function(done) {
       // Mock send from Salesforce
       var SFDCinfos = {
         user: {
@@ -66,11 +65,14 @@ describe('<Admin controller>', function() {
             users.length.should.eql(1);
 
             var u = users[0];
+
             u.name.should.eql('Jessy Pinkman');
             u.SFDCId.should.eql('5678');
             u.anyFetchId.should.eql('533d6b2a6355285e5563d005');
             u.email.should.eql('jessy.pinkman@breaking-bad.com');
+            u.anyFetchToken.should.eql('mockedToken');
             u.organization.should.eql(org._id);
+            u.isAdmin.should.be.eql(true);
 
             cb(null);
           });

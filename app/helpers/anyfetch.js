@@ -213,7 +213,7 @@ module.exports.initAccount = function(data, cb) {
         email: user.email,
         SFDCId: user.id,
         anyFetchId: user.anyFetchId,
-        token: user.token,
+        anyFetchToken: user.token,
         organization: localOrganization._id,
         isAdmin: true
       });
