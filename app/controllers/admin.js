@@ -5,7 +5,25 @@
 
 var async = require('async');
 var SFDChelper = require('../helpers/salesforce');
+var anyFetchHelper = require('../helpers/anyfetch');
 
+/**
+ * Create a subcompany and add an admin user
+ * Called on time at package installation
+ */
+module.exports.init = function(req, res, next) {
+  if (!req.user || !req.organization) {
+    return next(new Error('The init account should provide user and org informations'));
+  }
+
+  anyFetchHelper.initAccount(req, function(err, masterKey) {
+    if (err) {
+      return next(err);
+    }
+
+    res.send(masterKey);
+  });
+};
 
 /**
  * Administration index page
@@ -24,7 +42,6 @@ module.exports.index = function(req, res) {
     });
   });
 };
-
 
 /**
  * Display a form to create a nex context profiler
