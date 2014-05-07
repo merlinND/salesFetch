@@ -146,7 +146,7 @@ module.exports.initAccount = function(data, cb) {
 
   async.waterfall([
     function createRandomPassword(cb) {
-      crypto.randomBytes(48, function(ex, buf) {
+      crypto.randomBytes(20, function(ex, buf) {
         var password = buf.toString('hex');
         cb(null, password);
       });
@@ -162,7 +162,9 @@ module.exports.initAccount = function(data, cb) {
           password: password,
           is_admin: true,
         })
-        .end(function(e, r) {cb(e,r);});
+        .end(function(e, r) {
+          cb(e,r.body);
+        });
     },
     function retrieveUserToken(anyFetchUser, cb) {
       user.anyFetchId = anyFetchUser.id;
@@ -174,7 +176,7 @@ module.exports.initAccount = function(data, cb) {
             return cb(new Error('Impossible to retrieve token'));
           }
 
-          cb(null, res.token);
+          cb(null, res.body.token);
         });
     },
     function createSubCompany(token, cb) {
@@ -185,7 +187,9 @@ module.exports.initAccount = function(data, cb) {
         .send({
           name: org.name
         })
-        .end(function(e, r) {cb(e,r);});
+        .end(function(e, r) {
+          cb(e,r.body);
+        });
     },
     function saveLocalCompany(anyFetchSubCompany, cb) {
       var localOrg = new Organization({
@@ -194,7 +198,12 @@ module.exports.initAccount = function(data, cb) {
         anyFetchId: anyFetchSubCompany.id
       });
 
-      localOrg.save(cb);
+      localOrg.save(function(err, org) {
+        if (err) {
+          return cb(err);
+        }
+        cb(null, org);
+      });
     },
     function saveLocalUser(localOrganization, cb) {
       org = localOrganization;
@@ -209,7 +218,12 @@ module.exports.initAccount = function(data, cb) {
         isAdmin: true
       });
 
-      localUser.save(cb);
+      localUser.save(function(err, user) {
+        if (err) {
+          return cb(err);
+        }
+        cb(null, user);
+      });
     }
   ], function(err) {
     if (err) {
@@ -227,7 +241,7 @@ module.exports.initAccount = function(data, cb) {
 module.exports.addNewUser = function(endpoint, user, organization, cb) {
   async.waterfall([
     function createRandomPassword(cb) {
-      crypto.randomBytes(48, function(ex, buf) {
+      crypto.randomBytes(20, function(ex, buf) {
         var password = buf.toString('hex');
         cb(null, password);
       });

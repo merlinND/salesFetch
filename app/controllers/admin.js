@@ -10,16 +10,17 @@ var anyFetchHelper = require('../helpers/anyfetch');
  * Called on time at package installation
  */
 module.exports.init = function(req, res, next) {
-  if (!req.user || !req.organization) {
+  var data = req.body;
+  if (!data.user || !data.organization) {
     return next(new Error('The init account should provide user and org informations'));
   }
 
-  anyFetchHelper.initAccount(req, function(err, createdOrg) {
+  anyFetchHelper.initAccount(data, function(err, createdOrg) {
     if (err) {
       return next(err);
     }
 
-    res.send(createdOrg.masterKey);
+    res.send(200, createdOrg.masterKey);
   });
 };
 

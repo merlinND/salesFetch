@@ -6,6 +6,8 @@ var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
 
+var anyFetchHelper = require('../helpers/anyfetch.js');
+
 /**
  * Authenticate the user based on the request's context
  * return the user
@@ -21,14 +23,7 @@ var authenticateUser = function(context, org, done) {
         return done(null, user);
       }
 
-      // Create create a user in the company
-      var newUser = new User({
-        name: userContext.name,
-        userId: userContext.id,
-        email: userContext.email,
-        organization: org._id
-      });
-      newUser.save(cb);
+      anyFetchHelper.addNewUser(context.url, userContext, org, cb);
     }
   ], done);
 };
