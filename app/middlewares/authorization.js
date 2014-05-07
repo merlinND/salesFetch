@@ -15,7 +15,7 @@ var authenticateUser = function(context, org, done) {
   async.waterfall([
     function(cb) {
       // Find an existing user
-      User.findOne({userId: userContext.id}, cb);
+      User.findOne({SFDCId: userContext.id}, cb);
     }, function(user, cb) {
       if (user) {
         return done(null, user);
@@ -50,7 +50,7 @@ exports.requiresLogin = function(req, res, next) {
         return next({message: "Bad Request", status: 401});
       }
 
-      Organization.findOne({organizationId: data.organization.id}, cb);
+      Organization.findOne({SFDCId: data.organization.id}, cb);
     },
     function checkRequestValidity(org, cb){
       organization = org;

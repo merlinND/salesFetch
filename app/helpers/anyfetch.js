@@ -134,8 +134,8 @@ module.exports.findDocument = function(url, id, cb) {
 
 
 /**
- * Create a subcompany and an admin on the FetchAPi
- * Store the linking informations btw Salesforce and FetchApi
+ * Create a subcompany and an admin on the FetchAPI
+ * Store the linking informations btw Salesforce and FetchAPI
  */
 module.exports.initAccount = function(data, cb) {
   var endpoint = 'http://api.anyfetch.com';
@@ -205,7 +205,8 @@ module.exports.initAccount = function(data, cb) {
         SFDCId: user.id,
         anyFetchId: user.anyFetchId,
         token: user.token,
-        organization: localOrganization._id
+        organization: localOrganization._id,
+        isAdmin: true
       });
 
       localUser.save(cb);
@@ -217,4 +218,65 @@ module.exports.initAccount = function(data, cb) {
 
     cb(null, org);
   });
+};
+
+/**
+ * Create a user attached to the existing subcompany
+ * and store it on the local DB
+ */
+module.exports.addNewUser = function(endpoint, user, organization, cb) {
+  async.waterfall([
+    function createRandomPassword(cb) {
+      crypto.randomBytes(48, function(ex, buf) {
+        var password = buf.toString('hex');
+        cb(null, password);
+      });
+    },
+    function retrieveAdminToken(password, cb) {
+      user.password = password;
+
+      User.findOne({organization: organization._id, admin: true}, function(err, adminUser) {
+        if (err) {
+          return cb(new Error('No admin found for the comapany'));
+        }
+
+        cb(null, adminUser.token);
+      });
+    },
+    function createNewUser(adminToken, cb) {
+      request.post(endpoint + '/users')
+        .set('Authorization', 'Bearer ' + adminToken)
+        .send({
+          email: user.email,
+          name: user.name,
+          password: user.password
+        })
+        .end(function(e, r) {cb(e,r);});
+    },
+    function retrieveUserToken(anyFetchUser, cb) {
+      user.anyFetchId = anyFetchUser.id;
+
+      request.get(endpoint + '/token')
+        .set('Authorization', 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64'))
+        .end(function(err, res) {
+          if (err) {
+            return cb(new Error('Impossible to retrieve token'));
+          }
+
+          cb(null, res.token);
+        });
+    },
+    function saveLocalUser(userToken, cb) {
+      var localUser = new User({
+        name: user.name,
+        email: user.email,
+        SFDCId: user.id,
+        anyFetchId: user.anyFetchId,
+        token: userToken,
+        organization: organization._id
+      });
+
+      localUser.save(cb);
+    }
+  ],cb);
 };

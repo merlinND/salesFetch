@@ -25,7 +25,11 @@ var UserModel = new Schema ({
   },
   name: String,
   email: String,
-  anyFetchToken: String
+  anyFetchToken: String,
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
 });
 
 /**
