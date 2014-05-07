@@ -55,6 +55,7 @@ exports.requiresLogin = function(req, res, next) {
 
       var hash = data.organization.id + data.user.id + org.masterKey + "SalesFetch4TheWin";
       var check = crypto.createHash('sha1').update(hash).digest("base64");
+
       if (check !== data.hash) {
         return next({message: "Please check your salesFetch Master Key!", status: 401});
       }

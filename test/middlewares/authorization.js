@@ -7,6 +7,7 @@ var crypto = require('crypto');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
 
+var APIs = require('../helpers/APIs');
 var cleaner = require('../hooks/cleaner');
 var authMiddleware  = require('../../app/middlewares/authorization').requiresLogin;
 
@@ -55,24 +56,24 @@ describe('<Authentication middleware>', function() {
       function createCompany(cb) {
         var org = new Organization({
           name: "anyFetch",
-          organizationId: '1234'
+          SFDCId: '1234'
         });
         org.save(cb);
       }, function createUser(org, count, cb) {
         createdOrg = org;
 
         var user = new User({
-          userId: '5678',
+          SFDCId: '5678',
           organization: org
         });
         user.save(cb);
       }, function makeCall(user, count, cb) {
-        var hash = createdOrg.organizationId + user.userId + "SalesFetch4TheWin";
+        var hash = createdOrg.SFDCId + user.SFDCId + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
           hash: hash,
-          organization: {id: createdOrg.organizationId},
+          organization: {id: createdOrg.SFDCId},
           user: {id: user.userId}
         };
 
@@ -92,22 +93,25 @@ describe('<Authentication middleware>', function() {
   });
 
   it('should creata a new user if not in DB', function(done) {
+    before(function(done) {
+      APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
+    });
 
     async.waterfall([
       function checkNoUser(cb) {
         User.count({}, function(err, count) {
           count.should.eql(0);
-          cb(null, null);
+          cb();
         });
       }, function createCompany(_, cb) {
         var org = new Organization({
           name: "anyFetch",
-          organizationId: '1234'
+          SFDCId: '1234'
         });
 
         org.save(cb);
       }, function makeCall(org, count, cb) {
-        var hash = org.organizationId + '5678' + org.masterKey + "SalesFetch4TheWin";
+        var hash = org.SFDCId + '5678' + org.masterKey + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
@@ -127,7 +131,6 @@ describe('<Authentication middleware>', function() {
         };
 
         authMiddleware(req, null, function() {
-
           User.count({}, function(err, count) {
             count.should.eql(1);
             cb();
@@ -144,7 +147,7 @@ describe('<Authentication middleware>', function() {
       function createCompany(cb) {
         var org = new Organization({
           name: "anyFetch",
-          organizationId: '1234'
+          SFDCId: '1234'
         });
 
         org.save(cb);
@@ -152,7 +155,7 @@ describe('<Authentication middleware>', function() {
         createdOrg = org;
 
         var user = new User({
-          userId: '5678',
+          SFDCId: '5678',
           name: 'Walter White',
           email: 'walter.white@breaking-bad.com',
           organization: org.id
@@ -160,13 +163,13 @@ describe('<Authentication middleware>', function() {
 
         user.save(cb);
       },function makeCall(user, _, cb) {
-        var hash = createdOrg.organizationId + user.userId + createdOrg.masterKey + "SalesFetch4TheWin";
+        var hash = createdOrg.SFDCId + user.SFDCId + createdOrg.masterKey + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
           hash: hash,
-          organization: {id: createdOrg.organizationId},
-          user: {id: user.userId}
+          organization: {id: createdOrg.SFDCId},
+          user: {id: user.SFDCId}
         };
 
         var req = {
@@ -176,7 +179,7 @@ describe('<Authentication middleware>', function() {
         };
 
         authMiddleware(req, null, function() {
-          req.user.userId.should.eql(user.userId);
+          req.user.SFDCId.should.eql(user.SFDCId);
           req.reqParams.should.have.keys('hash', 'user', 'organization');
           cb();
         });
