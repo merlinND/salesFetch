@@ -3,19 +3,27 @@
  */
 'use strict';
 
+var async = require('async');
 var anyFetchHelper = require('../helpers/anyfetch');
 
 /**
  * Create a subcompany and add an admin user
- * Called on time at package installation
+ * Called one time at package installation
  */
 module.exports.init = function(req, res, next) {
-  var data = req.body;
-  if (!data.user || !data.organization) {
-    return next(new Error('The init account should provide user and org informations'));
-  }
+  async.waterfall([
+    function checkParams (cb) {
+      var data = req.body;
+      if (!data.user || !data.organization) {
+        return cb(new Error('The init account should provide user and org informations'));
+      }
 
-  anyFetchHelper.initAccount(data, function(err, createdOrg) {
+      cb(null, data);
+    },
+    function initAccount (data, cb) {
+      anyFetchHelper.initAccount(data, cb);
+    }
+  ], function(err, createdOrg) {
     if (err) {
       return next(err);
     }
