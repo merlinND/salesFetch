@@ -134,7 +134,7 @@ module.exports.findDocument = function(url, id, cb) {
  * Store the linking informations btw Salesforce and FetchAPI
  */
 module.exports.initAccount = function(data, cb) {
-  var url = 'http://api.anyfetch.com';
+  var url = config.fetchApiUrl;
 
   var user = data.user;
   var org = data.organization;
@@ -145,50 +145,48 @@ module.exports.initAccount = function(data, cb) {
       crypto.randomBytes(20, function(ex, buf) {
         var password = buf.toString('base64');
         user.password = password;
-        cb(null, password);
+        cb(null);
       });
     },
-    function createAccount(password, cb) {
+    function createAccount(cb) {
       request(url).post('/users')
         .set('Authorization', 'Basic ' + config.fetchApiCreds)
         .send({
           email: user.email,
           name: user.name,
-          password: password,
+          password: user.password,
           is_admin: true,
         })
         .end(cb);
     },
-    function retrieveUserToken(data, cb) {
-      user.anyFetchId = data.body.id;
+    function retrieveUserToken(res, cb) {
+      user.anyFetchId = res.body.id;
       user.basicAuth = new Buffer(user.email + ':' + user.password).toString('base64');
 
       request(url).get('/token')
         .set('Authorization', 'Basic ' + user.basicAuth)
         .end(cb);
     },
-    function createSubCompany(data, cb) {
-      user.token = data.body.token;
+    function createSubCompany(res, cb) {
+      user.token = res.body.token;
 
       request(url).post('/subcompanies')
         .set('Authorization', 'Bearer ' + user.token)
         .send({
           name: org.name
         })
-        .end(function(e, r) {
-          cb(e,r.body);
-        });
+        .end(cb);
     },
-    function saveLocalCompany(anyFetchSubCompany, cb) {
+    function saveLocalCompany(res, cb) {
       var localOrg = new Organization({
         name: org.name,
         SFDCId: org.id,
-        anyFetchId: anyFetchSubCompany.id
+        anyFetchId: res.body.id
       });
 
       localOrg.save(cb);
     },
-    function saveLocalUser(localOrganization, _, cb) {
+    function saveLocalUser(localOrganization, count, cb) {
       org = localOrganization;
 
       var localUser = new User({
@@ -213,17 +211,17 @@ module.exports.initAccount = function(data, cb) {
  * and store it on the local DB
  */
 module.exports.addNewUser = function(user, organization, cb) {
-  var url = 'http://api.anyfetch.com';
+  var url = config.fetchApiUrl;
 
   async.waterfall([
     function createRandomPassword(cb) {
       crypto.randomBytes(20, function(ex, buf) {
         var password = buf.toString('base64');
         user.password = password;
-        cb(null, password);
+        cb(null);
       });
     },
-    function retrieveAdminToken(password, cb) {
+    function retrieveAdminToken(cb) {
       User.findOne({organization: organization, admin: true}, cb);
     },
     function createNewUser(adminUser, cb) {
@@ -235,7 +233,7 @@ module.exports.addNewUser = function(user, organization, cb) {
           name: user.name,
           password: user.password
         })
-        .end(function(e, r) {cb(e,r);});
+        .end(cb);
     },
     function retrieveUserToken(anyFetchUser, cb) {
       user.anyFetchId = anyFetchUser.id;
@@ -244,8 +242,8 @@ module.exports.addNewUser = function(user, organization, cb) {
         .set('Authorization', 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64'))
         .end(cb);
     },
-    function saveLocalUser(data, cb) {
-      var userToken = data.token;
+    function saveLocalUser(res, cb) {
+      var userToken = res.token;
 
       var localUser = new User({
         name: user.name,

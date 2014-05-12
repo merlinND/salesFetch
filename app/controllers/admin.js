@@ -13,7 +13,7 @@ var anyFetchHelper = require('../helpers/anyfetch');
  */
 module.exports.init = function(req, res, next) {
   async.waterfall([
-    function checkParams (cb) {
+    function checkParams(cb) {
       var data = req.body;
       if (!data.user || !data.organization) {
         return cb(new Error('The init account should provide user and org informations'));
@@ -21,7 +21,7 @@ module.exports.init = function(req, res, next) {
 
       cb(null, data);
     },
-    function initAccount (data, cb) {
+    function initAccount(data, cb) {
       anyFetchHelper.initAccount(data, cb);
     }
   ], function(err, createdOrg) {
