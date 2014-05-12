@@ -1,6 +1,6 @@
 'use strict';
 
-var request = require('superagent');
+var request = require('supertest');
 var Mustache = require('mustache');
 var async = require('async');
 var crypto = require('crypto');
@@ -15,8 +15,7 @@ var config = require('../../config/index.js');
  * Execute query and return a list of templated sinppets
  */
 var baseRequest = function(url, endpoint, cb) {
-  var urlToCall = url + endpoint;
-  return request.get(urlToCall)
+  return request(url).get(endpoint)
     .set('Authorization', 'Basic ' + config.fetchApiCreds)
     .end(function(e, r) {cb(e,r);});
 };
@@ -135,7 +134,7 @@ module.exports.findDocument = function(url, id, cb) {
  * Store the linking informations btw Salesforce and FetchAPI
  */
 module.exports.initAccount = function(data, cb) {
-  var endpoint = 'http://api.anyfetch.com';
+  var url = 'http://api.anyfetch.com';
 
   var user = data.user;
   var org = data.organization;
@@ -150,7 +149,7 @@ module.exports.initAccount = function(data, cb) {
       });
     },
     function createAccount(password, cb) {
-      request.post(endpoint + '/users')
+      request(url).post('/users')
         .set('Authorization', 'Basic ' + config.fetchApiCreds)
         .send({
           email: user.email,
@@ -158,29 +157,21 @@ module.exports.initAccount = function(data, cb) {
           password: password,
           is_admin: true,
         })
-        .end(function(e, r) {
-          cb(e,r.body);
-        });
+        .end(cb);
     },
-    function retrieveUserToken(anyFetchUser, cb) {
-      user.anyFetchId = anyFetchUser.id;
+    function retrieveUserToken(data, cb) {
+      user.anyFetchId = data.body.id;
       user.basicAuth = new Buffer(user.email + ':' + user.password).toString('base64');
 
-      request.get(endpoint + '/token')
+      request(url).get('/token')
         .set('Authorization', 'Basic ' + user.basicAuth)
-        .end(function(err, res) {
-          if (err) {
-            return cb(err);
-          }
-
-          cb(null, res.body.token);
-        });
+        .end(cb);
     },
-    function createSubCompany(token, cb) {
-      user.token = token;
+    function createSubCompany(data, cb) {
+      user.token = data.body.token;
 
-      request.post(endpoint + '/subcompanies')
-        .set('Authorization', 'Bearer ' + token)
+      request(url).post('/subcompanies')
+        .set('Authorization', 'Bearer ' + user.token)
         .send({
           name: org.name
         })
@@ -222,7 +213,7 @@ module.exports.initAccount = function(data, cb) {
  * and store it on the local DB
  */
 module.exports.addNewUser = function(user, organization, cb) {
-  var endpoint = 'http://api.anyfetch.com';
+  var url = 'http://api.anyfetch.com';
 
   async.waterfall([
     function createRandomPassword(cb) {
@@ -233,16 +224,11 @@ module.exports.addNewUser = function(user, organization, cb) {
       });
     },
     function retrieveAdminToken(password, cb) {
-      User.findOne({organization: organization, admin: true}, function(err, adminUser) {
-        if (err) {
-          return cb(new Error('No admin found for the comapany'));
-        }
-
-        cb(null, adminUser.token);
-      });
+      User.findOne({organization: organization, admin: true}, cb);
     },
-    function createNewUser(adminToken, cb) {
-      request.post(endpoint + '/users')
+    function createNewUser(adminUser, cb) {
+      var adminToken = adminUser.token;
+      request(url).post('/users')
         .set('Authorization', 'Bearer ' + adminToken)
         .send({
           email: user.email,
@@ -254,17 +240,13 @@ module.exports.addNewUser = function(user, organization, cb) {
     function retrieveUserToken(anyFetchUser, cb) {
       user.anyFetchId = anyFetchUser.id;
 
-      request.get(endpoint + '/token')
+      request(url).get('/token')
         .set('Authorization', 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64'))
-        .end(function(err, res) {
-          if (err) {
-            return cb(new Error('Impossible to retrieve token'));
-          }
-
-          cb(null, res.token);
-        });
+        .end(cb);
     },
-    function saveLocalUser(userToken, cb) {
+    function saveLocalUser(data, cb) {
+      var userToken = data.token;
+
       var localUser = new User({
         name: user.name,
         email: user.email,
