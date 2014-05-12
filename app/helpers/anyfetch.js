@@ -9,13 +9,15 @@ var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
 
+var config = require('../../config/index.js');
+
 /**
  * Execute query and return a list of templated sinppets
  */
 var baseRequest = function(url, endpoint, cb) {
   var urlToCall = url + endpoint;
   return request.get(urlToCall)
-    .set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS)
+    .set('Authorization', 'Basic ' + config.fetchApiCreds)
     .end(function(e, r) {cb(e,r);});
 };
 
@@ -155,7 +157,7 @@ module.exports.initAccount = function(data, cb) {
       user.password = password;
 
       request.post(endpoint + '/users')
-        .set('Authorization', 'Basic ' + process.env.FETCHAPI_CREDS)
+        .set('Authorization', 'Basic ' + config.fetchApiCreds)
         .send({
           email: user.email,
           name: user.name,
