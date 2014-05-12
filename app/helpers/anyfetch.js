@@ -23,48 +23,50 @@ var baseRequest = function(url, endpoint, cb) {
 
 
 module.exports.findDocuments = function(url, params, cb) {
-  var query = [];
-  for(var key in params) {
-    query.push(key + "=" + encodeURIComponent(params[key]));
-  }
+  var pages = [];
 
-  var pages = [
-    '/document_types',
-    '/providers',
-    '/documents?' + query.join('&')
-  ];
+  async.waterfall([
+    function executeBatchRequest(cb) {
+      var query = [];
+      for(var key in params) {
+        query.push(key + "=" + encodeURIComponent(params[key]));
+      }
 
-  var batchParams = pages.map(encodeURIComponent).join('&pages=');
-  var batchUrl = '/batch?pages=' + batchParams;
-  baseRequest(url, batchUrl, function(err, res) {
+      pages = [
+        '/document_types',
+        '/providers',
+        '/documents?' + query.join('&')
+      ];
 
-    if (err) {
-      return cb(err);
-    }
+      var batchParams = pages.map(encodeURIComponent).join('&pages=');
+      var batchUrl = '/batch?pages=' + batchParams;
 
-    var body = res.body;
+      baseRequest(url, batchUrl, cb);
+    },
+    function templateResults(res, cb) {
 
-    var documentTypes = body[pages[0]];
-    var providers = body[pages[1]];
-    var docReturn = body[pages[2]];
+      var body = res.body;
 
-    if (!docReturn.datas) {
-      return cb(null, docReturn);
-    }
+      var documentTypes = body[pages[0]];
+      var providers = body[pages[1]];
+      var docReturn = body[pages[2]];
 
-    // Render the datas templated
-    docReturn.datas.forEach(function(doc) {
-      var relatedTemplate = documentTypes[doc.document_type].template_snippet;
-      doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
+      if (!docReturn.datas) {
+        return cb(null, docReturn);
+      }
 
-      doc.provider = providers[doc.token].name;
-      doc.document_type = documentTypes[doc.document_type].name;
-    });
+      // Render the templated datas
+      docReturn.datas.forEach(function(doc) {
+        var relatedTemplate = documentTypes[doc.document_type].template_snippet;
+        doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
-    // Return all the documents types
-    docReturn.document_types = {};
-    for (var docType in docReturn.facets.document_types) {
-      if (docType) {
+        doc.provider = providers[doc.token].name;
+        doc.document_type = documentTypes[doc.document_type].name;
+      });
+
+      // Return all the documents types
+      docReturn.document_types = {};
+      for (var docType in docReturn.facets.document_types) {
         var dT = {
           id: docType,
           count: docReturn.facets.document_types[docType],
@@ -73,12 +75,10 @@ module.exports.findDocuments = function(url, params, cb) {
 
         docReturn.document_types[docType] = dT;
       }
-    }
 
-    // Return all the providers
-    docReturn.providers = {};
-    for (var provider in docReturn.facets.tokens) {
-      if (provider) {
+      // Return all the providers
+      docReturn.providers = {};
+      for (var provider in docReturn.facets.tokens) {
         var p = {
           id: provider,
           count: docReturn.facets.tokens[provider],
@@ -87,16 +87,11 @@ module.exports.findDocuments = function(url, params, cb) {
 
         docReturn.providers[provider] = p;
       }
-    }
 
-    // Result number
-    docReturn.count = 0;
-    for(var token in docReturn.facets.tokens) {
-      docReturn.count += docReturn.facets.tokens[token];
-    }
+      cb(null, docReturn);
 
-    cb(null, docReturn);
-  });
+    }
+  ], cb);
 };
 
 /**
@@ -149,13 +144,12 @@ module.exports.initAccount = function(data, cb) {
   async.waterfall([
     function createRandomPassword(cb) {
       crypto.randomBytes(20, function(ex, buf) {
-        var password = buf.toString('hex');
+        var password = buf.toString('base64');
+        user.password = password;
         cb(null, password);
       });
     },
     function createAccount(password, cb) {
-      user.password = password;
-
       request.post(endpoint + '/users')
         .set('Authorization', 'Basic ' + config.fetchApiCreds)
         .send({
@@ -170,12 +164,13 @@ module.exports.initAccount = function(data, cb) {
     },
     function retrieveUserToken(anyFetchUser, cb) {
       user.anyFetchId = anyFetchUser.id;
+      user.basicAuth = new Buffer(user.email + ':' + user.password).toString('base64');
 
       request.get(endpoint + '/token')
-        .set('Authorization', 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64'))
+        .set('Authorization', 'Basic ' + user.basicAuth)
         .end(function(err, res) {
           if (err) {
-            return cb(new Error('Impossible to retrieve token'));
+            return cb(err);
           }
 
           cb(null, res.body.token);
@@ -200,14 +195,9 @@ module.exports.initAccount = function(data, cb) {
         anyFetchId: anyFetchSubCompany.id
       });
 
-      localOrg.save(function(err, org) {
-        if (err) {
-          return cb(err);
-        }
-        cb(null, org);
-      });
+      localOrg.save(cb);
     },
-    function saveLocalUser(localOrganization, cb) {
+    function saveLocalUser(localOrganization, _, cb) {
       org = localOrganization;
 
       var localUser = new User({
@@ -216,23 +206,14 @@ module.exports.initAccount = function(data, cb) {
         SFDCId: user.id,
         anyFetchId: user.anyFetchId,
         anyFetchToken: user.token,
-        organization: localOrganization._id,
+        organization: localOrganization,
         isAdmin: true
       });
 
-      localUser.save(function(err, user) {
-        if (err) {
-          return cb(err);
-        }
-        cb(null, user);
-      });
+      localUser.save(cb);
     }
   ], function(err) {
-    if (err) {
-      return cb(err);
-    }
-
-    cb(null, org);
+    cb(err, org);
   });
 };
 
@@ -246,14 +227,13 @@ module.exports.addNewUser = function(user, organization, cb) {
   async.waterfall([
     function createRandomPassword(cb) {
       crypto.randomBytes(20, function(ex, buf) {
-        var password = buf.toString('hex');
+        var password = buf.toString('base64');
+        user.password = password;
         cb(null, password);
       });
     },
     function retrieveAdminToken(password, cb) {
-      user.password = password;
-
-      User.findOne({organization: organization._id, admin: true}, function(err, adminUser) {
+      User.findOne({organization: organization, admin: true}, function(err, adminUser) {
         if (err) {
           return cb(new Error('No admin found for the comapany'));
         }
@@ -296,5 +276,5 @@ module.exports.addNewUser = function(user, organization, cb) {
 
       localUser.save(cb);
     }
-  ],cb);
+  ], cb );
 };
