@@ -8,6 +8,7 @@ var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
 
 var APIs = require('../helpers/APIs');
+var factories = require('../helpers/factories');
 var cleaner = require('../hooks/cleaner');
 var authMiddleware  = require('../../app/middlewares/authorization').requiresLogin;
 
@@ -50,32 +51,18 @@ describe('<Authentication middleware>', function() {
 
 
   it('should reject call if the hash dont match', function(done) {
-    var createdOrg;
 
     async.waterfall([
       function createCompany(cb) {
-        var org = new Organization({
-          name: "anyFetch",
-          SFDCId: '1234'
-        });
-        org.save(cb);
+        factories.initAccount(cb);
       },
-      function createUser(org, count, cb) {
-        createdOrg = org;
-
-        var user = new User({
-          SFDCId: '5678',
-          organization: org
-        });
-        user.save(cb);
-      },
-      function makeCall(user, count, cb) {
-        var hash = createdOrg.SFDCId + user.SFDCId + "SalesFetch4TheWin";
+      function makeCall(user, org, cb) {
+        var hash = org.SFDCId + user.SFDCId + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
           hash: hash,
-          organization: {id: createdOrg.SFDCId},
+          organization: {id: org.SFDCId},
           user: {id: user.userId}
         };
 
@@ -94,7 +81,7 @@ describe('<Authentication middleware>', function() {
     ], done);
   });
 
-  it('should creata a new user if not in DB', function(done) {
+  it('should create a new user if not in DB', function(done) {
 
     async.waterfall([
       function mountAPI(cb) {
@@ -107,26 +94,9 @@ describe('<Authentication middleware>', function() {
         });
       },
       function createCompany(_, cb) {
-        var org = new Organization({
-          name: "anyFetch",
-          SFDCId: '1234'
-        });
-
-        org.save(function(e, org) {
-          return cb(null, org);
-        });
+        factories.initAccount(cb);
       },
-      function createAdminUser(org, cb) {
-        var user = new User({
-          SFDCId: '5678',
-          organization: org
-        });
-
-        user.save(function() {
-          return cb(null, org);
-        });
-      },
-      function makeCall(org, cb) {
+      function makeCall(user, org, cb) {
         var hash = org.SFDCId + '5678' + org.masterKey + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
@@ -195,7 +165,7 @@ describe('<Authentication middleware>', function() {
         };
 
         authMiddleware(req, null, function() {
-          req.user.SFDCId.should.eql(user.SFDCId);
+          req.user.should.have.property('SFDCId', user.SFDCId);
           req.reqParams.should.have.keys('hash', 'user', 'organization');
           cb();
         });

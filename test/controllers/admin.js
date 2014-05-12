@@ -52,9 +52,9 @@ describe('<Admin controller>', function() {
             orgs.length.should.eql(1);
 
             var o = orgs[0];
-            o.name.should.eql('Breaking Bad');
-            o.SFDCId.should.eql('1234');
-            o.anyFetchId.should.eql('533d9161162215a5375d34d2');
+            o.should.have.property('name', 'Breaking Bad');
+            o.should.have.property('SFDCId', '1234');
+            o.should.have.property('anyFetchId', '533d9161162215a5375d34d2');
             generatedMasterKey = o.masterKey;
 
             cb(null, o);
@@ -66,15 +66,15 @@ describe('<Admin controller>', function() {
 
             var u = users[0];
 
-            u.name.should.eql('Jessy Pinkman');
-            u.SFDCId.should.eql('5678');
-            u.anyFetchId.should.eql('533d6b2a6355285e5563d005');
-            u.email.should.eql('jessy.pinkman@breaking-bad.com');
-            u.anyFetchToken.should.eql('mockedToken');
-            u.organization.should.eql(org._id);
-            u.isAdmin.should.be.eql(true);
+            u.should.have.property('name','Jessy Pinkman');
+            u.should.have.property('SFDCId', '5678');
+            u.should.have.property('anyFetchId', '533d6b2a6355285e5563d005');
+            u.should.have.property('email', 'jessy.pinkman@breaking-bad.com');
+            u.should.have.property('anyFetchToken', 'mockedToken');
+            u.should.have.property('organization', org._id);
+            u.should.have.property('isAdmin', true);
 
-            cb(null);
+            cb();
           });
         }
       ];
@@ -84,13 +84,12 @@ describe('<Admin controller>', function() {
         .post(endpoint)
         .send(SFDCinfos)
         .expect(200)
-        .end(function(err, res) {
+        .expect(function(res) {
           async.waterfall(validates, function() {
-
             res.text.should.eql(generatedMasterKey);
-            done();
           });
-        });
+        })
+        .end(done);
     });
   });
 });
