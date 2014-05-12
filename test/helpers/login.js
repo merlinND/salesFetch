@@ -6,6 +6,7 @@
 
 var async = require('async');
 var crypto = require('crypto');
+
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
@@ -17,8 +18,9 @@ module.exports.requestBuilder = function (endpoint, context, env, cb) {
   async.waterfall([
     function createCompany(cb) {
       var org = new Organization({
-        name: "anyFetch",
-        organizationId: '1234'
+        name: 'Breaking Bad',
+        anyFetchId: 'anyFetchId',
+        SFDCId: 'SFDCId',
       });
 
       org.save(cb);
@@ -26,10 +28,13 @@ module.exports.requestBuilder = function (endpoint, context, env, cb) {
       createdOrg = org;
 
       var user = new User({
-        userId: '5678',
+        anyFetchId: 'anyFetchId',
+        SFDCId: 'SFDCId',
         name: 'Walter White',
         email: 'walter.white@breaking-bad.com',
-        organization: org.id
+        anyFetchToken: 'anyFetchToken',
+        organization: org._id,
+        isAdmin: true
       });
 
       user.save(cb);
@@ -39,7 +44,7 @@ module.exports.requestBuilder = function (endpoint, context, env, cb) {
       return cb(err);
     }
 
-    var hash = createdOrg.organizationId + user.userId + createdOrg.masterKey + "SalesFetch4TheWin";
+    var hash = createdOrg.SFDCId + user.SFDCId + createdOrg.masterKey + "SalesFetch4TheWin";
     hash = crypto.createHash('sha1').update(hash).digest("base64");
 
     var contextEnv = env || {
@@ -51,8 +56,8 @@ module.exports.requestBuilder = function (endpoint, context, env, cb) {
     var authObj = {
       hash: hash,
       env: contextEnv,
-      organization: {id: createdOrg.organizationId},
-      user: {id: user.userId},
+      organization: {id: createdOrg.SFDCId},
+      user: {id: user.SFDCId},
       context: context,
       anyFetchURL: 'http://api.anyfetch.com',
       instanceURL: 'https://eu2.salesforce.com'

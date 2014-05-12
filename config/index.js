@@ -28,6 +28,10 @@ if (node_env === "production") {
 // mongo url connection
 var mongo_url = process.env.MONGO_URL || "mongodb://localhost/salesfetch_" + node_env;
 
+// anyFetch configuration
+var fetchApiUrl = process.env.FETCHAPI_URL || "http://api.anyfetch.com";
+var fetchApiCreds = process.env.FETCHAPI_CREDS;
+
 // directory path
 var dir_path = (__dirname + '/..');
 
@@ -105,6 +109,8 @@ module.exports = {
   port: process.env.PORT || default_port,
   mongo_url: mongo_url,
   certif: certificates,
+  fetchApiCreds: fetchApiCreds,
+  fetchApiUrl: fetchApiUrl,
 
   bootstrap: bootstrapServer
 };

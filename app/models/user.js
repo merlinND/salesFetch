@@ -11,7 +11,11 @@ var UserModel = new Schema ({
     type: Date,
     default: Date.now
   },
-  userId: {
+  anyFetchId: {
+    type: String,
+    unique: true
+  },
+  SFDCId: {
     type: String,
     unique: true
   },
@@ -20,7 +24,12 @@ var UserModel = new Schema ({
     ref: 'Organization'
   },
   name: String,
-  email: String
+  email: String,
+  anyFetchToken: String,
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
 });
 
 /**

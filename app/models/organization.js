@@ -12,12 +12,15 @@ var OrgModel = new Schema ({
     type: Date,
     default: Date.now
   },
-  organizationId: {
+  anyFetchId: {
+    type: String,
+    unique: true
+  },
+  SFDCId: {
     type: String,
     unique: true
   },
   name: String,
-  currency: String,
   masterKey: String
 });
 

@@ -6,6 +6,8 @@ var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
 
+var anyFetchHelper = require('../helpers/anyfetch.js');
+
 /**
  * Authenticate the user based on the request's context
  * return the user
@@ -15,20 +17,13 @@ var authenticateUser = function(context, org, done) {
   async.waterfall([
     function(cb) {
       // Find an existing user
-      User.findOne({userId: userContext.id}, cb);
+      User.findOne({SFDCId: userContext.id}, cb);
     }, function(user, cb) {
       if (user) {
         return done(null, user);
       }
 
-      // Create create a user in the company
-      var newUser = new User({
-        name: userContext.name,
-        userId: userContext.id,
-        email: userContext.email,
-        organization: org._id
-      });
-      newUser.save(cb);
+      anyFetchHelper.addNewUser(userContext, org, cb);
     }
   ], done);
 };
@@ -50,7 +45,8 @@ exports.requiresLogin = function(req, res, next) {
         return next({message: "Bad Request", status: 401});
       }
 
-      Organization.findOne({organizationId: data.organization.id}, cb);
+
+      Organization.findOne({SFDCId: data.organization.id}, cb);
     },
     function checkRequestValidity(org, cb){
       organization = org;
@@ -60,6 +56,7 @@ exports.requiresLogin = function(req, res, next) {
 
       var hash = data.organization.id + data.user.id + org.masterKey + "SalesFetch4TheWin";
       var check = crypto.createHash('sha1').update(hash).digest("base64");
+
       if (check !== data.hash) {
         return next({message: "Please check your salesFetch Master Key!", status: 401});
       }
