@@ -73,7 +73,7 @@
     "$"
   ],
   "indent"        : 2,
-  "maxstatements" : 20,
-  "maxcomplexity" : 10
+  "maxstatements" : 40,
+  "maxcomplexity" : 15
 }
 

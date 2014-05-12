@@ -5,9 +5,10 @@
 
 var anyFetchHelper = require('../helpers/anyfetch');
 
+
 /**
  * Create a subcompany and add an admin user
- * Called on time at package installation
+ * Called one time at package installation
  */
 module.exports.init = function(req, res, next) {
   var data = req.body;
