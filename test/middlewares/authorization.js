@@ -59,7 +59,8 @@ describe('<Authentication middleware>', function() {
           SFDCId: '1234'
         });
         org.save(cb);
-      }, function createUser(org, count, cb) {
+      },
+      function createUser(org, count, cb) {
         createdOrg = org;
 
         var user = new User({
@@ -67,7 +68,8 @@ describe('<Authentication middleware>', function() {
           organization: org
         });
         user.save(cb);
-      }, function makeCall(user, count, cb) {
+      },
+      function makeCall(user, count, cb) {
         var hash = createdOrg.SFDCId + user.SFDCId + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
@@ -93,30 +95,44 @@ describe('<Authentication middleware>', function() {
   });
 
   it('should creata a new user if not in DB', function(done) {
-    before(function(done) {
-      APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
-    });
 
     async.waterfall([
-      function checkNoUser(cb) {
+      function mountAPI(cb) {
+        APIs.mount('fetchAPI', 'http://api.anyfetch.com', cb);
+      },
+      function checkNoUser(_, cb) {
         User.count({}, function(err, count) {
           count.should.eql(0);
-          cb();
+          cb(null, null);
         });
-      }, function createCompany(_, cb) {
+      },
+      function createCompany(_, cb) {
         var org = new Organization({
           name: "anyFetch",
           SFDCId: '1234'
         });
 
-        org.save(cb);
-      }, function makeCall(org, count, cb) {
+        org.save(function(e, org) {
+          return cb(null, org);
+        });
+      },
+      function createAdminUser(org, cb) {
+        var user = new User({
+          SFDCId: '5678',
+          organization: org
+        });
+
+        user.save(function() {
+          return cb(null, org);
+        });
+      },
+      function makeCall(org, cb) {
         var hash = org.SFDCId + '5678' + org.masterKey + "SalesFetch4TheWin";
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
           hash: hash,
-          organization: {id: org.organizationId},
+          organization: {id: org.SFDCId},
           user: {
             id: '5678',
             name: 'Walter White',

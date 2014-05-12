@@ -238,7 +238,9 @@ module.exports.initAccount = function(data, cb) {
  * Create a user attached to the existing subcompany
  * and store it on the local DB
  */
-module.exports.addNewUser = function(endpoint, user, organization, cb) {
+module.exports.addNewUser = function(user, organization, cb) {
+  var endpoint = 'http://api.anyfetch.com';
+
   async.waterfall([
     function createRandomPassword(cb) {
       crypto.randomBytes(20, function(ex, buf) {

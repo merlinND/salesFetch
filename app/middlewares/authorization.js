@@ -23,7 +23,7 @@ var authenticateUser = function(context, org, done) {
         return done(null, user);
       }
 
-      anyFetchHelper.addNewUser(context.url, userContext, org, cb);
+      anyFetchHelper.addNewUser(userContext, org, cb);
     }
   ], done);
 };
@@ -44,6 +44,7 @@ exports.requiresLogin = function(req, res, next) {
       if (!data.organization.id) {
         return next({message: "Bad Request", status: 401});
       }
+
 
       Organization.findOne({SFDCId: data.organization.id}, cb);
     },
