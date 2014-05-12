@@ -29,10 +29,6 @@ module.exports.initAccount = function(cb) {
         user.save(cb);
       },
   ], function(err, user) {
-    if (err) {
-      return cb(err);
-    }
-
-    cb(null, user, createdOrg);
+    cb(err, user, createdOrg);
   });
 };

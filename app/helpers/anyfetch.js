@@ -64,7 +64,7 @@ module.exports.findDocuments = function(url, params, cb) {
       });
 
       // Return all the documents types
-      docReturn.document_types = {};
+      var tempDocTypes = {};
       for (var docType in docReturn.facets.document_types) {
         var dT = {
           id: docType,
@@ -72,11 +72,12 @@ module.exports.findDocuments = function(url, params, cb) {
           name: documentTypes[docType].name
         };
 
-        docReturn.document_types[docType] = dT;
+        tempDocTypes[docType] = dT;
       }
+      docReturn.document_types = tempDocTypes;
 
       // Return all the providers
-      docReturn.providers = {};
+      var tempProviders = {};
       for (var provider in docReturn.facets.tokens) {
         var p = {
           id: provider,
@@ -84,8 +85,9 @@ module.exports.findDocuments = function(url, params, cb) {
           name: providers[provider].name
         };
 
-        docReturn.providers[provider] = p;
+        tempProviders[provider] = p;
       }
+      docReturn.providers = tempProviders;
 
       cb(null, docReturn);
 
