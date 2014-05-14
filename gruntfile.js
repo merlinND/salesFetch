@@ -1,4 +1,7 @@
 'use strict';
+var paths = {
+  js: ['gruntfile.js', 'app.js', 'config/**/*.js', 'app/**/*.js', 'public/js/**', 'test/**/*.js']
+};
 
 module.exports = function(grunt) {
   // Project Configuration
@@ -6,7 +9,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     watch: {
       js: {
-        files: ['gruntfile.js', 'app.js', 'config/**/*.js', 'app/**/*.js', 'public/js/**', 'test/**/*.js'],
+        files: paths.js,
         tasks: ['jshint']
       }
     },
@@ -17,7 +20,7 @@ module.exports = function(grunt) {
         force: true
       },
       all: {
-        src: ['gruntfile.js', 'app.js', 'config/**/*.js', 'app/**/*.js', 'public/js/**', 'test/**/*.js']
+        src: paths.js
       }
     },
 
