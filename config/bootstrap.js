@@ -6,7 +6,7 @@ var swig = require('swig');
 var lessMiddleware = require('less-middleware');
 var errorsStack = require('errorhandler');
 
-var config = require('./config.js');
+var config = require('./configuration.js');
 var walk = require('./util.js');
 
 var expressConfig = function(app) {

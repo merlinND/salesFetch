@@ -8,11 +8,11 @@
 var mongoose = require('mongoose');
 
 // Init system variables
-var config = require('./config/config');
+var config = require('./config/configuration.js');
 mongoose.connect(config.mongo_url);
 
 // Bootstrap Models, Dependencies, Routes and the app as an express app
-var app = require('./config/bootstrap')();
+var app = require('./config/bootstrap.js')();
 
 // Init server in the right mode
 // With HTTPS in development, Heroku manage HTTPS in production
