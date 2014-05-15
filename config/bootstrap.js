@@ -47,38 +47,41 @@ var expressConfig = function(app) {
 
 var errorsHanlders = function(app) {
 
-  var notFoundError = function(req, res) {
-    res.status(404).render('404', {
-      url: req.originalUrl,
-      error: 'Not found'
-    });
-  };
+  // This middleware is used to provide a next
+  app.use(function(err, req, res, next) {
 
-  var unauthorizedError = function(req, res) {
-    res.status(401).render('401', {
-      error: 'Unauthorized'
-    });
-  };
+    // Treat as 401
+    if (err.message.indexOf('unauthorized') !== -1 || err.status === 401) {
+      return res.status(err.status).render('401', {
+        error: 'Unauthorized',
+        message: err.message
+      });
+    }
 
-  app.use(function(err, req, res) {
     // Treat as 404
-    if (err.message.indexOf('not found')) {
-      notFoundError();
-    } else if (err.message.indexOf('unauthorized')) {
-      unauthorizedError();
+    if (err.message.indexOf('not found') !== -1 || err.status === 404) {
+      next();
     }
 
     // Log it
-    console.error(err.stack);
+    if (config.env === 'development') {
+      console.error(err.stack);
+    }
 
     // Error page
-    res.status(500).render('500', {
-        error: err.stack
+    return res.status(500).render('500', {
+        error: err.stack,
+        message: err.message
     });
   });
 
   // Assume 404 since no middleware responded
-  app.use(notFoundError);
+  app.use(function(req, res) {
+    return res.status(404).render('404', {
+      url: req.originalUrl,
+      error: 'Not found'
+    });
+  });
 
   if (config.env === 'development') {
     app.use(errorsStack());
