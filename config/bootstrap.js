@@ -46,10 +46,26 @@ var expressConfig = function(app) {
 };
 
 var errorsHanlders = function(app) {
-  app.use(function(err, req, res, next) {
+
+  var notFoundError = function(req, res) {
+    res.status(404).render('404', {
+      url: req.originalUrl,
+      error: 'Not found'
+    });
+  };
+
+  var unauthorizedError = function(req, res) {
+    res.status(401).render('401', {
+      error: 'Unauthorized'
+    });
+  };
+
+  app.use(function(err, req, res) {
     // Treat as 404
     if (err.message.indexOf('not found')) {
-      return next();
+      notFoundError();
+    } else if (err.message.indexOf('unauthorized')) {
+      unauthorizedError();
     }
 
     // Log it
@@ -62,12 +78,7 @@ var errorsHanlders = function(app) {
   });
 
   // Assume 404 since no middleware responded
-  app.use(function(req, res) {
-    res.status(404).render('404', {
-      url: req.originalUrl,
-      error: 'Not found'
-    });
-  });
+  app.use(notFoundError);
 
   if (config.env === 'development') {
     app.use(errorsStack());
