@@ -18,7 +18,7 @@ var app = require('./config/bootstrap')();
 // With HTTPS in development, Heroku manage HTTPS in production
 var server;
 if (config.env === 'development') {
-  server = require('https').createServer(config.certif, app);
+  server = require('https').createServer(config.certificates, app);
 } else {
   server = require('http').createServer(app);
 }

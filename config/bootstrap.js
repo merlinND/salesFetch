@@ -12,7 +12,7 @@ var expressConfig = function(app) {
 
   // Simplified logger for dev and production
   if (config.env !== 'test') {
-    app.use(require(config.root + '/app/midlewares/looger.js'));
+    app.use(require(config.root + '/app/middlewares/logger.js'));
   }
 
   // Other middlewares
@@ -53,7 +53,7 @@ module.exports = function() {
 
   // Require models
   var modelsPath = config.root + '/app/models';
-  walk(modelsPath, function(path) { console.log(path); require(path); });
+  walk(modelsPath, function(path) { require(path); });
 
   // Configure express
   var app = express();

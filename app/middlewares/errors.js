@@ -6,8 +6,6 @@
 
 function logErrors(err, req, res, next) {
   req.unhandledError = err;
-  console.log('je ')
-
 
   var message = err.message;
   var error = err.error || err;
