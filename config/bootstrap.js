@@ -11,7 +11,7 @@ var walk = require('./util.js');
 var expressConfig = function(app) {
 
   // Simplified logger for dev and production
-  if (config.nodeEnv !== 'test') {
+  if (config.env !== 'test') {
     app.use(require(config.root + '/app/midlewares/looger.js'));
   }
 
@@ -45,6 +45,11 @@ var expressConfig = function(app) {
 };
 
 module.exports = function() {
+  // Check if fetchApi token is set before continuing !
+  if (config.env !== 'test' && !config.fetchApiCreds) {
+    console.log('Please provide a FetchApi token before launcing the server.');
+    process.exit(1);
+  }
 
   // Require models
   var modelsPath = config.root + '/app/models';
