@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 var lessMiddleware = require('less-middleware');
+var errorsStack = require('errorhandler');
 
 var config = require('./config.js');
 var walk = require('./util.js');
@@ -44,6 +45,35 @@ var expressConfig = function(app) {
   app.use(express.static(config.root + '/public'));
 };
 
+var errorsHanlders = function(app) {
+  app.use(function(err, req, res, next) {
+    // Treat as 404
+    if (err.message.indexOf('not found')) {
+      return next();
+    }
+
+    // Log it
+    console.error(err.stack);
+
+    // Error page
+    res.status(500).render('500', {
+        error: err.stack
+    });
+  });
+
+  // Assume 404 since no middleware responded
+  app.use(function(req, res) {
+    res.status(404).render('404', {
+      url: req.originalUrl,
+      error: 'Not found'
+    });
+  });
+
+  if (config.env === 'development') {
+    app.use(errorsStack());
+  }
+};
+
 module.exports = function() {
   // Check if fetchApi token is set before continuing !
   if (config.env !== 'test' && !config.fetchApiCreds) {
@@ -64,6 +94,9 @@ module.exports = function() {
   walk(routesPath, function(path) {
     require(path)(app);
   });
+
+  // Apply errors if routing fail or not match
+  errorsHanlders(app);
 
   return app;
 };
