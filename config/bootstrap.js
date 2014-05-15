@@ -13,12 +13,12 @@ var expressConfig = function(app) {
 
   // Simplified logger for dev and production
   if (config.env !== 'test') {
-    app.use(require(config.root + '/app/middlewares/logger.js'));
+    app.use(require('../app/middlewares/logger.js'));
   }
 
   // Other middlewares
   app.use(bodyParser());
-  app.use(require(config.root + '/app/middlewares/CORS.js'));
+  app.use(require('../app/middlewares/CORS.js'));
 
   // Less middleware
   var lessPath = config.root + '/assets/less';
@@ -45,7 +45,7 @@ var expressConfig = function(app) {
   app.use(express.static(config.root + '/public'));
 };
 
-var errorsHanlders = function(app) {
+var errorsHandlers = function(app) {
 
   // This middleware is used to provide a next
   app.use(function(err, req, res, next) {
@@ -110,7 +110,7 @@ module.exports = function() {
   });
 
   // Apply errors if routing fail or not match
-  errorsHanlders(app);
+  errorsHandlers(app);
 
   return app;
 };
