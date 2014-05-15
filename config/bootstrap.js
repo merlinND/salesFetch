@@ -5,9 +5,9 @@ var bodyParser = require('body-parser');
 var swig = require('swig');
 var lessMiddleware = require('less-middleware');
 var errorsStack = require('errorhandler');
+var autoLoad = require('auto-load')
 
 var config = require('./configuration.js');
-var walk = require('./util.js');
 
 var expressConfig = function(app) {
 
@@ -91,22 +91,22 @@ var errorsHandlers = function(app) {
 module.exports = function() {
   // Check if fetchApi token is set before continuing !
   if (config.env !== 'test' && !config.fetchApiCreds) {
-    console.log('Please provide a FetchApi token before launcing the server.');
+    console.log('Please provide a FetchApi token before launching the server.');
     process.exit(1);
   }
 
   // Require models
-  var modelsPath = config.root + '/app/models';
-  walk(modelsPath, function(path) { require(path); });
+  autoLoad(config.root + '/app/models');
 
   // Configure express
   var app = express();
   expressConfig(app);
 
   // Require routes
-  var routesPath = config.root + '/app/routes';
-  walk(routesPath, function(path) {
-    require(path)(app);
+  var routesPath = config.root + '/app/routes'
+  var routes = autoLoad(routesPath);
+  Object.keys(routes).forEach(function(route) {
+    require(routesPath + '/' + route)(app);
   });
 
   // Apply errors if routing fail or not match
