@@ -45,8 +45,6 @@ module.exports.contextSearch = function(req, res, next) {
  * Show full document
  */
 module.exports.documentDisplay = function(req, res, next) {
-  var reqParams = req.reqParams;
-
   anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, function(err, document) {
     if(err) {
       return next(err);
@@ -72,4 +70,16 @@ module.exports.listProviders = function(req, res, next) {
       providers: providers
     });
   });
+};
+
+/**
+ * Redirect the user on the connection page
+ */
+module.exports.connectProvider = function(req, res, next) {
+  if (!req.query.app_id) {
+    return next(new Error('Missing app_id query string.'));
+  }
+
+  var connectUrl = 'http://settings.anyfetch.com/connect/provider?app_id=' + req.query.app_id + '&token=' + req.user.anyFetchToken;
+  res.redirect(connectUrl);
 };

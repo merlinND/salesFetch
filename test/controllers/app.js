@@ -92,6 +92,50 @@ describe('<Application controller>', function() {
             .expect(200)
             .expect(function(res) {
               res.text.should.containDeep("Dropbox");
+              res.text.should.containDeep("/providers/connect?app_id=52bff114c8318c29e9000005");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+  });
+
+  describe('/providers/connect redirection', function() {
+    var endpoint = '/app/providers/connect';
+
+    checkUnauthenticated(app, 'get', endpoint);
+
+    it("should check presence of app_id", function(done) {
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, context, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(500)
+            .expect(function(res) {
+              res.text.should.containDeep("app_id");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+
+    it("should redirect user on connection page", function(done) {
+      var dropboxConnectEndpoint = endpoint + '?app_id=52bff114c8318c29e9000005';
+
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(dropboxConnectEndpoint, context, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(302)
+            .expect(function(res) {
+              res.text.should.containDeep("token=anyFetchToken");
+              res.text.should.containDeep("app_id=52bff114c8318c29e9000005");
             })
             .end(cb);
         }
