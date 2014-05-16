@@ -1,0 +1,19 @@
+{% extends './template.html' %}
+
+{% block content %}
+
+<section class="container">
+  <h2>Connect providers</h2>
+
+  <hr/>
+
+  <div class="row">
+    {% for provider in providers %}
+      <div class="col-xs-12">
+        <p>{{provider.name}}</p>
+        <a href="/app/providers/connect?app_id={{provider.id}}">Connect</a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

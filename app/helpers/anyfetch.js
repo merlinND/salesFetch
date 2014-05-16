@@ -260,3 +260,26 @@ module.exports.addNewUser = function(user, organization, cb) {
     }
   ], cb );
 };
+
+/**
+ * Retrive all providers
+ */
+module.exports.getProviders = function(cb) {
+  var apiUrl = 'http://settings.anyfetch.com';
+
+  async.waterfall([
+    function retrieveProviders(cb) {
+      request(apiUrl).get('/provider')
+        .end(cb);
+    },
+    function setId(res, cb) {
+      var providers = res.body;
+
+      providers.forEach(function(provider) {
+        provider.id = provider._id.$oid;
+      });
+
+      cb(null, providers);
+    }
+  ], cb);
+}

@@ -72,4 +72,30 @@ describe('<Application controller>', function() {
       ], done);
     });
   });
+
+  describe('/providers page', function() {
+    var endpoint = '/app/providers';
+    beforeEach(function(done) {
+      APIs.mount('settings', 'http://settings.anyfetch.com', done);
+    });
+
+    checkUnauthenticated(app, 'get', endpoint);
+
+    it("should return all providers", function(done) {
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, context, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(200)
+            .expect(function(res) {
+              res.text.should.containDeep("Dropbox");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+  });
 });
