@@ -7,7 +7,7 @@ module.exports = function(req, res, next) {
 
   // Intercept only OPTIONS methods
   // and let pass all others
-  if ('OPTIONS' === req.method) {
+  if (req.method === 'OPTIONS') {
     res.send(200);
   }
   else {
