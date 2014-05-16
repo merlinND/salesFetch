@@ -9,7 +9,7 @@ var mongoose =require('mongoose');
 var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
 
-var config = require('../../config/index.js');
+var config = require('../../config/configuration.js');
 
 /**
  * Execute query and return a list of templated sinppets

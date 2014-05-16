@@ -71,28 +71,5 @@ describe('<Application controller>', function() {
         }
       ], done);
     });
-
-    it("should display error if height is above 400px", function(done) {
-
-      var env = {
-        deviseType: 'desktop',
-        height: 200
-      };
-
-      async.waterfall([
-        function buildRequest(cb) {
-          requestBuilder(endpoint, null, env, cb);
-        },
-        function sendRequest(url, cb) {
-          request(app)
-            .get(url)
-            .expect(401)
-            .expect(function(res) {
-              res.text.should.containDeep("height");
-            })
-            .end(cb);
-        }
-      ], done);
-    });
   });
 });
