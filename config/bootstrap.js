@@ -96,14 +96,14 @@ module.exports = function() {
   }
 
   // Require models
-  autoLoad(config.root + '/app/models');
+  autoLoad(__dirname + '/../app/models');
 
   // Configure express
   var app = express();
   expressConfig(app);
 
   // Require routes
-  var routesPath = config.root + '/app/routes'
+  var routesPath = __dirname + '/../app/routes'
   var routes = autoLoad(routesPath);
   Object.keys(routes).forEach(function(route) {
     require(routesPath + '/' + route)(app);
