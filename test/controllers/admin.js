@@ -91,5 +91,39 @@ describe('<Admin controller>', function() {
         })
         .end(done);
     });
+
+    it('should return the same masterKey if package is reinstalled', function(done) {
+      var SFDCinfos = {
+        user: {
+          name: 'Jessy Pinkman',
+          id: '5678',
+          email: 'jessy.pinkman@breaking-bad.com'
+        },
+        organization: {
+          name: 'Breaking Bad',
+          id: '1234'
+        }
+      };
+
+      async.waterfall([
+        function(cb) {
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .end(cb);
+        },
+        function(res, cb) {
+          var intialMasterKey = res.text;
+
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .expect(function(res){
+              res.text.should.eql(intialMasterKey);
+            })
+            .end(cb);
+        }
+      ], done);
+    });
   });
 });
