@@ -63,12 +63,15 @@ module.exports.documentDisplay = function(req, res, next) {
  * Display list of all providers
  */
 module.exports.listProviders = function(req, res, next) {
+  var reqParams = req.reqParams;
+
   anyfetchHelpers.getProviders(function(err, providers) {
     if (err) {
       return next(err);
     }
 
     res.render('app/providers.html', {
+      data: reqParams,
       providers: providers
     });
   });

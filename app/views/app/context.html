@@ -24,7 +24,7 @@
       </button>
       <ul class="dropdown-menu" role="menu">
         <li><a href="#" id="show-filters">Filter result</a></li>
-        <li><a href="/app/providers" id="list-providers">Connect new service</a></li>
+        <li><a href="/app/providers" class="link">Connect new service</a></li>
       </ul>
     </div>
   </h2>
@@ -70,6 +70,13 @@
         </div>
       </div>
     {% endfor %}
+
+    {% if !documents.data.length %}
+      <div class="center-block">
+        No document as been found about {{data.context.templatedDisplay}}. <br/>
+        Have you connect all you <a href="/app/providers" class="link">services</a> ?
+      </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

@@ -99,7 +99,7 @@ $(function() {
  * Access pages
  */
 $(function() {
-  $("#list-providers").click(function(e) {
+  $(".link").click(function(e) {
     e.preventDefault();
     goToLocation(window, e.target.href);
   });

@@ -22,10 +22,16 @@ var expressConfig = function(app) {
 
   // Less middleware
   var lessPath = config.root + '/assets/less';
-  var publicPath = config.root + '/public/stylesheets';
+  var publicPath = config.root + '/public';
   var bootstrapPath = config.root + '/public/lib/bootstrap/less';
   app.use(lessMiddleware(lessPath, {
     dest: publicPath,
+    force: !config.less.cache || false,
+    preprocess: {
+      path: function(pathname) {
+        return pathname.replace('/stylesheets', '');
+      }
+    },
     parser: {
       paths: [bootstrapPath],
     }
