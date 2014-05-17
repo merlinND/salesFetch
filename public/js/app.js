@@ -58,32 +58,9 @@ $(function() {
   }
 });
 
-
-
 /**
- * Admin panel functions
+ * Handle filters
  */
-$(function() {
-  $("[data-admin-url]").click(function(e) {
-    e.preventDefault();
-
-    var url = $(this).data("adminUrl");
-    goToLocation(window, url);
-  });
-
-  $("#form").submit(function(e) {
-    e.preventDefault();
-    var url = $("#form").attr("action") + "?data=" + encodeURIComponent(JSON.stringify(data));
-
-    $.post(url, $("#form").serialize(), function(data, status) {
-      if(status === "nocontent") {
-        goToLocation(window, '/admin');
-      }
-    });
-  });
-});
-
-
 $(function() {
   $("#show-filters").click(function(e) {
     e.preventDefault();
@@ -117,25 +94,13 @@ $(function() {
     goToLocation(window, url);
   });
 });
+
 /**
- * Display the right size for pdf viewer
+ * Access pages
  */
 $(function() {
-  var getPdfZoom = function() {
-    var containerWidth = $('#page-container').width();
-    $('[data-page-no]').each(function() {
-      var pageWidth = $(this).width();
-      var ratio = containerWidth / pageWidth - 0.005;
-      $(this).css("zoom", ratio);
-      $(this).css("-moz-transform", ratio);
-    });
-  };
-
-  if ($('#page-container')) {
-    $( window ).resize(function() {
-      getPdfZoom();
-    });
-
-    getPdfZoom();
-  }
+  $("#list-providers").click(function(e) {
+    e.preventDefault();
+    goToLocation(window, e.target.href);
+  });
 });
