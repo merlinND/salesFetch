@@ -101,6 +101,11 @@ $(function() {
 $(function() {
   $(".link").click(function(e) {
     e.preventDefault();
-    goToLocation(window, e.target.href);
+    if ($(this).hasClass('link-popup')) {
+      attachedViewer = window.open(null,"_blank","scrollbars=yes, resizable=yes, width=600, height=800");
+      goToLocation(attachedViewer, e.target.href);
+    } else {
+      goToLocation(window, e.target.href);
+    }
   });
 });
