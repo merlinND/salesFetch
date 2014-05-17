@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var swig = require('swig');
 var lessMiddleware = require('less-middleware');
 var errorsStack = require('errorhandler');
-var autoLoad = require('auto-load')
+var autoLoad = require('auto-load');
 
 var config = require('./configuration.js');
 
@@ -103,7 +103,7 @@ module.exports = function() {
   expressConfig(app);
 
   // Require routes
-  var routesPath = __dirname + '/../app/routes'
+  var routesPath = __dirname + '/../app/routes';
   var routes = autoLoad(routesPath);
   Object.keys(routes).forEach(function(route) {
     require(routesPath + '/' + route)(app);

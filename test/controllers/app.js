@@ -84,7 +84,7 @@ describe('<Application controller>', function() {
     it("should return all providers", function(done) {
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, context, null, cb);
+          requestBuilder(endpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
@@ -108,7 +108,7 @@ describe('<Application controller>', function() {
     it("should check presence of app_id", function(done) {
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(endpoint, context, null, cb);
+          requestBuilder(endpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
@@ -127,7 +127,7 @@ describe('<Application controller>', function() {
 
       async.waterfall([
         function buildRequest(cb) {
-          requestBuilder(dropboxConnectEndpoint, context, null, cb);
+          requestBuilder(dropboxConnectEndpoint, null, null, cb);
         },
         function sendRequest(url, cb) {
           request(app)
