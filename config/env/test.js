@@ -5,5 +5,9 @@ module.exports = {
 
   swig: {
     cache: false
+  },
+
+  less: {
+    cache: false
   }
 };

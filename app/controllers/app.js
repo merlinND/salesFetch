@@ -4,6 +4,7 @@
 'use strict';
 
 var anyfetchHelpers = require('../helpers/anyfetch.js');
+var async = require("async");
 var _ = require("lodash");
 
 /**
@@ -65,14 +66,22 @@ module.exports.documentDisplay = function(req, res, next) {
 module.exports.listProviders = function(req, res, next) {
   var reqParams = req.reqParams;
 
-  anyfetchHelpers.getProviders(function(err, providers) {
+  async.parallel([
+    function(cb) {
+      anyfetchHelpers.getProviders(cb);
+    },
+    function(cb) {
+      anyfetchHelpers.getConnectedProviders(reqParams.anyFetchURL, req.user, cb);
+    }
+  ], function(err, data) {
     if (err) {
       return next(err);
     }
 
     res.render('app/providers.html', {
       data: reqParams,
-      providers: providers
+      providers: data[0],
+      connectProviders: data[1]
     });
   });
 };

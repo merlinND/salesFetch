@@ -283,3 +283,12 @@ module.exports.getProviders = function(cb) {
     }
   ], cb);
 };
+
+/**
+ * Retrieve all connect provider for an account
+ */
+module.exports.getConnectedProviders = function(url, user, cb) {
+  request(url).get('/providers')
+    .set('Authorization', 'Bearer ' + user.anyFetchToken)
+    .end(cb);
+};
