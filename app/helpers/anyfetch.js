@@ -56,7 +56,7 @@ module.exports.findDocuments = function(url, params, cb) {
 
       // Render the templated datas
       docReturn.datas.forEach(function(doc) {
-        var relatedTemplate = documentTypes[doc.document_type].template_snippet;
+        var relatedTemplate = documentTypes[doc.document_type].templates.snippet;
         doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
         doc.provider = providers[doc.token].name;
@@ -117,8 +117,8 @@ module.exports.findDocument = function(url, id, cb) {
     var providers = body[pages[1]];
     var docReturn = body[pages[2]];
 
-    var relatedTemplate = documentTypes[docReturn.document_type].template_full;
-    var titleTemplate = documentTypes[docReturn.document_type].template_title;
+    var relatedTemplate = documentTypes[docReturn.document_type].templates.full;
+    var titleTemplate = documentTypes[docReturn.document_type].templates.title;
 
     docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
     docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);

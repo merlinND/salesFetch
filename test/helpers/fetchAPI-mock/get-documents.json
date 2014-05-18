@@ -28,9 +28,11 @@
             "_type": "DocumentType",
             "id": "5252ce4ce4cfcd16f55cfa3c",
             "name": "document",
-            "template_snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
-            "template_full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
-            "template_title": "{{ title }}",
+            "templates": {
+                "snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
+                "full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
+                "title": "{{ title }}"
+            },
             "updated": "2014-03-28T13:53:35.513Z",
             "documents": 7
         },
@@ -38,9 +40,11 @@
             "_type": "DocumentType",
             "id": "5252ce4ce4cfcd16f55cfa3d",
             "name": "image",
-            "template_snippet": "<article>\n  <h1>{{{ title }}}</h1>\n\n  <img src=\"{{ thumb }}\" />\n</article>\n",
-            "template_full": "<article>\n  <h1>{{{ title }}}</h1>\n\n  <img src=\"{{ display }}\" />\n</article>\n",
-            "template_title": "{{ title }}",
+            "templates": {
+                "snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
+                "full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
+                "title": "{{ title }}"
+            },
             "updated": null,
             "documents": 7
         },
@@ -48,9 +52,11 @@
             "_type": "DocumentType",
             "id": "5252ce4ce4cfcd16f55cfa41",
             "name": "task",
-            "template_snippet": "<article>\n\t<h1>{{{subject}}}</h1>\n\t<span>Status: {{status}}</span>\n  <p>{{{description}}}</p>\n</article>\n",
-            "template_full": "<article>\n  <section>\n    <h1>{{{subject}}}</h1>\n    <span>Status: {{status}}</span>\n  </section>\n\n  <p>{{{description}}}</p>\n</article>\n",
-            "template_title": "{{ title }}",
+            "templates": {
+                "snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
+                "full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
+                "title": "{{ title }}"
+            },
             "updated": "2014-03-14T18:15:37.603Z",
             "documents": 2
         },
@@ -58,9 +64,11 @@
             "_type": "DocumentType",
             "id": "5252ce4ce4cfcd16f55cfa3b",
             "name": "file",
-            "template_snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <code>{{{ path }}}</code>\n</article>\n",
-            "template_full": "<article>\n  <h1>{{{ title }}}</h1>\n  <code>{{{ path }}}</code>\n</article>\n",
-            "template_title": "{{ title }}",
+            "templates": {
+                "snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
+                "full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
+                "title": "{{ title }}"
+            },
             "updated": "2014-03-21T16:48:16.486Z",
             "documents": 1
         },
@@ -68,9 +76,11 @@
             "_type": "DocumentType",
             "id": "5252ce4ce4cfcd16f55cfa3f",
             "name": "email",
-            "template_snippet": "<article>\n  <h1>{{{subject}}}</h1>\n  <div class=\"two-columns\">\n    <span><small>{{from}} &rarr; {{to}}</small></span>\n    <span>{{ date }}</span>\n  </div>\n  <blockquote>{{{snippet}}}</blockquote>\n</article>\n",
-            "template_full": "<article class=\"email-projection\">\n <header>\n     <h1>{{{subject}}}</h1>\n     <small>{{ date }}</small>\n     <small>From: <strong><a href=\"anyfetch://search/{{from}}\">{{from}}</a></strong></small>\n     <small>To: <strong><a href=\"anyfetch://search/{{to}}\">{{to}}</a></strong></small>\n </header>\n\n <main>\n       {{{html}}}\n </main>\n</article>\n",
-            "template_title": "{{ subject }}",
+            "templates": {
+                "snippet": "<article>\n  <h1>{{{ title }}}</h1>\n  <blockquote>\n  \t{{{ snippet }}}\n  </blockquote>\n</article>\n",
+                "full": "<article>\n  <section>\n    <h1>{{{ title }}}</h1>\n    <code>{{ path }}</code>\n  </section>\n\n  <section>\n    {{{ content }}}\n  </section>\n</article>\n",
+                "title": "{{ title }}"
+            },
             "updated": "2014-03-28T13:53:24.454Z",
             "documents": 27
         }
