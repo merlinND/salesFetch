@@ -29,7 +29,7 @@ module.exports.contextSearch = function(req, res, next) {
     params = _.merge(params, filters);
   }
 
-  anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, function(err, documents) {
+  anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, req.user, function(err, documents) {
     if (err) {
       return next(err);
     }
@@ -48,7 +48,7 @@ module.exports.contextSearch = function(req, res, next) {
 module.exports.documentDisplay = function(req, res, next) {
   var reqParams = req.reqParams;
 
-  anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, function(err, document) {
+  anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, req.user, function(err, document) {
     if(err) {
       return next(err);
     }

@@ -11,17 +11,8 @@ var User = mongoose.model('User');
 
 var config = require('../../config/configuration.js');
 
-/**
- * Execute query and return a list of templated sinppets
- */
-var baseRequest = function(url, endpoint, cb) {
-  return request(url).get(endpoint)
-    .set('Authorization', 'Basic ' + config.fetchApiCreds)
-    .end(function(e, r) {cb(e,r);});
-};
 
-
-module.exports.findDocuments = function(url, params, cb) {
+module.exports.findDocuments = function(url, params, user, cb) {
   var pages = [];
 
   async.waterfall([
@@ -40,7 +31,9 @@ module.exports.findDocuments = function(url, params, cb) {
       var batchParams = pages.map(encodeURIComponent).join('&pages=');
       var batchUrl = '/batch?pages=' + batchParams;
 
-      baseRequest(url, batchUrl, cb);
+      request(url).get(batchUrl)
+        .set('Authorization', 'Bearer ' + user.anyFetchToken)
+        .end(cb);
     },
     function templateResults(res, cb) {
 
@@ -98,7 +91,7 @@ module.exports.findDocuments = function(url, params, cb) {
 /**
  * Find and return a single templated document
  */
-module.exports.findDocument = function(url, id, cb) {
+module.exports.findDocument = function(url, id, user, cb) {
   var pages = [
     '/document_types',
     '/providers',
@@ -106,7 +99,9 @@ module.exports.findDocument = function(url, id, cb) {
   ];
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
-  baseRequest(url, '/batch?pages=' + batchParams, function(err, res) {
+  request(url).get('/batch?pages=' + batchParams)
+    .set('Authorization', 'Bearer ' + user.anyFetchToken)
+    .end( function(err, res) {
     if (err) {
       return cb(err);
     }
