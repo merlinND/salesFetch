@@ -160,22 +160,29 @@ module.exports.initAccount = function(data, done) {
       });
     },
     function createAccount(cb) {
+      // Avoid collision with production
+      if (config.env === 'development') {
+        user.name = 'dev-' + user.name;
+      }
+
       request(url).post('/users')
         .set('Authorization', 'Basic ' + config.fetchApiCreds)
         .send({
-          email: user.email,
+          email: user.name,
           name: user.name,
           password: user.password,
           is_admin: true,
         })
+        .expect(200)
         .end(cb);
     },
     function retrieveUserToken(res, cb) {
       user.anyFetchId = res.body.id;
-      user.basicAuth = new Buffer(user.email + ':' + user.password).toString('base64');
+      user.basicAuth = new Buffer(user.name + ':' + user.password).toString('base64');
 
       request(url).get('/token')
         .set('Authorization', 'Basic ' + user.basicAuth)
+        .expect(200)
         .end(cb);
     },
     function createSubCompany(res, cb) {
