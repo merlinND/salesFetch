@@ -135,7 +135,7 @@ module.exports.findDocument = function(url, id, cb) {
  * Create a subcompany and an admin on the FetchAPI
  * Store the linking informations btw Salesforce and FetchAPI
  */
-module.exports.initAccount = function(data, cb) {
+module.exports.initAccount = function(data, done) {
   var url = config.fetchApiUrl;
 
   var user = data.user;
@@ -143,6 +143,15 @@ module.exports.initAccount = function(data, cb) {
 
 
   async.waterfall([
+    function checkIfCompanyAlreadyExist(cb) {
+      Organization.findOne({'SFDCId': org.id}, function(err, existingOrg) {
+        if (existingOrg) {
+          return done(null, existingOrg);
+        }
+
+        cb(null);
+      });
+    },
     function createRandomPassword(cb) {
       crypto.randomBytes(20, function(ex, buf) {
         var password = buf.toString('base64');
@@ -151,22 +160,29 @@ module.exports.initAccount = function(data, cb) {
       });
     },
     function createAccount(cb) {
+      // Avoid collision with production
+      if (config.env === 'development') {
+        user.name = 'dev-' + user.name;
+      }
+
       request(url).post('/users')
         .set('Authorization', 'Basic ' + config.fetchApiCreds)
         .send({
-          email: user.email,
+          email: user.name,
           name: user.name,
           password: user.password,
           is_admin: true,
         })
+        .expect(200)
         .end(cb);
     },
     function retrieveUserToken(res, cb) {
       user.anyFetchId = res.body.id;
-      user.basicAuth = new Buffer(user.email + ':' + user.password).toString('base64');
+      user.basicAuth = new Buffer(user.name + ':' + user.password).toString('base64');
 
       request(url).get('/token')
         .set('Authorization', 'Basic ' + user.basicAuth)
+        .expect(200)
         .end(cb);
     },
     function createSubCompany(res, cb) {
@@ -204,7 +220,7 @@ module.exports.initAccount = function(data, cb) {
       localUser.save(cb);
     }
   ], function(err) {
-    cb(err, org);
+    done(err, org);
   });
 };
 
