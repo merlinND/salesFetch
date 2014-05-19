@@ -12,6 +12,8 @@ var factories = require('../helpers/factories');
 var cleaner = require('../hooks/cleaner');
 var authMiddleware  = require('../../app/middlewares/authorization').requiresLogin;
 
+var secureKey = require('../../config/configuration.js').secureKey;
+
 describe('<Authentication middleware>', function() {
 
   beforeEach(cleaner);
@@ -57,7 +59,7 @@ describe('<Authentication middleware>', function() {
         factories.initAccount(cb);
       },
       function makeCall(user, org, cb) {
-        var hash = org.SFDCId + user.SFDCId + "SalesFetch4TheWin";
+        var hash = org.SFDCId + user.SFDCId + secureKey;
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
@@ -97,7 +99,7 @@ describe('<Authentication middleware>', function() {
         factories.initAccount(cb);
       },
       function makeCall(user, org, cb) {
-        var hash = org.SFDCId + '5678' + org.masterKey + "SalesFetch4TheWin";
+        var hash = org.SFDCId + '5678' + org.masterKey + secureKey;
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
@@ -149,7 +151,7 @@ describe('<Authentication middleware>', function() {
 
         user.save(cb);
       },function makeCall(user, _, cb) {
-        var hash = createdOrg.SFDCId + user.SFDCId + createdOrg.masterKey + "SalesFetch4TheWin";
+        var hash = createdOrg.SFDCId + user.SFDCId + createdOrg.masterKey + secureKey;
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
