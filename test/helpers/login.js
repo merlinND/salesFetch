@@ -11,6 +11,8 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
 
+var secureKey = require('../../config/configuration.js').secureKey;
+
 
 module.exports.requestBuilder = function (endpoint, context, env, cb) {
   var createdOrg;
@@ -44,7 +46,7 @@ module.exports.requestBuilder = function (endpoint, context, env, cb) {
       return cb(err);
     }
 
-    var hash = createdOrg.SFDCId + user.SFDCId + createdOrg.masterKey + "SalesFetch4TheWin";
+    var hash = createdOrg.SFDCId + user.SFDCId + createdOrg.masterKey + secureKey;
     hash = crypto.createHash('sha1').update(hash).digest("base64");
 
     var contextEnv = env || {

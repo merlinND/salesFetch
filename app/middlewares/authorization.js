@@ -7,6 +7,7 @@ var Organization = mongoose.model('Organization');
 var User = mongoose.model('User');
 
 var anyFetchHelper = require('../helpers/anyfetch.js');
+var secureKey = require('../../config/configuration.js').secureKey;
 
 /**
  * Authenticate the user based on the request's context
@@ -54,7 +55,7 @@ exports.requiresLogin = function(req, res, next) {
         return next({message: "No matching company has been found", status: 401});
       }
 
-      var hash = data.organization.id + data.user.id + org.masterKey + "SalesFetch4TheWin";
+      var hash = data.organization.id + data.user.id + org.masterKey + secureKey;
       var check = crypto.createHash('sha1').update(hash).digest("base64");
 
       if (check !== data.hash) {
