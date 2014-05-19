@@ -273,7 +273,7 @@ module.exports.addNewUser = function(user, organization, cb) {
 };
 
 /**
- * Retrive all providers
+ * Retrieve all providers
  */
 module.exports.getProviders = function(cb) {
   var apiUrl = 'http://settings.anyfetch.com';
