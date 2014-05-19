@@ -16,5 +16,10 @@ module.exports = {
   // Disable template caching
   swig: {
     cache: false
+  },
+
+  // Disable caching on less middleware
+  less: {
+    cache: false
   }
 };

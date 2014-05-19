@@ -4,6 +4,7 @@
 'use strict';
 
 var anyfetchHelpers = require('../helpers/anyfetch.js');
+var async = require("async");
 var _ = require("lodash");
 
 /**
@@ -28,7 +29,7 @@ module.exports.contextSearch = function(req, res, next) {
     params = _.merge(params, filters);
   }
 
-  anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, function(err, documents) {
+  anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, req.user, function(err, documents) {
     if (err) {
       return next(err);
     }
@@ -47,7 +48,7 @@ module.exports.contextSearch = function(req, res, next) {
 module.exports.documentDisplay = function(req, res, next) {
   var reqParams = req.reqParams;
 
-  anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, function(err, document) {
+  anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, req.user, function(err, document) {
     if(err) {
       return next(err);
     }
@@ -57,4 +58,42 @@ module.exports.documentDisplay = function(req, res, next) {
       document: document
     });
   });
+};
+
+/**
+ * Display list of all providers
+ */
+module.exports.listProviders = function(req, res, next) {
+  var reqParams = req.reqParams;
+
+  async.parallel([
+    function(cb) {
+      anyfetchHelpers.getProviders(cb);
+    },
+    function(cb) {
+      anyfetchHelpers.getConnectedProviders(reqParams.anyFetchURL, req.user, cb);
+    }
+  ], function(err, data) {
+    if (err) {
+      return next(err);
+    }
+
+    res.render('app/providers.html', {
+      data: reqParams,
+      providers: data[0],
+      connectProviders: data[1]
+    });
+  });
+};
+
+/**
+ * Redirect the user on the connection page
+ */
+module.exports.connectProvider = function(req, res, next) {
+  if (!req.query.app_id) {
+    return next(new Error('Missing app_id query string.'));
+  }
+
+  var connectUrl = 'http://settings.anyfetch.com/provider/connect?app_id=' + req.query.app_id + '&token=' + req.user.anyFetchToken;
+  res.redirect(connectUrl);
 };

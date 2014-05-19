@@ -65,7 +65,9 @@ module.exports.requestBuilder = function (endpoint, context, env, cb) {
       instanceURL: 'https://eu2.salesforce.com'
     };
 
-    var ret = endpoint + '?data=' + encodeURIComponent(JSON.stringify(authObj));
+    var separator = endpoint.indexOf('?') !== -1 ? '&' : '?';
+
+    var ret = endpoint + separator + 'data=' + encodeURIComponent(JSON.stringify(authObj));
     cb(null, ret);
   });
 };

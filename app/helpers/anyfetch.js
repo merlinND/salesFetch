@@ -11,17 +11,8 @@ var User = mongoose.model('User');
 
 var config = require('../../config/configuration.js');
 
-/**
- * Execute query and return a list of templated sinppets
- */
-var baseRequest = function(url, endpoint, cb) {
-  return request(url).get(endpoint)
-    .set('Authorization', 'Basic ' + config.fetchApiCreds)
-    .end(function(e, r) {cb(e,r);});
-};
 
-
-module.exports.findDocuments = function(url, params, cb) {
+module.exports.findDocuments = function(url, params, user, cb) {
   var pages = [];
 
   async.waterfall([
@@ -40,7 +31,9 @@ module.exports.findDocuments = function(url, params, cb) {
       var batchParams = pages.map(encodeURIComponent).join('&pages=');
       var batchUrl = '/batch?pages=' + batchParams;
 
-      baseRequest(url, batchUrl, cb);
+      request(url).get(batchUrl)
+        .set('Authorization', 'Bearer ' + user.anyFetchToken)
+        .end(cb);
     },
     function templateResults(res, cb) {
 
@@ -56,7 +49,7 @@ module.exports.findDocuments = function(url, params, cb) {
 
       // Render the templated datas
       docReturn.datas.forEach(function(doc) {
-        var relatedTemplate = documentTypes[doc.document_type].template_snippet;
+        var relatedTemplate = documentTypes[doc.document_type].templates.snippet;
         doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 
         doc.provider = providers[doc.token].name;
@@ -98,7 +91,7 @@ module.exports.findDocuments = function(url, params, cb) {
 /**
  * Find and return a single templated document
  */
-module.exports.findDocument = function(url, id, cb) {
+module.exports.findDocument = function(url, id, user, cb) {
   var pages = [
     '/document_types',
     '/providers',
@@ -106,7 +99,9 @@ module.exports.findDocument = function(url, id, cb) {
   ];
 
   var batchParams = pages.map(encodeURIComponent).join('&pages=');
-  baseRequest(url, '/batch?pages=' + batchParams, function(err, res) {
+  request(url).get('/batch?pages=' + batchParams)
+    .set('Authorization', 'Bearer ' + user.anyFetchToken)
+    .end( function(err, res) {
     if (err) {
       return cb(err);
     }
@@ -117,8 +112,8 @@ module.exports.findDocument = function(url, id, cb) {
     var providers = body[pages[1]];
     var docReturn = body[pages[2]];
 
-    var relatedTemplate = documentTypes[docReturn.document_type].template_full;
-    var titleTemplate = documentTypes[docReturn.document_type].template_title;
+    var relatedTemplate = documentTypes[docReturn.document_type].templates.full;
+    var titleTemplate = documentTypes[docReturn.document_type].templates.title;
 
     docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
     docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
@@ -275,4 +270,36 @@ module.exports.addNewUser = function(user, organization, cb) {
       localUser.save(cb);
     }
   ], cb );
+};
+
+/**
+ * Retrieve all providers
+ */
+module.exports.getProviders = function(cb) {
+  var apiUrl = 'http://settings.anyfetch.com';
+
+  async.waterfall([
+    function retrieveProviders(cb) {
+      request(apiUrl).get('/provider')
+        .end(cb);
+    },
+    function setId(res, cb) {
+      var providers = res.body;
+
+      providers.forEach(function(provider) {
+        provider.id = provider._id.$oid;
+      });
+
+      cb(null, providers);
+    }
+  ], cb);
+};
+
+/**
+ * Retrieve all connect provider for an account
+ */
+module.exports.getConnectedProviders = function(url, user, cb) {
+  request(url).get('/providers')
+    .set('Authorization', 'Bearer ' + user.anyFetchToken)
+    .end(cb);
 };

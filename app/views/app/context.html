@@ -18,7 +18,15 @@
     in {{documents.providers[filters.token].name}}
     {% endif %}
 
-    <small><a href="#" id="show-filters">filter</a></small>
+    <div class="btn-group pull-right">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        Action <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="#" id="show-filters">Filter result</a></li>
+        <li><a href="/app/providers" class="link">Connect new service</a></li>
+      </ul>
+    </div>
   </h2>
 
   <form id="filters-container" action="" method="get" class="hidden">
@@ -62,6 +70,13 @@
         </div>
       </div>
     {% endfor %}
+
+    {% if !documents.count %}
+      <div class="center-block">
+        No document as been found about {{data.context.templatedDisplay}}. <br/>
+        Have you connect all you <a href="/app/providers" class="link">services</a> ?
+      </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
