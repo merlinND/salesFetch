@@ -81,7 +81,7 @@ module.exports.listProviders = function(req, res, next) {
     res.render('app/providers.html', {
       data: reqParams,
       providers: data[0],
-      connectProviders: data[1]
+      connectProviders: data[1].body
     });
   });
 };
