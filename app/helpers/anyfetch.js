@@ -125,6 +125,30 @@ module.exports.findDocument = function(url, id, user, cb) {
   });
 };
 
+/**
+ * Recusive function to create a user
+ */
+var createUser = function(user, urlRequest, cb) {
+  var email = crypto.randomBytes(7).toString('hex') + '@salesfetch.com';
+
+  request(urlRequest).post('/users')
+    .set('Authorization', 'Basic ' + config.fetchApiCreds)
+    .send({
+      email: email,
+      name: user.name,
+      password: user.password,
+      is_admin: true,
+    })
+    .end(function(err, res) {
+      if (res.status !== 200) {
+        return createUser(user, urlRequest, cb);
+      }
+
+      cb(null, res);
+    });
+
+
+};
 
 /**
  * Create a subcompany and an admin on the FetchAPI
@@ -155,30 +179,22 @@ module.exports.initAccount = function(data, done) {
       });
     },
     function createAccount(cb) {
-      // Avoid collision with production
-      if (config.env === 'development') {
-        user.name = 'dev-' + user.name;
-      }
-
-      request(url).post('/users')
-        .set('Authorization', 'Basic ' + config.fetchApiCreds)
-        .send({
-          email: user.name,
-          name: user.name,
-          password: user.password,
-          is_admin: true,
-        })
-        .expect(200)
-        .end(cb);
+      createUser(user, url, cb);
     },
     function retrieveUserToken(res, cb) {
       user.anyFetchId = res.body.id;
-      user.basicAuth = new Buffer(user.name + ':' + user.password).toString('base64');
+      user.anyFetchEmail = res.body.email;
+      user.basicAuth = new Buffer(user.anyFetchEmail + ':' + user.password).toString('base64');
 
       request(url).get('/token')
         .set('Authorization', 'Basic ' + user.basicAuth)
-        .expect(200)
-        .end(cb);
+        .end(function(err, resToken) {
+          if (res.status !== 200) {
+            return cb(new Error(JSON.stringify(resToken.body)));
+          }
+
+          cb(null, resToken);
+        });
     },
     function createSubCompany(res, cb) {
       user.token = res.body.token;
