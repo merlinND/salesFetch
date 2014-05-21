@@ -29,7 +29,14 @@ module.exports.contextSearch = function(req, res, next) {
     params = _.merge(params, filters);
   }
 
-  anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, req.user, function(err, documents) {
+  async.waterfall([
+    function updateDocuments(cb) {
+      anyfetchHelpers.updateAccount(reqParams.anyFetchURL, req.user, cb);
+    },
+    function retrieveDocument(res, cb) {
+      anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, req.user, cb);
+    }
+  ], function(err, documents) {
     if (err) {
       return next(err);
     }

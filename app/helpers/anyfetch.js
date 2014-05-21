@@ -303,3 +303,12 @@ module.exports.getConnectedProviders = function(url, user, cb) {
     .set('Authorization', 'Bearer ' + user.anyFetchToken)
     .end(cb);
 };
+
+/**
+ * Update the company documents
+ */
+module.exports.updateAccount = function(url, user, cb) {
+  request(url).post('/company/update')
+    .set('Authorization', 'Bearer ' + user.anyFetchToken)
+    .end(cb);
+};
