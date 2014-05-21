@@ -49,6 +49,7 @@ module.exports.findDocuments = function(url, params, user, cb) {
 
       // Render the templated datas
       docReturn.datas.forEach(function(doc) {
+        console.log(doc.id, doc.datas);
         var relatedTemplate = documentTypes[doc.document_type].templates.snippet;
         doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
 

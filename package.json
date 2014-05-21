@@ -45,7 +45,7 @@
     "should": "3.3.x",
     "jshint": "2.5.x",
     "mocha-mongoose": "1.0.x",
-    "nock": "0.28.x"
+    "nock": "0.31.x"
   },
   "licence": "Copyright Papiel",
   "engines": {
