@@ -15,19 +15,53 @@ var Organization = mongoose.model('Organization');
 
 
 describe('<Admin controller>', function() {
-  beforeEach(cleaner);
-  beforeEach(function(done) {
-    APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
-  });
-
   describe('GET /admin page', function() {
     var endpoint = '/admin';
-
     checkUnauthenticated(app, 'get', endpoint);
   });
 
+
   describe('POST /admin/init', function() {
     var endpoint = '/admin/init';
+
+    beforeEach(cleaner);
+    beforeEach(function(done) {
+      APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
+    });
+
+    it('should return the same masterKey if package is reinstalled', function(done) {
+      var SFDCinfos = {
+        user: {
+          name: 'Jessy Pinkman',
+          id: '5678',
+          email: 'jessy.pinkman@breaking-bad.com'
+        },
+        organization: {
+          name: 'Breaking Bad',
+          id: '1234'
+        }
+      };
+
+      async.waterfall([
+        function(cb) {
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .end(cb);
+        },
+        function(res, cb) {
+          var intialMasterKey = res.text;
+
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .expect(function(res){
+              res.text.should.eql(intialMasterKey);
+            })
+            .end(cb);
+        }
+      ], done);
+    });
 
     it('should create a user and a company', function(done) {
       // Mock send from Salesforce
@@ -90,40 +124,6 @@ describe('<Admin controller>', function() {
           });
         })
         .end(done);
-    });
-
-    it('should return the same masterKey if package is reinstalled', function(done) {
-      var SFDCinfos = {
-        user: {
-          name: 'Jessy Pinkman',
-          id: '5678',
-          email: 'jessy.pinkman@breaking-bad.com'
-        },
-        organization: {
-          name: 'Breaking Bad',
-          id: '1234'
-        }
-      };
-
-      async.waterfall([
-        function(cb) {
-          request(app)
-            .post(endpoint)
-            .send(SFDCinfos)
-            .end(cb);
-        },
-        function(res, cb) {
-          var intialMasterKey = res.text;
-
-          request(app)
-            .post(endpoint)
-            .send(SFDCinfos)
-            .expect(function(res){
-              res.text.should.eql(intialMasterKey);
-            })
-            .end(cb);
-        }
-      ], done);
     });
   });
 });
