@@ -60,12 +60,18 @@
   <hr/>
 
   <div class="row">
+    {% if documents.count %}
+    <p>{{documents.count}} results</p>
+    {% endif %}
+
     <div id="snippet-list">
       {% include "./_snippet-list.html" %}
 
+      {% if documents.count %}
       <div class="center-block hidden" id="loading-documents">
         Loading more documents
       </div>
+      {% endif %}
     </div>
 
     {% if !documents.count %}
