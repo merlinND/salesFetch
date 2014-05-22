@@ -60,10 +60,12 @@
   <hr/>
 
   <div class="row">
-    {% include "./_snippet-list.html" %}
+    <div id="snippet-list">
+      {% include "./_snippet-list.html" %}
 
-    <div class="center-block hidden" id="loading-documents">
-      Loading more documents
+      <div class="center-block hidden" id="loading-documents">
+        Loading more documents
+      </div>
     </div>
 
     {% if !documents.count %}

@@ -44,7 +44,7 @@ $(function() {
     var isOnMobile = data.env.deviseType === "mobile";
 
     // Handle the full preview loading
-    $("[data-document-url]").click(function(e) {
+    $("#snippet-list").on('click', '[data-document-url]', function(e) {
       e.preventDefault();
 
       var url = $(this).data("documentUrl");
