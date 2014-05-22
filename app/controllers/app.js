@@ -29,7 +29,7 @@ module.exports.contextSearch = function(req, res, next) {
     params = _.merge(params, filters);
   }
 
-  if (req.query.start) {
+  if(req.query.start) {
     params.start = req.query.start;
   }
 
@@ -41,11 +41,11 @@ module.exports.contextSearch = function(req, res, next) {
       anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, req.user, cb);
     }
   ], function(err, documents) {
-    if (err) {
+    if(err) {
       return next(err);
     }
 
-    if (req.query.start) {
+    if(req.query.start) {
       return res.render('app/_snippet-list.html', {
         documents: documents
       });

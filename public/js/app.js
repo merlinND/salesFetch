@@ -111,10 +111,10 @@ $(function() {
 });
 
 /**
- * Inifinite scroll
+ * Infinite scroll
  */
 $(function() {
-  if ($('#loading-documents')) {
+  if($('#loading-documents')) {
     var loading = false;
     var currentCount = 20;
     var lastDocument = false;
