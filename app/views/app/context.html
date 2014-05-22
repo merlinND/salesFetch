@@ -60,16 +60,11 @@
   <hr/>
 
   <div class="row">
-    {% for doc in documents.datas %}
-      <div data-document-url="/app/documents/{{doc.id}}" class="col-xs-12 panel panel-default snippet-container document">
-        <div class="panel-heading">
-          {{doc.document_type|capitalize}} - {{doc.provider|capitalize}}
-        </div>
-        <div class="panel-body">
-          {% autoescape false %}{{doc.snippet_rendered}}{% endautoescape %}
-        </div>
-      </div>
-    {% endfor %}
+    {% include "./_snippet-list.html" %}
+
+    <div class="center-block hidden" id="loading-documents">
+      Loading more documents
+    </div>
 
     {% if !documents.count %}
       <div class="center-block">
@@ -77,6 +72,7 @@
         Have you connect all you <a href="/app/providers" class="link">services</a> ?
       </div>
     {% endif %}
+
   </div>
 </section>
 {% endblock %}

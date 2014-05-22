@@ -24,7 +24,7 @@
       </div>
     {% endfor %}
 
-    {% if !connectProviders %}
+    {% if Object.keys(connectProviders).length === 0 %}
       <p>
         No providers has already been connected. <br/>
         There is a delay before the provider appears if you just connecter the application.

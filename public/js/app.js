@@ -109,3 +109,34 @@ $(function() {
     }
   });
 });
+
+/**
+ * Inifinite scroll
+ */
+$(function() {
+  if ($('#loading-documents')) {
+    var loading = false;
+    var currentCount = 20;
+    var lastDocument = false;
+
+    $(window).scroll(function(){
+      if (!loading && !lastDocument && $(window).scrollTop() === $(document).height() - $(window).height()){
+
+        loading = true;
+        $('#loading-documents').removeClass('hidden');
+        var loadingUrl = document.URL + '&start=' + currentCount;
+
+        $.get(loadingUrl, function(res) {
+          if (!res.length) {
+            lastDocument = true;
+          }
+
+          $(res).insertBefore('#loading-documents');
+          currentCount = $('.snippet-container').length;
+          $('#loading-documents').addClass('hidden');
+          loading = false;
+        });
+      }
+    });
+  }
+});

@@ -29,6 +29,10 @@ module.exports.contextSearch = function(req, res, next) {
     params = _.merge(params, filters);
   }
 
+  if (req.query.start) {
+    params.start = req.query.start;
+  }
+
   async.waterfall([
     function updateDocuments(cb) {
       anyfetchHelpers.updateAccount(reqParams.anyFetchURL, req.user, cb);
@@ -39,6 +43,12 @@ module.exports.contextSearch = function(req, res, next) {
   ], function(err, documents) {
     if (err) {
       return next(err);
+    }
+
+    if (req.query.start) {
+      return res.render('app/_snippet-list.html', {
+        documents: documents
+      });
     }
 
     res.render('app/context.html', {
