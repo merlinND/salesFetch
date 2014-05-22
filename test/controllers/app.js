@@ -48,6 +48,34 @@ describe('<Application controller>', function() {
       ], done);
     });
 
+    it("should return just snippets for infinite scroll if there is a start query parameter", function(done) {
+
+      var context = {
+        recordType: 'Contact',
+        recordId: '003b000000LHOj3',
+        templatedQuery: 'Walter White',
+        templatedDisplay: 'Walter White'
+      };
+
+      endpoint += '?start=1';
+
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, context, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(200)
+            .expect(function(res) {
+              res.text.should.containDeep("National Security");
+              res.text.should.not.containDeep("<body>");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+
     it("should display error if no template found", function(done) {
 
       var context = {
