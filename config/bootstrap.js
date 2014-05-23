@@ -69,10 +69,7 @@ var errorsHandlers = function(app) {
       next();
     }
 
-    // Log it
-    if (config.env === 'development') {
-      console.error(err.stack);
-    }
+    console.error(err.stack);
 
     // Error page
     return res.status(500).render('500', {

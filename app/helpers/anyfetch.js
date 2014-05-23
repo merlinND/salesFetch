@@ -185,8 +185,8 @@ module.exports.initAccount = function(data, done) {
     },
     function retrieveUserToken(res, cb) {
       if(res.status !== 200){
-        return cb(new Error(res.body))
-      };
+        return cb(new Error(res.body));
+      }
 
       user.anyFetchId = res.body.id;
       user.basicAuth = new Buffer(user.name + ':' + user.password).toString('base64');
@@ -197,8 +197,8 @@ module.exports.initAccount = function(data, done) {
     },
     function createSubCompany(res, cb) {
       if(res.status !== 200){
-        return cb(new Error(res.body))
-      };
+        return cb(new Error(res.body));
+      }
 
       user.token = res.body.token;
 
