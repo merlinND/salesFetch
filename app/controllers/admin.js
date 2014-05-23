@@ -53,7 +53,7 @@ module.exports.delete = function(req, res, next) {
     },
     function setDeletedOnCOmpany(org, cb) {
       if (!org) {
-        return next({message: "Bad Request", status: 401});
+        return cb({message: "Bad Request", status: 401});
       }
 
       org.deleted = true;
