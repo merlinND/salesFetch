@@ -144,9 +144,6 @@ describe('<Admin controller>', function() {
     var endpoint = '/admin/delete';
 
     beforeEach(cleaner);
-    beforeEach(function(done) {
-      APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
-    });
 
     it('should set the org to deleted', function(done) {
       var SFDCinfos = {
@@ -172,16 +169,12 @@ describe('<Admin controller>', function() {
             .expect(204)
             .end(cb);
         },
-        function checkIfOrgIsDeleted(res, cb){
-          async.waterfall([
-            function(cb){
-              Organization.findOne({SFDCId: SFDCinfos.organization.id}, cb);
-            },
-            function(org, cb){
-              org.should.have.property('deleted', true);
-              cb();
-            }
-          ], cb);
+        function retrieveOrg(res, cb){
+          Organization.findOne({SFDCId: SFDCinfos.organization.id}, cb);
+        },
+        function checkIfDeleted(org, cb){
+          org.should.have.property('deleted', true);
+          cb();
         }
       ], done);
     });
