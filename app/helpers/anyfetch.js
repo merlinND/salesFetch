@@ -36,6 +36,9 @@ module.exports.findDocuments = function(url, params, user, cb) {
         .end(cb);
     },
     function templateResults(res, cb) {
+      if (res.status === 401) {
+        return cb(new Error('Invalid credentials'));
+      }
 
       var body = res.body;
 
@@ -103,27 +106,31 @@ module.exports.findDocument = function(url, id, user, cb) {
   request(url).get('/batch?pages=' + batchParams)
     .set('Authorization', 'Bearer ' + user.anyFetchToken)
     .end( function(err, res) {
-    if (err) {
-      return cb(err);
-    }
+      if (err) {
+        return cb(err);
+      }
 
-    var body = res.body;
+      if (res.status === 401) {
+        return cb(new Error('Invalid credentials'));
+      }
 
-    var documentTypes = body[pages[0]];
-    var providers = body[pages[1]];
-    var docReturn = body[pages[2]];
+      var body = res.body;
 
-    var relatedTemplate = documentTypes[docReturn.document_type].templates.full;
-    var titleTemplate = documentTypes[docReturn.document_type].templates.title;
+      var documentTypes = body[pages[0]];
+      var providers = body[pages[1]];
+      var docReturn = body[pages[2]];
 
-    docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
-    docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
+      var relatedTemplate = documentTypes[docReturn.document_type].templates.full;
+      var titleTemplate = documentTypes[docReturn.document_type].templates.title;
 
-    docReturn.provider = providers[docReturn.token].name;
-    docReturn.document_type = documentTypes[docReturn.document_type].name;
+      docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
+      docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
 
-    cb(null, docReturn);
-  });
+      docReturn.provider = providers[docReturn.token].name;
+      docReturn.document_type = documentTypes[docReturn.document_type].name;
+
+      cb(null, docReturn);
+    });
 };
 
 
