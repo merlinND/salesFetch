@@ -126,4 +126,8 @@ describe('<Admin controller>', function() {
         .end(done);
     });
   });
+
+  describe('POST /admin/delete', function() {
+
+  });
 });
