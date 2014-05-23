@@ -46,7 +46,7 @@ module.exports.delete = function(req, res, next) {
   async.waterfall([
     function retrieveCompany(cb) {
       if (!data.organization.id) {
-        return next({message: "Bad Request", status: 401});
+        return cb({message: "Bad Request", status: 401});
       }
 
       Organization.findOne({SFDCId: data.organization.id}, cb);

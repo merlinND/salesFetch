@@ -173,10 +173,15 @@ describe('<Admin controller>', function() {
             .end(cb);
         },
         function checkIfOrgIsDeleted(res, cb){
-          Organization.findOne({SFDCId: SFDCinfos.organization.id}, function(err, org) {
-            org.should.have.property('deleted', true);
-            cb();
-          });
+          async.waterfall([
+            function(cb){
+              Organization.findOne({SFDCId: SFDCinfos.organization.id}, cb);
+            },
+            function(org, cb){
+              org.should.have.property('deleted', true);
+              cb();
+            }
+          ], cb);
         }
       ], done);
     });
