@@ -43,48 +43,49 @@ describe('<Admin controller>', function() {
     it('should create a user and a company', function(done) {
       var generatedMasterKey;
 
-      // Validation
-      var validates = [
-        function checkCompany(cb) {
-          Organization.find({}, function(err, orgs) {
-            orgs.length.should.eql(1);
-
-            var o = orgs[0];
-            o.should.have.property('name', 'Breaking Bad');
-            o.should.have.property('SFDCId', '1234');
-            o.should.have.property('anyFetchId', '533d9161162215a5375d34d2');
-            o.should.have.property('deleted', false);
-            generatedMasterKey = o.masterKey;
-
-            cb(null, o);
-          });
-        },
-        function checkUser(org, cb) {
-          User.find({}, function(err, users) {
-            users.length.should.eql(1);
-
-            var u = users[0];
-
-            u.should.have.property('name','Jessy Pinkman');
-            u.should.have.property('SFDCId', '5678');
-            u.should.have.property('anyFetchId', '533d6b2a6355285e5563d005');
-            u.should.have.property('email', 'jessy.pinkman@breaking-bad.com');
-            u.should.have.property('anyFetchToken', 'mockedToken');
-            u.should.have.property('organization', org._id);
-            u.should.have.property('isAdmin', true);
-
-            cb();
-          });
-        }
-      ];
-
       // Fake request
       request(app)
         .post(endpoint)
         .send(SFDCinfos)
         .expect(200)
-        .expect(function(res) {
-          async.waterfall(validates, function() {
+        .end(function(err, res) {
+          if(err) {
+            throw err;
+          }
+
+          async.waterfall([
+            function checkCompany(cb) {
+              Organization.find({}, function(err, orgs) {
+                orgs.length.should.eql(1);
+
+                var o = orgs[0];
+                o.should.have.property('name', 'Breaking Bad');
+                o.should.have.property('SFDCId', '1234');
+                o.should.have.property('anyFetchId', '533d9161162215a5375d34d2');
+                o.should.have.property('deleted', false);
+                generatedMasterKey = o.masterKey;
+
+                cb(null, o);
+              });
+            },
+            function checkUser(org, cb) {
+              User.find({}, function(err, users) {
+                users.length.should.eql(1);
+
+                var u = users[0];
+
+                u.should.have.property('name','Jessy Pinkman');
+                u.should.have.property('SFDCId', '5678');
+                u.should.have.property('anyFetchId', '533d6b2a6355285e5563d005');
+                u.should.have.property('email', 'jessy.pinkman@breaking-bad.com');
+                u.should.have.property('anyFetchToken', 'mockedToken');
+                u.should.have.property('organization', org._id);
+                u.should.have.property('isAdmin', true);
+
+                cb();
+              });
+            }
+          ], function() {
             res.text.should.eql(generatedMasterKey);
           });
         })
