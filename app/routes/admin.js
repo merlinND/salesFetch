@@ -8,4 +8,5 @@ module.exports = function(app) {
 
   app.get('/admin', authorization.requiresLogin, admin.index);
   app.post('/admin/init', admin.init);
+  app.post('/admin/delete', admin.delete);
 };

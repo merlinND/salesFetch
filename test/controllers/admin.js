@@ -23,60 +23,24 @@ describe('<Admin controller>', function() {
 
   describe('POST /admin/init', function() {
     var endpoint = '/admin/init';
+    var SFDCinfos = {
+      user: {
+        name: 'Jessy Pinkman',
+        id: '5678',
+        email: 'jessy.pinkman@breaking-bad.com'
+      },
+      organization: {
+        name: 'Breaking Bad',
+        id: '1234'
+      }
+    };
 
     beforeEach(cleaner);
     beforeEach(function(done) {
       APIs.mount('fetchAPI', 'http://api.anyfetch.com', done);
     });
 
-    it('should return the same masterKey if package is reinstalled', function(done) {
-      var SFDCinfos = {
-        user: {
-          name: 'Jessy Pinkman',
-          id: '5678',
-          email: 'jessy.pinkman@breaking-bad.com'
-        },
-        organization: {
-          name: 'Breaking Bad',
-          id: '1234'
-        }
-      };
-
-      async.waterfall([
-        function(cb) {
-          request(app)
-            .post(endpoint)
-            .send(SFDCinfos)
-            .end(cb);
-        },
-        function(res, cb) {
-          var intialMasterKey = res.text;
-
-          request(app)
-            .post(endpoint)
-            .send(SFDCinfos)
-            .expect(function(res){
-              res.text.should.eql(intialMasterKey);
-            })
-            .end(cb);
-        }
-      ], done);
-    });
-
     it('should create a user and a company', function(done) {
-      // Mock send from Salesforce
-      var SFDCinfos = {
-        user: {
-          name: 'Jessy Pinkman',
-          id: '5678',
-          email: 'jessy.pinkman@breaking-bad.com'
-        },
-        organization: {
-          name: 'Breaking Bad',
-          id: '1234'
-        }
-      };
-
       var generatedMasterKey;
 
       // Validation
@@ -89,6 +53,7 @@ describe('<Admin controller>', function() {
             o.should.have.property('name', 'Breaking Bad');
             o.should.have.property('SFDCId', '1234');
             o.should.have.property('anyFetchId', '533d9161162215a5375d34d2');
+            o.should.have.property('deleted', false);
             generatedMasterKey = o.masterKey;
 
             cb(null, o);
@@ -124,6 +89,94 @@ describe('<Admin controller>', function() {
           });
         })
         .end(done);
+    });
+
+    it('should return the same masterKey if package is reinstalled', function(done) {
+      async.waterfall([
+        function initCompany(cb) {
+          var org = new Organization({
+            name: SFDCinfos.organization.name,
+            SFDCId: SFDCinfos.organization.id
+          });
+
+          org.save(cb);
+        },
+        function checkKey(org, count, cb) {
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .expect(function(res){
+              res.text.should.eql(org.masterKey);
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+
+    it('should reset deleted if the original company was deleted', function(done) {
+      async.waterfall([
+        function initCompany(cb) {
+          var org = new Organization({
+            name: SFDCinfos.organization.name,
+            SFDCId: SFDCinfos.organization.id,
+            deleted: true
+          });
+
+          org.save(cb);
+        },
+        function sendInformations(org, count, cb) {
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .end(cb);
+        },
+        function checkOrgStatus(res, cb) {
+          Organization.findOne({SFDCId: SFDCinfos.organization.id}, function(err, org) {
+            org.should.have.property('deleted', false);
+            cb();
+          });
+        }
+      ], done);
+    });
+  });
+
+  describe('POST /admin/delete', function() {
+    var endpoint = '/admin/delete';
+
+    beforeEach(cleaner);
+
+    it('should set the org to deleted', function(done) {
+      var SFDCinfos = {
+        organization: {
+          name: 'Breaking Bad',
+          id: '1234'
+        }
+      };
+
+      async.waterfall([
+        function createOrg(cb) {
+          var org = new Organization({
+            name: SFDCinfos.organization.name,
+            SFDCId: SFDCinfos.organization.id
+          });
+
+          org.save(cb);
+        },
+        function deleteAccount(res, count, cb) {
+          request(app)
+            .post(endpoint)
+            .send(SFDCinfos)
+            .expect(204)
+            .end(cb);
+        },
+        function retrieveOrg(res, cb){
+          Organization.findOne({SFDCId: SFDCinfos.organization.id}, cb);
+        },
+        function checkIfDeleted(org, cb){
+          org.should.have.property('deleted', true);
+          cb();
+        }
+      ], done);
     });
   });
 });

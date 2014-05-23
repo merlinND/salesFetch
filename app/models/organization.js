@@ -21,7 +21,11 @@ var OrgModel = new Schema ({
     unique: true
   },
   name: String,
-  masterKey: String
+  masterKey: String,
+  deleted: {
+    type: Boolean,
+    default: false
+  }
 });
 
 /**
