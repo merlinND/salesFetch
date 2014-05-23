@@ -41,15 +41,21 @@ module.exports.init = function(req, res, next) {
  * Save in database that the package has been uninstalled
  */
 module.exports.delete = function(req, res, next) {
+  var data = req.body;
+
   async.waterfall([
     function retrieveCompany(cb) {
-      if (!req.organization.id) {
+      if (!data.organization.id) {
         return next({message: "Bad Request", status: 401});
       }
 
-      Organization.findOne({SFDCId: req.organization.id}, cb);
+      Organization.findOne({SFDCId: data.organization.id}, cb);
     },
     function setDeletedOnCOmpany(org, cb) {
+      if (!org) {
+        return next({message: "Bad Request", status: 401});
+      }
+
       org.deleted = true;
       org.save(cb);
     }
