@@ -181,19 +181,25 @@ module.exports.initAccount = function(data, done) {
           password: user.password,
           is_admin: true,
         })
-        .expect(200)
         .end(cb);
     },
     function retrieveUserToken(res, cb) {
+      if(res.status !== 200){
+        return cb(new Error(res.body))
+      };
+
       user.anyFetchId = res.body.id;
       user.basicAuth = new Buffer(user.name + ':' + user.password).toString('base64');
 
       request(url).get('/token')
         .set('Authorization', 'Basic ' + user.basicAuth)
-        .expect(200)
         .end(cb);
     },
     function createSubCompany(res, cb) {
+      if(res.status !== 200){
+        return cb(new Error(res.body))
+      };
+
       user.token = res.body.token;
 
       request(url).post('/subcompanies')
