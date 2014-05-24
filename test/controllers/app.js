@@ -101,6 +101,30 @@ describe('<Application controller>', function() {
     });
   });
 
+  describe('/document page', function() {
+    var endpoint = '/app/documents/5309c57d9ba7daaa265ffdc9';
+
+    checkUnauthenticated(app, 'get', endpoint);
+
+    it("should render the full template", function(done) {
+      async.waterfall([
+        function buildRequest(cb) {
+          requestBuilder(endpoint, null, null, cb);
+        },
+        function sendRequest(url, cb) {
+          request(app)
+            .get(url)
+            .expect(function(res) {
+              res.text.should.containDeep("Email");
+              res.text.should.containDeep("Gmail");
+              res.text.should.containDeep("Albert Einstein");
+            })
+            .end(cb);
+        }
+      ], done);
+    });
+  });
+
   describe('/providers page', function() {
     var endpoint = '/app/providers';
     beforeEach(function(done) {
