@@ -254,24 +254,33 @@ module.exports.addNewUser = function(user, organization, cb) {
       });
     },
     function retrieveAdminToken(cb) {
-      User.findOne({organization: organization, admin: true}, cb);
+      User.findOne({organization: organization._id, isAdmin: true}, cb);
     },
     function createNewUser(adminUser, cb) {
-      var adminToken = adminUser.token;
+      if (!adminUser) {
+        return cb(new Error('No admin for the comapny has been found'));
+      }
+
+      var adminToken = adminUser.anyFetchToken;
       request(url).post('/users')
         .set('Authorization', 'Bearer ' + adminToken)
         .send({
-          email: user.email,
+          email: user.name,
           name: user.name,
           password: user.password
         })
         .end(cb);
     },
-    function retrieveUserToken(anyFetchUser, cb) {
-      user.anyFetchId = anyFetchUser.id;
+    function retrieveUserToken(res, cb) {
+      if(res.status !== 200){
+        return cb(new Error(res.body));
+      }
+
+      user.anyFetchId = res.body.id;
+      user.basicAuth = new Buffer(user.name + ':' + user.password).toString('base64');
 
       request(url).get('/token')
-        .set('Authorization', 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64'))
+        .set('Authorization', 'Basic ' + user.basicAuth)
         .end(cb);
     },
     function saveLocalUser(res, cb) {
@@ -283,7 +292,7 @@ module.exports.addNewUser = function(user, organization, cb) {
         SFDCId: user.id,
         anyFetchId: user.anyFetchId,
         token: userToken,
-        organization: organization._id
+        organization: organization
       });
 
       localUser.save(cb);

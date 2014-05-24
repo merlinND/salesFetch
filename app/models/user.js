@@ -32,13 +32,4 @@ var UserModel = new Schema ({
   }
 });
 
-/**
- * Statics
- */
-UserModel.statics.loadAndPopulate = function(id, cb) {
-  this.findOne({
-    _id: id
-  }).populate('organization').exec(cb);
-};
-
 mongoose.model('User', UserModel);

@@ -46,7 +46,6 @@ exports.requiresLogin = function(req, res, next) {
         return next({message: "Bad Request", status: 401});
       }
 
-
       Organization.findOne({SFDCId: data.organization.id}, cb);
     },
     function checkRequestValidity(org, cb){
@@ -61,7 +60,6 @@ exports.requiresLogin = function(req, res, next) {
       if (check !== data.hash) {
         return next({message: "Please check your salesFetch Master Key!", status: 401});
       }
-
       cb(null, data);
     },
     function loadUser(envelope, cb){

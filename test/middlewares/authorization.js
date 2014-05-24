@@ -84,29 +84,41 @@ describe('<Authentication middleware>', function() {
   });
 
   it('should create a new user if not in DB', function(done) {
+    var createdOrg;
 
     async.waterfall([
       function mountAPI(cb) {
         APIs.mount('fetchAPI', 'http://api.anyfetch.com', cb);
       },
-      function checkNoUser(_, cb) {
-        User.count({}, function(err, count) {
-          count.should.eql(0);
-          cb(null, null);
+      function createCompany(api, cb) {
+         var org = new Organization({
+          name: "anyFetch",
+          SFDCId: '1234'
         });
+
+        org.save(cb);
       },
-      function createCompany(_, cb) {
-        factories.initAccount(cb);
+      function createAdminUser(org, count, cb) {
+        createdOrg = org;
+
+        var user = new User({
+          SFDCId: '5678',
+          organization: org.id,
+          anyFetchToken: 'anyfetchToken',
+          isAdmin: true
+        });
+
+        user.save(cb);
       },
-      function makeCall(user, org, cb) {
-        var hash = org.SFDCId + '5678' + org.masterKey + secureKey;
+      function makeCall(user, count, cb) {
+        var hash = createdOrg.SFDCId + 'newUser' + createdOrg.masterKey + secureKey;
         hash = crypto.createHash('sha1').update(hash).digest("base64");
 
         var authObj = {
           hash: hash,
-          organization: {id: org.SFDCId},
+          organization: {id: createdOrg.SFDCId},
           user: {
-            id: '5678',
+            id: 'newUser',
             name: 'Walter White',
             email: 'walter.white@breaking-bad.com'
           }
@@ -120,7 +132,7 @@ describe('<Authentication middleware>', function() {
 
         authMiddleware(req, null, function() {
           User.count({}, function(err, count) {
-            count.should.eql(1);
+            count.should.eql(2);
             cb();
           });
         });
