@@ -67,14 +67,3 @@ module.exports.delete = function(req, res, next) {
     res.send(204);
   });
 };
-
-/**
- * Administration index page
- * Display the context profilers settings
- */
-module.exports.index = function(req, res) {
-  res.render('admin/index.html', {
-    organization: req.organization,
-    data: req.reqParams
-  });
-};

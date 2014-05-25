@@ -7,7 +7,6 @@ var request = require('supertest');
 var app = require('../../app.js');
 var APIs = require('../helpers/APIs');
 var cleaner = require('../hooks/cleaner');
-var checkUnauthenticated = require('../helpers/access').checkUnauthenticated;
 
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
@@ -15,11 +14,6 @@ var Organization = mongoose.model('Organization');
 
 
 describe('<Admin controller>', function() {
-  describe('GET /admin page', function() {
-    var endpoint = '/admin';
-    checkUnauthenticated(app, 'get', endpoint);
-  });
-
 
   describe('POST /admin/init', function() {
     var endpoint = '/admin/init';

@@ -1,9 +1,0 @@
-{% extends '../template.html' %}
-
-{% block bare-js %}
-  <script type="text/javascript">
-    window.data = {{JSON.stringify(data)|safe}};
-  </script>
-
-  <script type="text/javascript" src="/js/app.js"></script>
-{% endblock %}
