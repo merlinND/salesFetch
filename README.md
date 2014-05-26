@@ -9,7 +9,7 @@ Fetch API integration in Salesforce.
 * 2 ways : timeline views and search views
 * Dynamic request management
 
-Check out the [wiki](https://github.com/Papiel/salesFetch/wiki) to understand how to integrate salesFetch into you salesforce organization.
+Check out the [wiki](https://github.com/Papiel/salesFetch/wiki/Installation-guide) to understand how to integrate salesFetch into you salesforce organization.
 
 
 ## Before...
