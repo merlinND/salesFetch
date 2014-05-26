@@ -9,6 +9,8 @@ Fetch API integration in Salesforce.
 * 2 ways : timeline views and search views
 * Dynamic request management
 
+Check out the [wiki](https://github.com/Papiel/salesFetch/wiki) to understand how to integrate salesFetch into you salesforce organization.
+
 
 ## Before...
 * Node.js - Download and Install [Node.js](http://www.nodejs.org/download/). You can also follow [this gist](https://gist.github.com/isaacs/579814) for a quick and easy way to install Node.js and npm
