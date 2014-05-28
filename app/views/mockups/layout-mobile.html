@@ -5,83 +5,55 @@
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <div class="btn-group navbar-btn">
-      <a class="btn btn-primary">
-        Context  <span class="badge">42</span>
-      </a>
-      <a class="btn btn-default">
-        Pinned  <span class="badge">5</span>
-      </a>
+<div id="left-panel">
+  {% include 'snippet-list.html' %}
+</div>
+<div id="right-panel">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <a href="#" class="btn btn-default navbar-btn pull-right">Pin</a>
     </div>
+  </nav>
 
-    <a href="#" class="btn btn-default navbar-btn pull-right" id="filter" data-toggle="popover" title="" role="button">Filters</a>
-  </div>
-</nav>
+  <div class="container-fluid">
+    <h2>Media heading</h2>
+    <div class="well full">
 
-<div class="hidden">
-  <div id="filter-popover">
-    <label for="provider">Provider</label>
-    <select class="form-control" id="provider">
-      <option>All</option>
-      <option>Gmail</option>
-      <option>Dropbox</option>
-    </select>
-
-    <label for="type">Type</label>
-    <select class="form-control" id="type">
-      <option>All</option>
-      <option>Pdf</option>
-      <option>Image</option>
-    </select>
+    </div>
   </div>
 </div>
 
-<p>Today</p>
-{% for i in [1] %}
-  {% include 'snippet.html' %}
-{% endfor %}
-
-<p>2 days ago</p>
-{% for i in [1,2,3] %}
-  {% include 'snippet.html' %}
-{% endfor %}
-
-<p>Last week</p>
-{% for i in [1,2,3] %}
-  {% include 'snippet.html' %}
-{% endfor %}
-
-<p>Last Month</p>
-{% for i in [1,2,3,4,5,6] %}
-  {% include 'snippet.html' %}
-{% endfor %}
-
 <style type="text/css">
-  .icon{
-    display: block;
-    width: 20px;
-    height: 20px;
-    margin-bottom: 10px;
-    margin-right: 5px;
-  }
+#left-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 320px;
+  overflow-y: hidden;
+  border-right: 1px solid #ddd;
+}
 
-  .snippet {
-    padding: 5px;
-    margin-top: 0;
-    margin-bottom: -1px;
-    border-bottom: 1px solid #ddd;
-    color: #646464;
-  }
+#left-panel #snippet-list {
+  position: absolute;
+  top: 53px;
+  bottom: 0;
+  overflow-y: scroll;
+}
 
-  .snippet a {
-    color: inherit;
-    text-decoration: none;
-  }
+#right-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 320px;
+  right: 0;
+  overflow-y: hidden;
+  background-color: #f8f8f8;
+}
 
-  .snippet .title {
-    color: #333;
-  }
+.well.full {
+  border: none;
+  background-color: white;
+}
 </style>
 {% endblock %}
