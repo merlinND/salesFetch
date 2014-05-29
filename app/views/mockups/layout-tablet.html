@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block content %}
-<div id="left-panel">
+<div id="left-panel" class="active">
   {% include 'snippet-list.html' %}
+  <div id="left-toogle"></div>
 </div>
-<div id="left-toogle"></div>
 
 
 <div id="right-panel">
@@ -40,7 +40,7 @@
   height: 50px;
   position: absolute;
   top: 0;
-  left: 0;
+  left: 320px;
   z-index: 1;
   background-color: white;
   border-radius: 0 5px 5px 0;
@@ -81,15 +81,6 @@
 
   #left-panel.active {
     left: 0;
-  }
-
-  #left-toogle {
-    -webkit-transition:left .5s ease-in-out;
-    transition: left .5s ease-in-out;
-  }
-
-  #left-panel.active + #left-toogle {
-    left: 320px;
   }
 
   #right-panel {
