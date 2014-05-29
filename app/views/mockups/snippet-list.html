@@ -9,7 +9,7 @@
       </a>
     </div>
 
-    <a href="#" class="btn btn-default navbar-btn pull-right" id="filter" data-toggle="popover" title="" role="button">Filters</a>
+    <a class="btn btn-default navbar-btn pull-right" id="filter" data-toggle="popover" title="">Filters</a>
   </div>
 </nav>
 
@@ -58,7 +58,9 @@
     border-radius: 0;
     border-right: 0;
     border-left: 0;
-    margin-bottom: 0;
+    margin-bottom: -50px;
+    -webkit-transition: top .5s ease-in-out;
+    transition: top .5s ease-in-out;
   }
 
   #context-switch a {
@@ -71,6 +73,10 @@
     height: 20px;
     margin-bottom: 10px;
     margin-right: 5px;
+  }
+
+  #snippet-list {
+    margin-top: 50px;
   }
 
   #snippet-list .timestamp {

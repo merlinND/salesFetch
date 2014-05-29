@@ -5,5 +5,22 @@
 {% endblock %}
 
 {% block content %}
-  {% include 'snippet-list.html' %}
+
+{% include 'snippet-list.html' %}
+
+<style type="text/css">
+  .navbar-fixed {
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    top: 0;
+    border-width: 0 0 1px;
+  }
+
+  .navbar-fixed.navbar-hidden {
+    top: -50px;
+  }
+</style>
+
 {% endblock %}
