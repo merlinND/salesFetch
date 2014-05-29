@@ -5,55 +5,5 @@
 {% endblock %}
 
 {% block content %}
-<div id="left-panel">
   {% include 'snippet-list.html' %}
-</div>
-<div id="right-panel">
-  <nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-      <a href="#" class="btn btn-default navbar-btn pull-right">Pin</a>
-    </div>
-  </nav>
-
-  <div class="container-fluid">
-    <h2>Media heading</h2>
-    <div class="well full">
-
-    </div>
-  </div>
-</div>
-
-<style type="text/css">
-#left-panel {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 320px;
-  overflow-y: hidden;
-  border-right: 1px solid #ddd;
-}
-
-#left-panel #snippet-list {
-  position: absolute;
-  top: 53px;
-  bottom: 0;
-  overflow-y: scroll;
-}
-
-#right-panel {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 320px;
-  right: 0;
-  overflow-y: hidden;
-  background-color: #f8f8f8;
-}
-
-.well.full {
-  border: none;
-  background-color: white;
-}
-</style>
 {% endblock %}

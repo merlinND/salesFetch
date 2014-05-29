@@ -1,5 +1,21 @@
 "use strict";
 
+var UAParser = require('ua-parser-js');
+
+
 module.exports.contextSearch = function (req, res) {
-  return res.render('mockups/layout-mobile.html');
+  var deviceType;
+
+  if (req.params.env && req.params.env.type === 'desktop') {
+    deviceType = 'desktop';
+  } else {
+    var parser = new UAParser();
+    var ua = req.headers['user-agent'];
+    deviceType = parser.setUA(ua).getResult().device.type || 'tablet';
+  }
+
+  var template = 'mockups/layout-' + deviceType + '.html';
+  console.log(template);
+
+  return res.render(template);
 };
