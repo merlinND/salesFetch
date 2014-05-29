@@ -10,7 +10,7 @@
 $("#filter").popover({
   placement : 'bottom',
   html: true,
-  container: '.navbar',
+  container: '.navbar-result',
   content : $('#filter-popover').html()
 });
 
