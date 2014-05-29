@@ -6,3 +6,7 @@ $("#filter").popover({
   container: 'body',
   content : $('#filter-popover').html()
 });
+
+$('#left-toogle').click(function() {
+  $("#left-panel").toggleClass('active');
+});
