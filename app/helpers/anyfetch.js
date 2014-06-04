@@ -46,15 +46,15 @@ module.exports.findDocuments = function(params, user, cb) {
       var providers = body[pages[1]];
       var docReturn = body[pages[2]];
 
-      if (!docReturn.datas) {
+      if (!docReturn.data) {
         return cb(null, docReturn);
       }
 
-      // Render the templated datas
-      docReturn.datas.forEach(function(doc) {
+      // Render the templated data
+      docReturn.data.forEach(function(doc) {
 
         var relatedTemplate = documentTypes[doc.document_type].templates.snippet;
-        doc.snippet_rendered = Mustache.render(relatedTemplate, doc.datas);
+        doc.snippet_rendered = Mustache.render(relatedTemplate, doc.data);
 
         doc.provider = providers[doc.token].name;
         doc.document_type = documentTypes[doc.document_type].name;
@@ -123,8 +123,8 @@ module.exports.findDocument = function(id, user, cb) {
       var relatedTemplate = documentTypes[docReturn.document_type].templates.full;
       var titleTemplate = documentTypes[docReturn.document_type].templates.title;
 
-      docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.datas);
-      docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.datas);
+      docReturn.full_rendered = Mustache.render(relatedTemplate, docReturn.data);
+      docReturn.title_rendered = Mustache.render(titleTemplate, docReturn.data);
 
       docReturn.provider = providers[docReturn.token].name;
       docReturn.document_type = documentTypes[docReturn.document_type].name;
