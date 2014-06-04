@@ -5,8 +5,8 @@ var data = window.data;
 
 var goToLocation = function(window, url) {
   var linker = url.indexOf('?') !== -1 ? '&' : '?';
-  var urlWithDatas = url + linker + "data=" + encodeURIComponent(JSON.stringify(data));
-  window.location = urlWithDatas;
+  var urlWithdata = url + linker + "data=" + encodeURIComponent(JSON.stringify(data));
+  window.location = urlWithdata;
 };
 
 var displayFull = function(url) {
