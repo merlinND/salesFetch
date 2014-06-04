@@ -35,10 +35,10 @@ module.exports.contextSearch = function(req, res, next) {
 
   async.waterfall([
     function updateDocuments(cb) {
-      anyfetchHelpers.updateAccount(reqParams.anyFetchURL, req.user, cb);
+      anyfetchHelpers.updateAccount(req.user, cb);
     },
     function retrieveDocument(res, cb) {
-      anyfetchHelpers.findDocuments(reqParams.anyFetchURL, params, req.user, cb);
+      anyfetchHelpers.findDocuments(params, req.user, cb);
     }
   ], function(err, documents) {
     if(err) {
@@ -65,7 +65,7 @@ module.exports.contextSearch = function(req, res, next) {
 module.exports.documentDisplay = function(req, res, next) {
   var reqParams = req.reqParams;
 
-  anyfetchHelpers.findDocument(reqParams.anyFetchURL, req.params.id, req.user, function(err, document) {
+  anyfetchHelpers.findDocument(req.params.id, req.user, function(err, document) {
     if(err) {
       return next(err);
     }
@@ -88,7 +88,7 @@ module.exports.listProviders = function(req, res, next) {
       anyfetchHelpers.getProviders(cb);
     },
     function(cb) {
-      anyfetchHelpers.getConnectedProviders(reqParams.anyFetchURL, req.user, cb);
+      anyfetchHelpers.getConnectedProviders(req.user, cb);
     }
   ], function(err, data) {
     if (err) {
